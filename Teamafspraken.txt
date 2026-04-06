@@ -1,0 +1,15 @@
+Teamafspraken
+
+1. Communicatie verloopt via Whatsapp en Discord
+2. Er wordt gestemt over de data voor standups
+3. Bestanden worden gedeelt via Github of in de discord server en later op Github gezet.
+4. Ben je afwezig? meldt het via Whatsapp.
+5. Wees duidelijk en direct bij de retrospectives (niet te lief)
+6. Wees eerlijk over je bijdrage aan het werk
+7. We hebben respect voor elkaar!
+8. We houden ons aan de afgesproken deadlines
+9. Onthoud dat we alleen invloed hebben op ons product en niet op de outcome of benefit
+10. We staan open en vragen om feedback
+11. Voortgang wordt duidelijk en eerlijk gecommuniceerd bij de standups
+12. Wees niet bang om om hulp te vragen
+13. Vraag niet om hulp zonder het eerst zelf te hebben geprobeerd
