@@ -1,0 +1,2 @@
+#Bestanden die niet geupload zullen woorden bij een push naar github
+.env 
