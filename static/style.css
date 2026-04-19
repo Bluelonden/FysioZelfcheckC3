@@ -1,0 +1,58 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+:root {
+    --text-color: teal;
+    --main-color: cornflowerblue;
+    --second-color: lightskyblue;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, rgb(211, 239, 247), lightgrey);
+    color: var(--text-color);
+}
+
+main {
+    margin: 20px;
+}
+
+/* NAVBAR */
+.navbar {
+    background: var(--main-color);
+    padding: 10px;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar .nav-menu a {
+    padding: 10px;
+}
+
+.navbar .nav-menu a:hover {
+    background: var(--second-color);
+}
+
+.navbar .nav-menu {
+    display: flex;
+}
+
+.navbar .nav-menu .nav-link {
+    color: black;
+}
+
+.navbar ul {
+    list-style: none;
+}
+
+.navbar a {
+    text-decoration: none;
+}

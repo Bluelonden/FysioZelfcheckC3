@@ -1,0 +1,28 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inloggen</title>
+</head>
+
+<body>
+    {% extends "base.html" %}
+    {% block content %}
+    <!-- content here -->
+    <h1>Dit is de inlogpagina</h1>
+    <div class="container">
+        <div class="form-box" id="login-form">
+            <form action="">
+                <h2>Inloggen</h2>
+                <input type="email" name="email" placeholder="Email@example.com">
+                <input type="password" name="password" placeholder="Wachtwoord">
+                <button type="submit" name="login">Inloggen</button>
+                <p>Nog geen account? <a href="#">Registreer</a></p>
+            </form>
+        </div>
+    </div>
+    {% endblock %}
+</body>
+
+</html>
