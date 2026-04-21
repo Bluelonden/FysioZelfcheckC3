@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inloggen</title>
+    <title>Registreren</title>
 </head>
 
 <body>
     {% extends "base.html" %}
     {% block content %}
     <!-- content here -->
-    <h1>Dit is de inlog pagina</h1>
+    <h1>Dit is de registratie pagina</h1>
     <div class="container">
-        <div class="form-box" id="login-form">
+        <div class="form-box" id="register-form">
             <form method="POST">
                 {{form.hidden_tag()}}
 
-                <h2>Inloggen</h2>
+                <h2>Registreren</h2>
                 <div>
                     {{ form.username(class="form-input", placeholder="Username") }}
+                </div>
+
+                <div>
+                    {{ form.email(class="form-input", placeholder="Email@example.nl") }}
                 </div>
 
                 <div>
@@ -26,14 +30,19 @@
                 </div>
 
                 <div>
+                    {{ form.role(class="form-select", placeholder="--Selecteer Type Gebruiker--") }}
+                </div>
+
+                <div>
                     {{ form.submit(class="form-button") }}
                 </div>
 
-                <p>Nog geen account? <a href="#" onclick="showForm()">Registreer</a></p>
+                <p>Al een account? <a href="login">Login</a></p>
             </form>
         </div>
     </div>
     {% endblock %}
+
 </body>
 
 </html>

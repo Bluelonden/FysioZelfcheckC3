@@ -1,7 +1,7 @@
 from flask import Flask, render_template as rt, session, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegisterForm
-from models import db, migrate, login_manager, User
+from models import db, migrate, login_manager, User, exists
 from dotenv import load_dotenv
 import requests
 import os
@@ -10,8 +10,9 @@ load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'users.db')
+# app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') # WERKT NIET ZONDER .ENV 
+app.config['SECRET_KEY'] = 'mijngeheimesleutel' # TEST KEY
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'website.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['TMDB_API_KEY'] = os.getenv('TMDB_API_KEY')
 
@@ -19,6 +20,10 @@ db.init_app(app)
 migrate.init_app(app, db)
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
+with app.app_context():
+    if not exists():
+        db.create_all()
 
 @app.route("/")
 def home():
@@ -54,7 +59,13 @@ def login():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    # if request.method == 'GET':
+    #     return rt('register.html')
+
+    # elif request.method == 'POST':
+    #     username = request.form['username']
     form = RegisterForm()
+
     if form.validate_on_submit():
         check_user = User.query.filter_by(username=form.username.data).first()
         check_email = User.query.filter_by(email=form.email.data).first()
@@ -69,8 +80,9 @@ def register():
 
         # maak een nieuwe gebruiker aan
         new_user = User(
+            username=form.username.data,
             email=form.email.data,
-            username=form.username.data
+            role=form.role.data
         )
         # gebruik de set_password methode om het wachtwoord te hashen voor opslag
         new_user.set_password(form.password.data)
@@ -87,4 +99,5 @@ def register():
 def dashboard():
     return rt("dashboard.html", name=current_user.username) # pas deze html redirect aan als het moet 
 
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
