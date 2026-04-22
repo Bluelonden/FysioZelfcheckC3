@@ -54,13 +54,12 @@ def login():
             # zoniet, terug naar login pagina
             else:
                 flash('Ongeldige gebruikersnaam of wachtwoord.', 'danger')
-                
+                return redirect(url_for('login', form=form))
 
                 """next_page = request.args.get('next')
                 if not next_page or not next_page.startswith('/'):
                     next_page = url_for('dashboard', form=form) """
                 
-            return redirect(url_for('dashboard', form=form))
         
     return rt('login.html', form=form)
 
@@ -88,7 +87,7 @@ def register():
             
             if check_email:
                 flash("Dit e-mailadres is al in gebruik!", "danger")
-                return rt("register.html", form=form)
+                return redirect(url_for("register", form=form))
             
             # check of username al bestaat en zoniet maak een nieuwe gebruiker aan
             if not check_user and not check_email:
