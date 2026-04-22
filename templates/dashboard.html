@@ -1,18 +1,17 @@
 {% extends "base.html" %}
+
 {% block title %}
 <title>
 Dashboard
 </title>
 {% endblock %}
+
 {% block content %}
+
     <!-- content here -->
-{% endblock %}
 
     {% if current_user.is_authenticated %}
-
-    <h1>Welkom, {{ current_user.username }}! Ingelogd als {{ current_user.role }}</h1>
-
+        <h1>Welkom, {{ current_user.username }}! Ingelogd als {{ current_user.role }}</h1>
     {% endif %}
 
-    {% endblock %}
-
+{% endblock %}

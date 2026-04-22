@@ -1,30 +1,35 @@
 {% extends "base.html" %}
+
 {% block title %}
-<title> Login </title>
+<title>Login</title>
 {% endblock %}
-    {% block content %}
-    <!-- content here -->
-    <h1>Dit is de inlog pagina</h1>
-    <div class="container">
-        <div class="form-box" id="login-form">
-            <form method="POST">
-                {{form.hidden_tag()}}
 
-                <h2>Inloggen</h2>
-                <div>
-                    {{ form.username(class="form-input", placeholder="Username") }}
-                </div>
+{% block content %}
 
-                <div>
-                    {{ form.password(class="form-input", placeholder="Password") }}
-                </div>
+<h1>Dit is de inlog pagina</h1>
 
-                <div>
-                    {{ form.submit(class="form-button") }}
-                </div>
+<div class="container">
+    <div class="form-box" id="login-form">
+        <form method="POST">
+            {{ form.hidden_tag() }}
 
-                <p>Nog geen account? <a href="register" onclick="showForm()">Registreer</a></p>
-            </form>
-        </div>
+            <h2>Inloggen</h2>
+
+            <div>
+                {{ form.username(class="form-input", placeholder="Username") }}
+            </div>
+
+            <div>
+                {{ form.password(class="form-input", placeholder="Password") }}
+            </div>
+
+            <div>
+                {{ form.submit(class="form-button") }}
+            </div>
+
+            <p>Nog geen account? <a href="register" onclick="showForm()">Registreer</a></p>
+        </form>
     </div>
-    {% endblock %}
+</div>
+
+{% endblock %}
