@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Portal{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body.light-mode {
+            background-color: #e8f4fc;
+            /* lichtblauw */
+            color: #212529;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: #0d1b2a;
+            /* donkerblauw */
+            color: #e0f0ff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode .navbar {
+            background-color: #0a1520 !important;
+            /* nog donkerder blauw voor navbar */
+            border-bottom: 1px solid #1e3a5f !important;
+        }
+
+        body.dark-mode .card {
+            background-color: #112240;
+            /* kaarten in middenblauw */
+            color: #e0f0ff;
+            border-color: #1e3a5f;
+        }
+
+        body.light-mode h1,
+        body.light-mode h2,
+        body.light-mode h3,
+        body.light-mode h4,
+        body.light-mode h5,
+        body.light-mode p,
+        body.light-mode .nav-link:not(.btn),
+        body.light-mode .navbar-brand,
+        body.light-mode .text-info {
+            color: #212529 !important;
+        }
+
+        body.dark-mode h1,
+        body.dark-mode h2,
+        body.dark-mode h3,
+        body.dark-mode h4,
+        body.dark-mode h5,
+        body.dark-mode p,
+        body.dark-mode .nav-link:not(.btn),
+        body.dark-mode .navbar-brand,
+        body.dark-mode .text-info {
+            color: #ffffff !important;
+        }
+
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 15px;
+            height: 100%;
+            align-self: center;
+        }
+
+        #theme-toggle-button {
+            font-size: 17px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 65px;
+            height: 40px;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        #toggle {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        #container,
+        #button,
+        #sun,
+        #moon,
+        #cloud,
+        #stars {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #container {
+            fill: #5ebad9;
+        }
+
+        #toggle:checked+svg #container {
+            fill: #3a4b63;
+            stroke: #ffffff;
+            stroke-width: 0.5px;
+        }
+
+        #toggle:checked+svg #button {
+            transform: translate(28px, 2.333px);
+        }
+
+        #sun {
+            opacity: 1;
+        }
+
+        #toggle:checked+svg #sun {
+            opacity: 0;
+        }
+
+        #moon {
+            opacity: 0;
+        }
+
+        #toggle:checked+svg #moon {
+            opacity: 1;
+        }
+
+        #cloud {
+            opacity: 1;
+        }
+
+        #toggle:checked+svg #cloud {
+            opacity: 0;
+        }
+
+        #stars {
+            opacity: 0;
+        }
+
+        #toggle:checked+svg #stars {
+            opacity: 1;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+    {% block styles %}{% endblock %}
+</head>
+
+<body class="dark-mode">
+    <nav class="navbar navbar-expand-lg border-bottom border-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">Portal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <div class="theme-switch-wrapper">
+                    <label id="theme-toggle-button">
+                        <input type="checkbox" id="toggle">
+                        <svg viewBox="0 0 69.667 44" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <g transform="translate(3.5 3.5)" id="Component_15_1">
+                                <rect rx="17.5" height="35" width="60.667" id="container"></rect>
+                                <g transform="translate(2.333 2.333)" id="button">
+                                    <g id="sun">
+                                        <circle fill="#f8e664" r="15.167" cy="15.167" cx="15.167"></circle>
+                                        <path fill="rgba(246,254,247,0.29)"
+                                            d="M11.667,0A11.667,11.667,0,1,1,0,11.667,11.667,11.667,0,0,1,11.667,0Z">
+                                        </path>
+                                        <circle fill="#fcf4b9" r="7" cy="7" cx="7"></circle>
+                                    </g>
+                                    <g id="moon">
+                                        <circle fill="#cce6ee" r="15.167" cy="15.167" cx="15.167"></circle>
+                                        <g fill="#a6cad0" transform="translate(7.085 4.821)" id="patches">
+                                            <circle r="2" cy="2" cx="2"></circle>
+                                            <circle transform="translate(-3.643 13.456)" r="2" cy="2" cx="2"></circle>
+                                            <circle transform="translate(8.072 14.392)" r="1.5" cy="1.5" cx="1.5">
+                                            </circle>
+                                        </g>
+                                    </g>
+                                </g>
+                                <g id="cloud">
+                                    <path fill="#fff"
+                                        d="M15,20 a4,4 0 0,1 8,0 a4,4 0 0,1 4,-4 a4,4 0 0,1 4,4 a4,4 0 0,1 -16,0z"
+                                        transform="translate(10,5) scale(0.5)"></path>
+                                </g>
+                                <g fill="#def8ff" id="stars">
+                                    <circle cx="45" cy="10" r="1"></circle>
+                                    <circle cx="52" cy="15" r="0.5"></circle>
+                                    <circle cx="48" cy="25" r="0.8"></circle>
+                                </g>
+                            </g>
+                        </svg>
+                    </label>
+                </div>
+
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="nav-link text-info">Welkom, {{ current_user.username }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Uitloggen</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Inloggen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger btn-sm text-white ms-lg-2"
+                            href="{{ url_for('register') }}">Registreren</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const toggle = document.getElementById('toggle');
+        const body = document.body;
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            body.classList.replace('dark-mode', 'light-mode');
+            toggle.checked = false;
+        } else {
+            body.classList.add('dark-mode');
+            toggle.checked = true;
+        }
+
+        toggle.addEventListener('change', () => {
+            if (toggle.checked) {
+                body.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
+</body>
+
+</html>

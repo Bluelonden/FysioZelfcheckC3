@@ -30,73 +30,93 @@ def home():
 
 @app.route("/login", methods=['GET', 'POST']) 
 def login():
-    # check of iemand al is ingelogd
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-        
     form = LoginForm()
+
+    # check of iemand al is ingelogd
+    if request.method == 'GET':
+        if current_user.is_authenticated:
+            return rt('dashboard.html', form=form)
     
-    # check of het formulier is verzonden en valide is
-    if form.validate_on_submit():
-        # hier wordt 'user' gedefinieerd
-        user = User.query.filter_by(username=form.username.data).first()
+    elif request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        # check of het formulier is verzonden en valide is
+        if form.validate_on_submit():
+            # hier wordt 'user' gedefinieerd
+            user = User.query.filter_by(username=username).first()
+
+            # check user password
+            if user is not None and user.check_password(password):
+                login_user(user)
+                flash('Welkom terug! Je bent nu ingelogd.', 'success')
+                return redirect(url_for('dashboard', form=form))
+            # zoniet, terug naar login pagina
+            else:
+                flash('Ongeldige gebruikersnaam of wachtwoord.', 'danger')
+                return redirect(url_for('login', form=form))
+
+                """next_page = request.args.get('next')
+                if not next_page or not next_page.startswith('/'):
+                    next_page = url_for('dashboard', form=form) """
+                
         
-        # nu kunnen we 'user' pas controleren
-        if user is not None and user.check_password(form.password.data):
-            login_user(user)
-            flash('Welkom terug! Je bent nu ingelogd.', 'success')
-            
-            next_page = request.args.get('next')
-            if not next_page or not next_page.startswith('/'):
-                next_page = url_for('home')
-            
-            return redirect(next_page)
-        else:
-            flash('Ongeldige gebruikersnaam of wachtwoord.', 'danger')
-            
-    return rt("login.html", form=form)
+    return rt('login.html', form=form)
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    # if request.method == 'GET':
-    #     return rt('register.html')
-
-    # elif request.method == 'POST':
-    #     username = request.form['username']
     form = RegisterForm()
 
-    if form.validate_on_submit():
-        check_user = User.query.filter_by(username=form.username.data).first()
-        check_email = User.query.filter_by(email=form.email.data).first()
+    if request.method == 'GET':
+        return rt("register.html", form=form)
 
-        if check_user:
-            flash("Deze gebruikersnaam is al bezet!", "danger")
-            return rt("register.html", form=form)
-        
-        if check_email:
-            flash("Dit e-mailadres is al in gebruik!", "danger")
-            return rt("register.html", form=form)
+    elif request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        role = request.form['role']
 
-        # maak een nieuwe gebruiker aan
-        new_user = User(
-            username=form.username.data,
-            email=form.email.data,
-            role=form.role.data
-        )
-        # gebruik de set_password methode om het wachtwoord te hashen voor opslag
-        new_user.set_password(form.password.data)
+        if form.validate_on_submit():
+            check_user = User.query.filter_by(username=username).first()
+            check_email = User.query.filter_by(email=email).first()
+
+            if check_user:
+                flash("Deze gebruikersnaam is al bezet!", "danger")
+                return redirect(url_for("register", form=form))
+            
+            if check_email:
+                flash("Dit e-mailadres is al in gebruik!", "danger")
+                return redirect(url_for("register", form=form))
+            
+            # check of username al bestaat en zoniet maak een nieuwe gebruiker aan
+            if not check_user and not check_email:
+                new_user = User(
+                    username=username, # was form.username.data
+                    email=email,
+                    role=role
+                    )
+            
+                # gebruik de set_password methode om het wachtwoord te hashen voor opslag
+                new_user.set_password(password)
+                
+                db.session.add(new_user)
+                db.session.commit()
+                flash("Account succesvol aangemaakt!", "success")
+            
+            return redirect(url_for('login', form=form))
         
-        db.session.add(new_user)
-        db.session.commit()
-        flash("Account succesvol aangemaakt!", "success")
-        return redirect(url_for('login'))
-        
-    return rt("register.html", form=form)
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return rt("dashboard.html", name=current_user.username) # pas deze html redirect aan als het moet 
+    return rt("dashboard.html")
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)

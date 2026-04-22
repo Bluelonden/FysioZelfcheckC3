@@ -31,13 +31,30 @@
             </li>
             <li>
                 <a href="/gegevens">Uw metingen</a>
+
             </li>
+            <li class="nav-link">
+                <a href="register">Registreren</a>
+            </li>
+            {% endif %}
         </ul>
     </nav>
+
+    <!-- flash message -->
+    {% for cat, msg in get_flashed_messages(with_categories=true) %}
+    <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
 
     {% block content %}
     <!-- rest of site content -->
     {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

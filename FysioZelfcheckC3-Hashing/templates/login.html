@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Fysio Zelfcheck{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center">
+    <h1 class="display-4">Welkom op Fysio Zelfcheck !</h1>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center my-4">Login</h2>
+
+            {# Flash meldingen #}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="alert-container">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            {# Start van het formulier #}
+            <form method="POST" action="{{ url_for('login') }}">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group mb-3">
+                    {{ form.username.label(class="form-label") }}
+                    {{ form.username(class="form-control") }}
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control") }}
+                </div>
+
+                <div class="form-group mt-4">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a href="{{ url_for('home') }}" class="btn btn-secondary mx-2">Terug</a>
+                </div>
+            </form>
+            
+            <p class="mt-3 text-center">
+                Nog geen account? <a href="{{ url_for('register') }}">Registreer hier</a>.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
