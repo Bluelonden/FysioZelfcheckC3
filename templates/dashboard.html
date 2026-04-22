@@ -10,6 +10,11 @@
     {% extends "base.html" %}
     {% block content %}
     <!-- content here -->
+    {% if current_user.is_authenticated %}
+
+    <h1>Welkom, {{ current_user.username }}! Ingelogd als {{ current_user.role }}</h1>
+
+    {% endif %}
 
     {% endblock %}
 </body>

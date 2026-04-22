@@ -12,14 +12,20 @@
     <nav class="navbar">
         <ul class="nav-menu">
             <li class="nav-item">
-                <a href="/" class="nav-link">Home</a>
+                <a class="nav-link" href="/">Home</a>
             </li>
-            <li class="nav-item">
-                <a href="login" class="nav-link">Inloggen</a>
+            {% if current_user.is_authenticated %}
+            <li class="nav-link">
+                <a href="logout">Uitloggen</a>
             </li>
-            <li class="nav-item">
-                <a href="register" class="nav-link">Registreren</a>
+            {% else %}
+            <li class="nav-link">
+                <a href="login">Inloggen</a>
             </li>
+            <li class="nav-link">
+                <a href="register">Registreren</a>
+            </li>
+            {% endif %}
         </ul>
     </nav>
 

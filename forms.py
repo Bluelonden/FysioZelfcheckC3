@@ -21,6 +21,6 @@ class RegisterForm(FF):
                      validators=[DataRequired(),
                                  Length(min=8)])
     role = SelF('Role',
-                choices=[('user', 'Patient'), ('admin', 'Huisarts')],
+                choices=[('patient', 'Patient'), ('arts', 'Arts')],
                 validators=[DataRequired()])
     submit = SubF('Registreren')
