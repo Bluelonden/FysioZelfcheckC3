@@ -1,48 +1,42 @@
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}
+<title>Register</title>
+{% endblock %}
+{% block content %}
+<!-- content here -->
+<h1>Dit is de registratie pagina</h1>
+<div class="container">
+    <div class="form-box" id="register-form">
+        <form method="POST">
+            {{form.hidden_tag()}}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registreren</title>
-</head>
+            <h2>Registreren</h2>
+            <div>
+                {{ form.username(class="form-input", placeholder="Username") }}
+            </div>
 
-<body>
-    {% extends "base.html" %}
-    {% block content %}
-    <!-- content here -->
-    <h1>Dit is de registratie pagina</h1>
-    <div class="container">
-        <div class="form-box" id="register-form">
-            <form method="POST">
-                {{form.hidden_tag()}}
+            <div>
+                {{ form.email(class="form-input", placeholder="Email@example.nl") }}
+            </div>
 
-                <h2>Registreren</h2>
-                <div>
-                    {{ form.username(class="form-input", placeholder="Username") }}
-                </div>
+            <div>
+                {{ form.password(class="form-input", placeholder="Password") }}
+            </div>
 
-                <div>
-                    {{ form.email(class="form-input", placeholder="Email@example.nl") }}
-                </div>
+            <div>
+                {{ form.role(class="form-select", placeholder="--Selecteer Type Gebruiker--") }}
+            </div>
 
-                <div>
-                    {{ form.password(class="form-input", placeholder="Password") }}
-                </div>
+            <div>
+                {{ form.submit(class="form-button") }}
+            </div>
 
-                <div>
-                    {{ form.role(class="form-select", placeholder="--Selecteer Type Gebruiker--") }}
-                </div>
-
-                <div>
-                    {{ form.submit(class="form-button") }}
-                </div>
-
-                <p>Al een account? <a href="login">Login</a></p>
-            </form>
-        </div>
+            <p>Al een account? <a href="login">Login</a></p>
+        </form>
     </div>
-    {% endblock %}
+</div>
+{% endblock %}
 
-</body>
+
 
 </html>

@@ -1,17 +1,31 @@
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}
+<title>home</title>
+{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+{% block content %}
+<!-- content here -->
+<h1 style="align-items: center;"><strong>Wij zijn Fysiozelfcheck!</strong></h1>
+<img class = "logo" src="static/img/Logo.jpeg" alt="Logo">
+<div class="custom-containerv2">
+    <h3><strong>
+            Wat doet ons product
+        </strong>
+    </h3>
+    <p>
+        Wij bij Fysiozelfcheck bieden sensoren aan die patienten met milde tot matige COPD of Asthma helpen
+        te ondersteunen bij hun dagelijkste activiteiten. Dit doen wij door constante feedback te geven aan de gebruiker 
+        over de luchtkwaliteit en hem/haar aan de hand hiervan een persoonlijk advies te geven.
+     </p>   
+        <br>
+    
+        <p>
+        Wij bieden hierbij verschillende setups aan waarbij u de drempelwaardes voor waarschuwingen kan aanpassen naar uw eigen voorkeuren.
+        Ook hebben wij preset profiles waarmee u de door ons aanbevolen drempelwaardes kunt gebruiken.
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
 
-<body>
-    {% extends "base.html" %}
-    {% block content %}
-    <!-- content here -->
-    <h1 style="align-items: center;">Dit is de homepage voor de portal</h1>
-    {% endblock %}
-</body>
-
-</html>
+    </p>
+</div>
+{% endblock %}

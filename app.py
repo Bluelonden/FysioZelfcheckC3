@@ -1,4 +1,4 @@
-from flask import Flask, render_template as rt
+from flask import render_template as rt,Flask
 
 app = Flask(__name__)
 
@@ -13,5 +13,9 @@ def login():
 @app.route("/register")
 def register():
     return rt('register.html')
+
+@app.route("/gegevens")
+def metingen():
+    return rt('home.html')
 
 app.run()

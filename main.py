@@ -2,11 +2,10 @@ from flask import Flask, render_template as rt, session, redirect, url_for, flas
 from flask_login import login_user, logout_user, login_required, current_user
 from forms import LoginForm, RegisterForm
 from models import db, migrate, login_manager, User, exists
-from dotenv import load_dotenv
-import requests
+#from dotenv import load_dotenv
 import os
 
-load_dotenv()
+#load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)

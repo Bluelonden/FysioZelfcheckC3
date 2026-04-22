@@ -1,0 +1,15 @@
+.custom-containerv2 {
+    width: 100%;
+    max-width: 30%;
+    margin-left: 50px;        
+    margin-top: 50px;     
+    padding: 40px;
+    display: block;
+    background: rgb(136, 176, 245);
+}
+
+.logo {max-width: 20%;
+        margin-left: 50px;
+        padding-top: 30px;
+        margin-bottom: -10px;}
+

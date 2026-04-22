@@ -3,22 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}
     <title>Portal</title>
-    <link rel="stylesheet" href="static/style.css">
+    {% endblock %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
+    {% block stylesheet %}
+    {% endblock %}
 </head>
 
 <body>
     <!-- navbar -->
-    <nav class="navbar">
+    <nav class="custom-nav">
         <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="/" class="nav-link">Home</a>
+            <li>
+                <a href="/">Home</a>
             </li>
-            <li class="nav-item">
-                <a href="login" class="nav-link">Inloggen</a>
+            <li>
+                <a href="/login">Inloggen</a>
             </li>
-            <li class="nav-item">
-                <a href="register" class="nav-link">Registreren</a>
+            <li>
+                <a href="/register">Registreren</a>
+            </li>
+            <li>
+                <a href="/gegevens">Uw metingen</a>
             </li>
         </ul>
     </nav>
