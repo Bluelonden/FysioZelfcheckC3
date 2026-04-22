@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Registreren{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Account aanmaken</h2>
+
+            {# Flash meldingen voor fouten of succes #}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('register') }}">
+                {{ form.hidden_tag() }}
+
+                {# Gebruikersnaam #}
+                <div class="form-group mb-3">
+                    {{ form.username.label(class="form-label") }}
+                    {{ form.username(class="form-control") }}
+                </div>
+
+                {# Email #}
+                <div class="form-group mb-3">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control") }}
+                </div>
+
+                {# Wachtwoord #}
+                <div class="form-group mb-3">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control") }}
+                </div>
+
+                {# Bevestig Wachtwoord #}
+                <div class="form-group mb-3">
+                    {{ form.confirm_password.label(class="form-label") }}
+                    {{ form.confirm_password(class="form-control") }}
+                </div>
+
+                <div class="form-group mt-4">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-secondary mx-2">Al een account? Log in</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
