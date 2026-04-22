@@ -7,14 +7,18 @@
     display: flex;
     gap: 40px;
     justify-content: flex-start;
+    
 }
 
 .box1{
     background: rgb(136, 176, 245);
-padding:20px;}
+padding:20px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
 
 .box1, .box2 {
-    flex: 1;        
+    flex: 1;
+    ;        
 }
 
 .lung{width: 80% ;}
@@ -34,6 +38,26 @@ padding:20px;}
     color: #333;
 }
 
+.custom-containerv3 {
+    width: 100%;
+    max-width: 1200px;       
+    margin: 50px auto ;  
+    padding: 20px;
+    background: #f5f8ff;     
+    border-left: 6px solid #88b0f5; 
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.custom-containerv3 h3 {
+    margin-top: 0;
+    font-size: 1.4rem;
+}
+
+.custom-containerv3 p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
 
 
 
