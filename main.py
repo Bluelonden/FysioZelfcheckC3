@@ -1,4 +1,3 @@
-
 from flask import Flask
 from models import db, migrate, login_manager, exists
 import os
@@ -22,5 +21,3 @@ with app.app_context():
     if not exists():
         db.create_all()
 
-
-from app import *
