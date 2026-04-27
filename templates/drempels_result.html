@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Resultaat</h3>
+<p><strong>Totaalscore:</strong> {{ score }} / 8</p>
+<p><strong>Niveau:</strong> {{ niveau }}</p>
+
+<h4>Initieel ingestelde drempels</h4>
+<ul>
+  {% for param, bands in drempels.items() %}
+    <li><strong>{{ param }}</strong>
+      <ul>
+        <li>Groen: {{ bands.groen[0] }} – {{ bands.groen[1] }}</li>
+        <li>Oranje: {{ bands.oranje[0] }} – {{ bands.oranje[1] }}</li>
+        <li>Rood: ≥ {{ bands.rood[0] }}</li>
+      </ul>
+    </li>
+  {% endfor %}
+</ul>
+
+<p><a href="{{ url_for('drempelwaardes_route') }}">Terug</a></p>
+{% endblock %}
+

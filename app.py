@@ -2,7 +2,7 @@
 from flask import render_template as rt, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from main import app
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm,Drempelwaardes
 from models import db, User
 
 @app.route("/")
@@ -87,3 +87,93 @@ def logout():
 @app.route("/gegevens")
 def metingen():
     return rt("home.html")
+
+# scoring en thresholds
+def bereken_score(data):
+    score = 0
+    # Leeftijd 65+
+    try:
+        if int(data.get("leeftijd", 0)) >= 65:
+            score += 1
+    except (TypeError, ValueError):
+        pass
+    # Roken
+    if data.get("rookt"):
+        score += 1
+    # Symptoomvragen (elke True/Ja = 1)
+    symptooms = ["symptoom_dag", "symptoom_nacht", "symptoom_saba", "symptoom_beperking"]
+    for s in symptooms:
+        if data.get(s):
+            score += 1
+    # Exacerbaties
+    ex = data.get("exacerbaties")
+    if ex == "1":
+        score += 1
+    elif ex == "2+" or ex == "2":
+        score += 2
+    # Hospitalisatie (afgelopen maanden) -> +1
+    if data.get("hospitalisatie"):
+        score += 1
+    # Prednisongebruik afgelopen 12 maanden -> +2
+    if data.get("prednison_gebruik"):
+        score += 2
+    # Maximaal 8
+    return min(score, 8)
+
+def map_score_naar_niveau(score: int) -> str:
+    if score <= 2:
+        return "Laag"
+    if 3 <= score <= 4:
+        return "Midden"
+    return "Hoog"
+
+THRESHOLDS = {
+    "Laag": {
+        "PM2.5": {"groen": (0,10), "oranje": (11,35), "rood": (36,)},
+        "PM10": {"groen": (0,20), "oranje": (21,50), "rood": (51,)},
+        "CO2": {"groen": (0,799), "oranje": (800,1500), "rood": (1501,)},
+        "TVOC": {"groen": (0,299), "oranje": (300,1000), "rood": (1001,)}
+    },
+    "Midden": {
+        "PM2.5": {"groen": (0,10), "oranje": (11,25), "rood": (26,)},
+        "PM10": {"groen": (0,20), "oranje": (21,40), "rood": (41,)},
+        "CO2": {"groen": (0,699), "oranje": (700,1200), "rood": (1201,)},
+        "TVOC": {"groen": (0,249), "oranje": (250,800), "rood": (801,)}
+    },
+    "Hoog": {
+        "PM2.5": {"groen": (0,10), "oranje": (11,20), "rood": (21,)},
+        "PM10": {"groen": (0,20), "oranje": (21,35), "rood": (36,)},
+        "CO2": {"groen": (0,599), "oranje": (600,1000), "rood": (1001,)},
+        "TVOC": {"groen": (0,199), "oranje": (200,600), "rood": (601,)}
+    }
+}
+
+
+@app.route("/drempelwaardes", methods=["GET", "POST"])
+@login_required
+def drempelwaardes_route():
+    form = Drempelwaardes()
+
+    if form.validate_on_submit():
+        # Bouw een eenvoudige dict met de formwaarden
+        data = {
+            "leeftijd": form.leeftijd.data,
+            "diagnose": form.diagnose.data if hasattr(form, "diagnose") else None,
+            "rookt": bool(form.rookt.data),
+            "symptoom_dag": bool(getattr(form, "symptoom_dag").data),
+            "symptoom_nacht": bool(getattr(form, "symptoom_nacht").data),
+            "symptoom_saba": bool(getattr(form, "symptoom_saba").data),
+            "symptoom_beperking": bool(getattr(form, "symptoom_beperking").data),
+            "exacerbaties": form.exacerbaties.data if hasattr(form, "exacerbaties") else "0",
+            "hospitalisatie": bool(getattr(form, "hospitalisatie").data) if hasattr(form, "hospitalisatie") else False,
+            "prednison_hosp": bool(getattr(form, "prednison_hosp").data) if hasattr(form, "prednison_hosp") else False
+        }
+
+        score = bereken_score(data)
+        niveau = map_score_naar_niveau(score)
+        drempels = THRESHOLDS[niveau]
+
+        return rt("drempels_result.html", score=score, niveau=niveau, drempels=drempels, data=data)
+    
+    return rt("drempels_form.html", form=form)
+
