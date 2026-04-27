@@ -127,7 +127,7 @@ def map_score_naar_niveau(score: int) -> str:
         return "Midden"
     return "Hoog"
 
-THRESHOLDS = {
+DREMPELWAARDES = {
     "Laag": {
         "PM2.5": {"groen": (0,10), "oranje": (11,35), "rood": (36,)},
         "PM10": {"groen": (0,20), "oranje": (21,50), "rood": (51,)},
@@ -171,7 +171,7 @@ def drempelwaardes_route():
 
         score = bereken_score(data)
         niveau = map_score_naar_niveau(score)
-        drempels = THRESHOLDS[niveau]
+        drempels = DREMPELWAARDES[niveau]
 
         return rt("drempels_result.html", score=score, niveau=niveau, drempels=drempels, data=data)
     

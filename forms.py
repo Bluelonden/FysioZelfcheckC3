@@ -28,14 +28,14 @@ class RegisterForm(FF):
 class Drempelwaardes(FF):
     leeftijd = IntegerField("Wat is uw leeftijd?", validators=[DataRequired(), NumberRange(min=0, max=120)])
     diagnose = SelectField("Wat is uw Diagnose?", choices=[("astma","Astma"),("copd","COPD"),("beide","Beide"),("onbekend","Onbekend")])
-    rookt = BooleanField("Rookt u?")
+    rookt = RadioField("Rookt u?", choices=[("ja","Ja"), ("nee","Nee")], default="nee")
 
-    symptoom_dag = BooleanField("Heeft u vaker dan 2x per week dagelijkse klachten?")
-    symptoom_nacht = BooleanField("Wordt u regelmatig s'nachts wakker met ademhalingsproblemen")
-    symptoom_saba = BooleanField("Gebruikt u uw SABA (nood-inhaler) meer dan 2x per week")
-    symptoom_beperking = BooleanField("Bent u beperkt in uw dagelijkse activiteiten door uw ademhaling?")
+    symptoom_dag = BooleanField("Ik heb vaker dan 2x per week dagelijkse klachten")
+    symptoom_nacht = BooleanField("Ik word regelmatig s'nachts wakker met ademhalingsproblemen")
+    symptoom_saba = BooleanField("Ik gebruik mijn SABA(nood-inhaler) meer dan 2x per week")
+    symptoom_beperking = BooleanField("Ik beperk mijn dagelijkse activeit vanwege mijn ademhaling")
 
-    exacerbaties = RadioField("Aantal exacerbaties afgelopen 12 maanden", choices=[("0","0"),("1","1"),("2+","≥2")], default="0")
-    hospitalisatie = BooleanField("Bent u de afgelopen maanden gehospitaliseerd?")
+    hospitalisatie = BooleanField("Bent u de afgelopen 12 maanden gehospitaliseerd?")
     prednison_gebruik = BooleanField("Heeft u in de afgelopen 12 maanden prednison gebruikt?")
+    exacerbaties = RadioField("Aantal exacerbaties afgelopen 12 maanden", choices=[("0","0"),("1","1"),("2+","≥2")], default="0")
     submit = SubmitField("Opslaan en berekenen")

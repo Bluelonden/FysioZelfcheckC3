@@ -6,17 +6,14 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/drempels.css') }}">
 {% endblock %}
 {% block content %}
-<div class = 'custom-containerform'>
-<form method="post">
-  <h4>Algemene vragen</h4>
+<div class='custom-containerform'>
+<form method="post" id="drempel-form">
+  <h4><strong>Algemene vragen</strong></h4>
   {{ form.hidden_tag() }}
 
   <p>
     {{ form.leeftijd.label }}<br>
     {{ form.leeftijd(size=4) }}
-    {% if form.leeftijd.errors %}
-      <br><small style="color:red">{{ form.leeftijd.errors[0] }}</small>
-    {% endif %}
   </p>
 
   <p>
@@ -25,19 +22,14 @@
   </p>
 
   <p>
-    {{ form.rookt() }} {{ form.rookt.label }}
+    {{ form.rookt.label }}{{ form.rookt() }} 
   </p>
 
-  <h4>Symptoomvragen</h4>
+  <h4><strong>Symptoomvragen</strong></h4>
   <p>{{ form.symptoom_dag() }} {{ form.symptoom_dag.label }}</p>
   <p>{{ form.symptoom_nacht() }} {{ form.symptoom_nacht.label }}</p>
   <p>{{ form.symptoom_saba() }} {{ form.symptoom_saba.label }}</p>
   <p>{{ form.symptoom_beperking() }} {{ form.symptoom_beperking.label }}</p>
-
-  <p>
-    {{ form.exacerbaties.label }}<br>
-    {{ form.exacerbaties() }}
-  </p>
 
   <p>
     {{ form.hospitalisatie() }} {{ form.hospitalisatie.label }}
@@ -45,6 +37,11 @@
 
   <p>
     {{ form.prednison_gebruik() }} {{ form.prednison_gebruik.label }}
+  </p>
+
+  <p>
+    {{ form.exacerbaties.label }}<br>
+    {{ form.exacerbaties() }}
   </p>
 
   <p>{{ form.submit() }}</p>
