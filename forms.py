@@ -35,7 +35,7 @@ class Drempelwaardes(FF):
     symptoom_saba = BooleanField("Ik gebruik mijn SABA(nood-inhaler) meer dan 2x per week")
     symptoom_beperking = BooleanField("Ik beperk mijn dagelijkse activeit vanwege mijn ademhaling")
 
-    hospitalisatie = BooleanField("Bent u de afgelopen 12 maanden gehospitaliseerd?")
-    prednison_gebruik = BooleanField("Heeft u in de afgelopen 12 maanden prednison gebruikt?")
+    hospitalisatie = BooleanField("Ik ben de afgelopen 12 maanden gehospitaliseerd")
+    prednison_gebruik = BooleanField("Ik heb in de afgelopen 12 maanden prednison gebruikt")
     exacerbaties = RadioField("Aantal exacerbaties afgelopen 12 maanden", choices=[("0","0"),("1","1"),("2+","≥2")], default="0")
     submit = SubmitField("Opslaan en berekenen")
