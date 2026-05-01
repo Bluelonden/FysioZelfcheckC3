@@ -2,11 +2,13 @@
 
 {% block content %}
 <div class = "custom-containerv3">
-<h3>Resultaat</h3>
+<h2>Resultaat</h2>
+<br>
 <p><strong>Totaalscore:</strong> {{ score }} / 8</p>
 <p><strong>Niveau:</strong> {{ niveau }}</p>
 
 <h4>Op basis van uw antwoorden hebben wij het volgende profiel gegenereerd:</h4>
+<br>
 <ul>
   {% for columns, rows in drempels.items() %}
     <li><strong>{{ columns }}</strong>
