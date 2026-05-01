@@ -1,15 +1,4 @@
 
-
-.custom-containerv2 {
-    width: 80%;
-    max-width: 1200px;     
-    margin: 50px auto;      
-    display: flex;
-    gap: 40px;
-    justify-content: flex-start;
-    
-}
-
 .box1{
     background: rgb(136, 176, 245);
 padding:20px;
@@ -38,16 +27,6 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     color: #333;
 }
 
-.custom-containerv3 {
-    width: 80%;
-    max-width: 1200px;       
-    margin: 50px auto ; 
-    padding: 20px;
-    background: #f5f8ff;     
-    border-left: 6px solid #88b0f5; 
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
 
 .custom-containerv3 h3 {
     margin-top: 0;
@@ -58,5 +37,4 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     margin-bottom: 15px;
 }
 
-
-
+.custom-containerv2 {justify-content: flex-start;}
