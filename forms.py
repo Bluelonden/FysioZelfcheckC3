@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm as FF
-from wtforms import (StringField as StrF, PasswordField as PassF, SubmitField,
-                     EmailField as MailF, SelectField, IntegerField,RadioField,BooleanField)
+from wtforms import (StringField as StrF, PasswordField as PassF, SubmitField as SubF,
+                     EmailField as MailF, SelectField as SelF, IntegerField as IntF,
+                     RadioField as RadF, BooleanField as BoolF)
 from wtforms.validators import DataRequired, Length, NumberRange
 
 
@@ -9,7 +10,7 @@ class LoginForm(FF):
                     validators=[DataRequired()])
     password = PassF('Wachtwoord',
                      validators=[DataRequired()])
-    submit = SubmitField('Login')
+    submit = SubF('Login')
 
 
 class RegisterForm(FF):
@@ -20,22 +21,25 @@ class RegisterForm(FF):
     password = PassF('Wachtwoord',
                      validators=[DataRequired(),
                                  Length(min=8)])
-    role = SelectField('Role',
+    role = SelF('Role',
                 choices=[('patient', 'Patient'), ('arts', 'Arts')],
                 validators=[DataRequired()])
-    submit = SubmitField('Registreren')
+    submit = SubF('Registreren')
 
-class Drempelwaardes(FF):
-    leeftijd = IntegerField("Wat is uw leeftijd?", validators=[DataRequired(), NumberRange(min=0, max=120)])
-    diagnose = SelectField("Wat is uw Diagnose?", choices=[("astma","Astma"),("copd","COPD"),("beide","Beide"),("onbekend","Onbekend")])
-    rookt = RadioField("Rookt u?", choices=[("ja","Ja"), ("nee","Nee")], default="nee")
-
-    symptoom_dag = BooleanField("Ik heb vaker dan 2x per week dagelijkse klachten")
-    symptoom_nacht = BooleanField("Ik word regelmatig s'nachts wakker met ademhalingsproblemen")
-    symptoom_saba = BooleanField("Ik gebruik mijn SABA(nood-inhaler) meer dan 2x per week")
-    symptoom_beperking = BooleanField("Ik beperk mijn dagelijkse activeit vanwege mijn ademhaling")
-
-    hospitalisatie = BooleanField("Ik ben de afgelopen 12 maanden gehospitaliseerd")
-    prednison_gebruik = BooleanField("Ik heb in de afgelopen 12 maanden prednison gebruikt")
-    exacerbaties = RadioField("Aantal exacerbaties afgelopen 12 maanden", choices=[("0","0"),("1","1"),("2+","≥2")], default="0")
-    submit = SubmitField("Opslaan en berekenen")
+class WaardesForm(FF):
+    leeftijd = IntF("Wat is uw leeftijd?",
+                    validators=[DataRequired(), 
+                                NumberRange(min=0, max=120)])
+    diagnose = SelF("Wat is uw Diagnose?",
+                    choices=[("astma","Astma"),("copd","COPD"),
+                             ("beide","Beide"),("onbekend","Onbekend")])
+    rookt = BoolF("Rookt u?")
+    dag = BoolF("Ik heb vaker dan 2x per week dagelijkse klachten")
+    nacht = BoolF("Ik word regelmatig s'nachts wakker met ademhalingsproblemen")
+    saba = BoolF("Ik gebruik mijn SABA(nood-inhaler) meer dan 2x per week")
+    beperking = BoolF("Ik beperk mijn dagelijkse activeit vanwege mijn ademhaling")
+    hospital = BoolF("Ik ben in de afgelopen 12 maanden vanwegen mijn ziekte/symptomen in het ziekenhuis opgenomen geweest")
+    prednison = BoolF("Ik heb in de afgelopen 12 maanden prednison gebruikt")
+    exacerbaties = RadF("Aantal exacerbaties afgelopen 12 maanden", 
+                        choices=[(0,"0"),(1,"1"),(2,"≥2")], default="0")
+    submit = SubF("Opslaan en berekenen")

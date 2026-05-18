@@ -1,18 +1,27 @@
 {% extends "base.html" %}
 
 {% block title %}
-<title>
-Dashboard
-</title>
+<title>Dashboard</title>
 {% endblock %}
 
 {% block content %}
 
-    <!-- content here -->
+{% if current_user.is_authenticated %}
 
-    {% if current_user.is_authenticated %}
-        <h1>Welkom, {{ current_user.username }}! Ingelogd als {{ current_user.role }}</h1>
-    {% endif %}
+<section class="container">
+    <div class="heading">
+        <h1>Dashboard</h1>
+        <h2>Welkom, {{ current_user.username }}! Ingelogd als {{ current_user.role }}</h2>
+    </div>
+
+    <button onclick="location.href='vragenlijst'">Naar vragenlijst</button>
+
+</section>
+
+{% else %}
+
+<h1>Log eerst in!</h1>
+
+{% endif %}
 
 {% endblock %}
-
