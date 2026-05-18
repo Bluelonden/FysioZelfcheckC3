@@ -1,9 +1,14 @@
 
-from flask import render_template as rt, redirect, url_for, flash, request
+from flask import render_template as rt, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from main import app
 from forms import LoginForm, RegisterForm,Drempelwaardes
 from models import db, User
+import requests
+import json
+
+ESP32_IP = "http://192.168.1.50"
+
 
 @app.route("/")
 def home():
@@ -125,28 +130,45 @@ def map_score_naar_niveau(score):
         return "Laag"
     if 3 <= score <= 4:
         return "Midden"
-    return "Hoog"
+    else:
+        return "Hoog"
 
 DREMPELWAARDES = {
     "Laag": {
-        "PM2.5": {"groen": (0,10), "oranje": (11,35), "rood": (36,)},
-        "PM10": {"groen": (0,20), "oranje": (21,50), "rood": (51,)},
-        "CO2": {"groen": (0,799), "oranje": (800,1500), "rood": (1501,)},
-        "TVOC": {"groen": (0,299), "oranje": (300,1000), "rood": (1001,)}
+        "PM2.5": {"groen": [0, 10], "oranje": [11, 35], "rood": [36]},
+        "PM10": {"groen": [0, 20], "oranje": [21, 50], "rood": [51]},
+        "CO2": {"groen": [0, 799], "oranje": [800, 1500], "rood": [1501]},
+        "TVOC": {"groen": [0, 299], "oranje": [300, 1000], "rood": [1001]}
     },
     "Midden": {
-        "PM2.5": {"groen": (0,10), "oranje": (11,25), "rood": (26,)},
-        "PM10": {"groen": (0,20), "oranje": (21,40), "rood": (41,)},
-        "CO2": {"groen": (0,699), "oranje": (700,1200), "rood": (1201,)},
-        "TVOC": {"groen": (0,249), "oranje": (250,800), "rood": (801,)}
+        "PM2.5": {"groen": [0, 10], "oranje": [11, 25], "rood": [26]},
+        "PM10": {"groen": [0, 20], "oranje": [21, 40], "rood": [41]},
+        "CO2": {"groen": [0, 699], "oranje": [700, 1200], "rood": [1201]},
+        "TVOC": {"groen": [0, 249], "oranje": [250, 800], "rood": [801]}
     },
     "Hoog": {
-        "PM2.5": {"groen": (0,10), "oranje": (11,20), "rood": (21,)},
-        "PM10": {"groen": (0,20), "oranje": (21,35), "rood": (36,)},
-        "CO2": {"groen": (0,599), "oranje": (600,1000), "rood": (1001,)},
-        "TVOC": {"groen": (0,199), "oranje": (200,600), "rood": (601,)}
+        "PM2.5": {"groen": [0, 10], "oranje": [11, 20], "rood": [21]},
+        "PM10": {"groen": [0, 20], "oranje": [21, 35], "rood": [36]},
+        "CO2": {"groen": [0, 599], "oranje": [600, 1000], "rood": [1001]},
+        "TVOC": {"groen": [0, 199], "oranje": [200, 600], "rood": [601]}
     }
 }
+
+@app.route("/save_thresholds", methods=["POST"])
+def save_thresholds():
+    thresholds_raw = request.form.get("thresholds")
+    thresholds = json.loads(thresholds_raw)
+
+    try:
+        r = requests.post(f"{ESP32_IP}/update_thresholds", json=thresholds, timeout=3)
+        if r.status_code == 200:
+            flash("Drempelwaardes succesvol verzonden naar ESP32!", "success")
+        else:
+            flash("ESP32 gaf een foutmelding.", "danger")
+    except:
+        flash("ESP32 niet bereikbaar.", "danger")
+
+    return redirect(url_for("dashboard"))
 
 
 @app.route("/drempelwaardes", methods=["GET", "POST"])

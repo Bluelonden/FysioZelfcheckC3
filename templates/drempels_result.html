@@ -21,6 +21,12 @@
   {% endfor %}
 </ul>
 
+<form action="/save_thresholds" method="POST">
+    <input type="hidden" name="thresholds" value='{{ drempels | tojson }}'>
+    <button type="submit">Stuur naar ESP32</button>
+</form>
+
+
 <p><a href="{{ url_for('drempelwaardes_route') }}">Terug</a></p>
 </div>
 
