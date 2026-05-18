@@ -120,7 +120,7 @@ def bereken_score(data):
     # Maximaal 8
     return min(score, 8)
 
-def map_score_naar_niveau(score: int) -> str:
+def map_score_naar_niveau(score):
     if score <= 2:
         return "Laag"
     if 3 <= score <= 4:
