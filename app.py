@@ -15,17 +15,18 @@ from plotly.io import to_html #Maakt het mogelijk een grafiek om te zetten naar 
 
 ESP32_IP = "http://192.168.1.50"
 
-@app.route("/")
+@app.route("/") #Dit is de homepage 
 def home():
     return rt('home.html')
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/login", methods=['GET', 'POST']) #Login route
 def login():
     form = LoginForm()
 
     if request.method == 'GET':
         if current_user.is_authenticated:
-            return rt('dashboard.html')
+            flash('Welkom terug! Je bent nu ingelogd.', 'success')
+            return rt('home.html')
         else:
             return rt('login.html', form=form)
 
@@ -45,7 +46,7 @@ def login():
                 return redirect(url_for('login'))
 
 
-@app.route("/register", methods=['GET', 'POST'])
+@app.route("/register", methods=['GET', 'POST']) #Register route
 def register():
     form = RegisterForm()
 
@@ -79,14 +80,9 @@ def register():
     
     return rt('register.html', form=form)
 
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    return rt('dashboard.html')
-
 @app.route("/api/latest") #Haalt meetwaardes uit de database
 def api_latest():
-    m = Metingen.query.order_by(Metingen.id.desc()).first()
+    m = Metingen.query.order_by(Metingen.id.desc()).first() #.first geeft de laatste meting terug
 
     if m is None:
         return jsonify({
@@ -198,7 +194,7 @@ DREMPELWAARDES = {
     }
 }
 
-
+#Dit is om de drempelwaardes naar de ESP te posten en is samen met AI gemaakt
 @app.route("/save_thresholds", methods=["POST"])
 def save_thresholds():
     thresholds = request.get_json()
@@ -212,7 +208,7 @@ def save_thresholds():
     except:
         flash("ESP32 niet bereikbaar.", "danger")
 
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("results"))
 
 
 @app.route("/vragenlijst", methods=["GET", "POST"])
