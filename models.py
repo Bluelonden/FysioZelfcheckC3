@@ -112,10 +112,10 @@ class Metingen(db.Model):
 
     pm25: Map[float] = mc(db.Float, nullable=False)
     pm10: Map[float] = mc(db.Float, nullable=False)
+    pm1: Map[float] = mc(db.Integer, nullable=False)
     aqi: Map[int] = mc(db.Integer, nullable=False)
     co2: Map[int] = mc(db.Integer, nullable=False)
     tvoc: Map[float] = mc(db.Integer, nullable=False)
-    pm1: Map[float] = mc(db.Integer, nullable=False)
     timestamp: Map[str] = mc(db.DateTime, default=db.func.now())
 
     user_id: Map[int] = mc(FK("user.id"), nullable=True)

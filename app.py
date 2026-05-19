@@ -92,19 +92,19 @@ def api_latest():
         return jsonify({
             "pm25": 0,
             "pm10": 0,
+            "pm1": 0,
             "aqi": 0,
             "co2": 0,
             "tvoc": 0,
-            "pm1": 0
         })
     
     return jsonify({
         "pm25": m.pm25,
         "pm10": m.pm10,
+        "pm1": m.pm1,
         "aqi": m.aqi,
         "co2": m.co2,
-        "tvoc": m.tvoc,
-        "pm1": m.pm1
+        "tvoc": m.tvoc
     })
 
 
@@ -133,10 +133,10 @@ def results():
 
     pm25_html = make_empty_plot("pm25_plot", "PM2.5", "Tijd", "µg/m³")
     pm10_html = make_empty_plot("pm10_plot", "PM10", "Tijd", "µg/m³")
+    pm1_html  = make_empty_plot("pm1_plot",  "PM1",  "Tijd", "µg/m³")
     aqi_html  = make_empty_plot("aqi_plot",  "AQI",  "Tijd", "Index")
     co2_html  = make_empty_plot("co2_plot",  "CO₂",  "Tijd", "ppm")
     tvoc_html  = make_empty_plot("tvoc_plot",  "TVOC",  "Tijd", "ppb")
-    pm1_html  = make_empty_plot("pm1_plot",  "PM1",  "Tijd", "µg/m³")
     #Verstuurt de drempelwaardesconfig naar de ESP32 Gemaakt met AI
     try:
         requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
@@ -151,10 +151,10 @@ def results():
         drempels=drempels,
         pm25_plot=pm25_html,
         pm10_plot=pm10_html,
+        pm1_plot = pm1_html,
         aqi_plot=aqi_html,
         co2_plot=co2_html,
-        tvoc_plot =tvoc_html,
-        pm1_plot = pm1_html
+        tvoc_plot =tvoc_html
     )
 
 
@@ -269,4 +269,4 @@ def sensordata():
     return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0",port=5000,debug=True)
