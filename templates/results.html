@@ -5,16 +5,23 @@
 
 {% block stylesheet %}
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/results.css') }}">
 {% endblock %}
 
-{% block content %}
-
+{% block content %}>
 <div class="custom-containerv3">
+    <h2>Live metingen</h2>
+    <br>
+    <div class="graph-grid">
 
-    {{ pm25_plot|safe }}
-    {{ pm10_plot|safe }}
-    {{ aqi_plot|safe }}
-    {{ co2_plot|safe }}
+    <div class="graph-item">{{ pm25_plot|safe }}</div>
+    <div class="graph-item">{{ pm10_plot|safe }}</div>
+    <div class="graph-item">{{ aqi_plot|safe }}</div>
+    <div class="graph-item">{{ co2_plot|safe }}</div>
+    <div class="graph-item">{{ tvoc_plot|safe }}</div>
+    <div class="graph-item">{{ pm1_plot|safe }}</div>
+    </div>
+
 
     <script>
     function updateAll() {
@@ -27,7 +34,9 @@
                     { id: "pm25_plot", value: data.pm25 },
                     { id: "pm10_plot", value: data.pm10 },
                     { id: "aqi_plot",  value: data.aqi  },
-                    { id: "co2_plot",  value: data.co2  }
+                    { id: "co2_plot",  value: data.co2  },
+                    { id: "tvoc_plot",  value: data.tvoc  },
+                    { id: "pm1_plot",  value: data.pm1  }
                 ];
 
                 updates.forEach(u => {

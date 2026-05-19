@@ -93,14 +93,18 @@ def api_latest():
             "pm25": 0,
             "pm10": 0,
             "aqi": 0,
-            "co2": 0
+            "co2": 0,
+            "tvoc": 0,
+            "pm1": 0
         })
     
     return jsonify({
         "pm25": m.pm25,
         "pm10": m.pm10,
         "aqi": m.aqi,
-        "co2": m.co2
+        "co2": m.co2,
+        "tvoc": m.tvoc,
+        "pm1": m.pm1
     })
 
 
@@ -116,7 +120,7 @@ def results():
     score = user.waardes.score
     drempels = DREMPELWAARDES[niveau]
 
-   #Maakt lege grafieken
+   #Maakt lege grafieken 
     def make_empty_plot(div_id, title, x_label, y_label):
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=[], y=[], mode="lines+markers"))
@@ -131,8 +135,9 @@ def results():
     pm10_html = make_empty_plot("pm10_plot", "PM10", "Tijd", "µg/m³")
     aqi_html  = make_empty_plot("aqi_plot",  "AQI",  "Tijd", "Index")
     co2_html  = make_empty_plot("co2_plot",  "CO₂",  "Tijd", "ppm")
-    
-    #Verstuurt de drempelwaardesconfig naar de ESP32
+    tvoc_html  = make_empty_plot("tvoc_plot",  "TVOC",  "Tijd", "ppb")
+    pm1_html  = make_empty_plot("pm1_plot",  "PM1",  "Tijd", "µg/m³")
+    #Verstuurt de drempelwaardesconfig naar de ESP32 Gemaakt met AI
     try:
         requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
         flash("Drempelwaardes automatisch verzonden naar ESP32!", "success")
@@ -147,7 +152,9 @@ def results():
         pm25_plot=pm25_html,
         pm10_plot=pm10_html,
         aqi_plot=aqi_html,
-        co2_plot=co2_html
+        co2_plot=co2_html,
+        tvoc_plot =tvoc_html,
+        pm1_plot = pm1_html
     )
 
 
@@ -169,22 +176,28 @@ DREMPELWAARDES = {
     "Laag": {
         "PM2.5": {"groen": [0, 10], "oranje": [11, 35], "rood": [36]},
         "PM10": {"groen": [0, 20], "oranje": [21, 50], "rood": [51]},
-        "CO2": {"groen": [0, 799], "oranje": [800, 1500], "rood": [1501]},
-        "TVOC": {"groen": [0, 299], "oranje": [300, 1000], "rood": [1001]}
+        "CO2":  {"groen": [0, 799], "oranje": [800, 1500], "rood": [1501]},
+        "TVOC": {"groen": [0, 200], "oranje": [201, 400], "rood": [401]},
+        "PM1":  {"groen": [0, 7],   "oranje": [8, 15],   "rood": [16]}
     },
+
     "Midden": {
         "PM2.5": {"groen": [0, 10], "oranje": [11, 25], "rood": [26]},
         "PM10": {"groen": [0, 20], "oranje": [21, 40], "rood": [41]},
-        "CO2": {"groen": [0, 699], "oranje": [700, 1200], "rood": [1201]},
-        "TVOC": {"groen": [0, 249], "oranje": [250, 800], "rood": [801]}
+        "CO2":  {"groen": [0, 699], "oranje": [700, 1200], "rood": [1201]},
+        "TVOC": {"groen": [0, 150], "oranje": [151, 300], "rood": [301]},
+        "PM1":  {"groen": [0, 5],   "oranje": [6, 12],   "rood": [13]}
     },
+
     "Hoog": {
         "PM2.5": {"groen": [0, 10], "oranje": [11, 20], "rood": [21]},
         "PM10": {"groen": [0, 20], "oranje": [21, 35], "rood": [36]},
-        "CO2": {"groen": [0, 599], "oranje": [600, 1000], "rood": [1001]},
-        "TVOC": {"groen": [0, 199], "oranje": [200, 600], "rood": [601]}
+        "CO2":  {"groen": [0, 599], "oranje": [600, 1000], "rood": [1001]},
+        "TVOC": {"groen": [0, 100], "oranje": [101, 200], "rood": [201]},
+        "PM1":  {"groen": [0, 3],   "oranje": [4, 8],    "rood": [9]}
     }
 }
+
 
 @app.route("/save_thresholds", methods=["POST"])
 def save_thresholds():

@@ -1,0 +1,13 @@
+.graph-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    grid-gap: 20px;                
+    width: 100%;
+    margin: 0 auto;
+}
+
+.graph-item {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+}
