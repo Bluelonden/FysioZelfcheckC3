@@ -259,8 +259,10 @@ def sensordata():
     m = Metingen(
         pm25=data["pm25"],
         pm10=data["pm10"],
+        pm1=data["pm1"],
         aqi=data["aqi"],
         co2=data["co2"],
+        tvoc=data["tvoc"]
     )
 
     db.session.add(m)
