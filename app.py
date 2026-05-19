@@ -1,10 +1,15 @@
 
-from flask import render_template as rt, redirect, url_for, flash, request
+from flask import render_template as rt, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from main import app
 from forms import LoginForm, RegisterForm, WaardesForm
 from models import db, User, Waardes
 from config import DREMPELWAARDES
+from forms import LoginForm, RegisterForm, Drempelwaardes
+import requests
+import json
+
+ESP32_IP = "http://192.168.1.50"
 
 @app.route("/")
 def home():
@@ -95,8 +100,86 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-
 @app.route("/vragenlijst", methods=['GET', 'POST'])
+# scoring en thresholds
+def bereken_score(data):
+    score = 0
+    # Leeftijd 65+
+    try:
+        if int(data.get("leeftijd", 0)) >= 65:
+            score += 1
+    except (TypeError, ValueError):
+        pass
+    # Roken
+    if data.get("rookt"):
+        score += 1
+    # Symptoomvragen (elke True/Ja = 1)
+    symptooms = ["symptoom_dag", "symptoom_nacht", "symptoom_saba", "symptoom_beperking"]
+    for s in symptooms:
+        if data.get(s):
+            score += 1
+    # Exacerbaties
+    ex = data.get("exacerbaties")
+    if ex == "1":
+        score += 1
+    elif ex == "2+" or ex == "2":
+        score += 2
+    # Hospitalisatie (afgelopen maanden) -> +1
+    if data.get("hospitalisatie"):
+        score += 1
+    # Prednisongebruik afgelopen 12 maanden -> +2
+    if data.get("prednison_gebruik"):
+        score += 2
+    # Maximaal 8
+    return min(score, 8)
+
+def map_score_naar_niveau(score):
+    if score <= 2:
+        return "Laag"
+    if 3 <= score <= 4:
+        return "Midden"
+    else:
+        return "Hoog"
+
+DREMPELWAARDES = {
+    "Laag": {
+        "PM2.5": {"groen": [0, 10], "oranje": [11, 35], "rood": [36]},
+        "PM10": {"groen": [0, 20], "oranje": [21, 50], "rood": [51]},
+        "CO2": {"groen": [0, 799], "oranje": [800, 1500], "rood": [1501]},
+        "TVOC": {"groen": [0, 299], "oranje": [300, 1000], "rood": [1001]}
+    },
+    "Midden": {
+        "PM2.5": {"groen": [0, 10], "oranje": [11, 25], "rood": [26]},
+        "PM10": {"groen": [0, 20], "oranje": [21, 40], "rood": [41]},
+        "CO2": {"groen": [0, 699], "oranje": [700, 1200], "rood": [1201]},
+        "TVOC": {"groen": [0, 249], "oranje": [250, 800], "rood": [801]}
+    },
+    "Hoog": {
+        "PM2.5": {"groen": [0, 10], "oranje": [11, 20], "rood": [21]},
+        "PM10": {"groen": [0, 20], "oranje": [21, 35], "rood": [36]},
+        "CO2": {"groen": [0, 599], "oranje": [600, 1000], "rood": [1001]},
+        "TVOC": {"groen": [0, 199], "oranje": [200, 600], "rood": [601]}
+    }
+}
+
+@app.route("/save_thresholds", methods=["POST"])
+def save_thresholds():
+    thresholds_raw = request.form.get("thresholds")
+    thresholds = json.loads(thresholds_raw)
+
+    try:
+        r = requests.post(f"{ESP32_IP}/update_thresholds", json=thresholds, timeout=3)
+        if r.status_code == 200:
+            flash("Drempelwaardes succesvol verzonden naar ESP32!", "success")
+        else:
+            flash("ESP32 gaf een foutmelding.", "danger")
+    except:
+        flash("ESP32 niet bereikbaar.", "danger")
+
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/drempelwaardes", methods=["GET", "POST"])
 @login_required
 def vragenlijst():
     form = WaardesForm()
