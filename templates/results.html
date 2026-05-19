@@ -1,26 +1,81 @@
 {% extends "base.html" %}
+{% block title %}
+<title>results</title>
+{% endblock %}
+
+{% block stylesheet %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
 
 {% block content %}
+
 <div class="custom-containerv3">
-  <h2>Resultaten</h2>
-  <br>
-  <p><strong>Totaalscore:</strong> {{ score }} / 8</p>
-  <p><strong>Niveau:</strong> {{ niveau }}</p>
 
-  <h4>Op basis van uw antwoorden hebben wij het volgende profiel gegenereerd:</h4>
-  <br>
-  <ul>
-    {% for columns, rows in drempels.items() %}
-    <li><strong>{{ columns }}</strong>
-      <ul>
-        <li>Groen: {{ rows.groen[0] }} – {{ rows.groen[1] }}</li>
-        <li>Oranje: {{ rows.oranje[0] }} – {{ rows.oranje[1] }}</li>
-        <li>Rood: ≥ {{ rows.rood[0] }}</li>
-      </ul>
-    </li>
-    {% endfor %}
-  </ul>
+    {{ pm25_plot|safe }}
+    {{ pm10_plot|safe }}
+    {{ aqi_plot|safe }}
+    {{ co2_plot|safe }}
 
+    <script>
+    function updateAll() {
+        fetch("/api/latest")
+            .then(r => r.json())
+            .then(data => {
+                let t = new Date();
+
+                const updates = [
+                    { id: "pm25_plot", value: data.pm25 },
+                    { id: "pm10_plot", value: data.pm10 },
+                    { id: "aqi_plot",  value: data.aqi  },
+                    { id: "co2_plot",  value: data.co2  }
+                ];
+
+                updates.forEach(u => {
+                    Plotly.extendTraces(u.id, {
+                        x: [[t]],
+                        y: [[u.value]]
+                    }, [0]);
+                });
+            });
+    }
+
+    setInterval(updateAll, 5000);
+    </script>
+
+</div>
+
+<div class="custom-containerv3">
+  <h2>Mijn drempelwaardes</h2>
+  <br>
+
+  {% if score is not none %}
+    <p><strong>Totaalscore:</strong> {{ score }} / 8</p>
+    <p><strong>Niveau:</strong> {{ niveau }}</p>
+
+    <h4>Op basis van uw antwoorden hebben wij het volgende profiel gegenereerd:</h4>
+    <br>
+
+    <ul>
+      {% for column, ranges in drempels.items() %}
+      <li><strong>{{ column }}</strong>
+        <ul>
+          <li>Groen: {{ ranges['groen'][0] }} – {{ ranges['groen'][1] }}</li>
+          <li>Oranje: {{ ranges['oranje'][0] }} – {{ ranges['oranje'][1] }}</li>
+          <li>Rood: ≥ {{ ranges['rood'][0] }}</li>
+        </ul>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('vragenlijst') }}" class="btn">Vragenlijst invullen</a>
+    <br>
+    <a href="" class="btn">Maak zelf een configuratie</a>
+
+  {% else %}
+    <a href="{{ url_for('vragenlijst') }}" class="btn">Vragenlijst invullen</a>
+    <br>
+    <a href="" class="btn">Maak zelf een configuratie</a>
+  {% endif %}
 </div>
 
 {% endblock %}

@@ -3,12 +3,15 @@ from flask import render_template as rt, redirect, url_for, flash, request, json
 from flask_login import login_user, logout_user, login_required, current_user
 from main import app
 from forms import LoginForm, RegisterForm, WaardesForm
-from models import db, User, Waardes
+from models import db, User, Waardes, Metingen
 from config import DREMPELWAARDES
 from forms import LoginForm, RegisterForm
 import requests
 import plotly
 import plotly.express as px
+import plotly.graph_objs as go  #Dit zijn de plotly objecten
+from plotly.io import to_html #Maakt het mogelijk een grafiek om te zetten naar html
+
 
 ESP32_IP = "http://192.168.1.50"
 
@@ -36,7 +39,7 @@ def login():
             if user and user.check_password(password):
                 login_user(user)
                 flash('Welkom terug! Je bent nu ingelogd.', 'success')
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('home'))
             else:
                 flash('Ongeldige gebruikersnaam of wachtwoord.', 'danger')
                 return redirect(url_for('login'))
@@ -81,22 +84,72 @@ def register():
 def dashboard():
     return rt('dashboard.html')
 
+@app.route("/api/latest") #Haalt meetwaardes uit de database
+def api_latest():
+    m = Metingen.query.order_by(Metingen.id.desc()).first()
+
+    if m is None:
+        return jsonify({
+            "pm25": 0,
+            "pm10": 0,
+            "aqi": 0,
+            "co2": 0
+        })
+    
+    return jsonify({
+        "pm25": m.pm25,
+        "pm10": m.pm10,
+        "aqi": m.aqi,
+        "co2": m.co2
+    })
+
+
 @app.route('/results')
 @login_required
 def results():
     user = current_user
+    
+    if user.waardes is None:
+        return rt('results.html', niveau=None, score=None, drempels=None)
+    
     niveau = user.waardes.niveau
     score = user.waardes.score
     drempels = DREMPELWAARDES[niveau]
 
+   #Maakt lege grafieken
+    def make_empty_plot(div_id, title, x_label, y_label):
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=[], y=[], mode="lines+markers"))
+        fig.update_layout(
+            title=title,
+            xaxis_title=x_label,
+            yaxis_title=y_label
+        )
+        return to_html(fig, full_html=False, div_id=div_id)
+
+    pm25_html = make_empty_plot("pm25_plot", "PM2.5", "Tijd", "µg/m³")
+    pm10_html = make_empty_plot("pm10_plot", "PM10", "Tijd", "µg/m³")
+    aqi_html  = make_empty_plot("aqi_plot",  "AQI",  "Tijd", "Index")
+    co2_html  = make_empty_plot("co2_plot",  "CO₂",  "Tijd", "ppm")
+    
+    #Verstuurt de drempelwaardesconfig naar de ESP32
     try:
         requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
         flash("Drempelwaardes automatisch verzonden naar ESP32!", "success")
     except:
         flash("Kon geen verbinding maken met de ESP32.", "danger")
 
-    return rt('results.html', niveau=niveau,
-              score=score, drempels=drempels)
+    return rt(
+        'results.html',
+        niveau=niveau,
+        score=score,
+        drempels=drempels,
+        pm25_plot=pm25_html,
+        pm10_plot=pm10_html,
+        aqi_plot=aqi_html,
+        co2_plot=co2_html
+    )
+
 
 @app.route('/logout')
 @login_required
@@ -153,16 +206,8 @@ def save_thresholds():
 @login_required
 def vragenlijst():
     form = WaardesForm()
-    
-    if request.method == 'GET':
 
-        if current_user.waardes:
-            flash('Formulier is al eerder ingevuld!', 'danger')
-            return redirect(url_for('results'))
-        else:
-            return rt('vragenlijst.html', form=form)
-
-    if request.method == 'POST' and form.validate_on_submit():
+    if form.validate_on_submit():
         try:    
             leeftijd = form.leeftijd.data
             diagnose = form.diagnose.data
@@ -194,6 +239,21 @@ def vragenlijst():
     
     return rt("vragenlijst.html", form=form)
 
+@app.route("/sensordata", methods=["POST"]) 
+def sensordata():
+    data = request.get_json()
+
+    m = Metingen(
+        pm25=data["pm25"],
+        pm10=data["pm10"],
+        aqi=data["aqi"],
+        co2=data["co2"],
+    )
+
+    db.session.add(m)
+    db.session.commit()
+
+    return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
     app.run()

@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from sqlalchemy import String, Integer, Boolean, inspect, ForeignKey as FK
 from sqlalchemy.orm import Mapped as Map, mapped_column as mc, relationship as rel
-from werkzeug.security import generate_password_hash as gen_hash, check_password_hash as check_hash # belangrijk voor hashing
+from werkzeug.security import generate_password_hash as gen_hash, check_password_hash as check_hash 
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -46,7 +46,6 @@ class Waardes(db.Model):
     beperking: Map[bool] = mc(Boolean, default=False, nullable=False)
     hospital: Map[bool] = mc(Boolean, default=False, nullable=False)
     prednison: Map[bool] = mc(Boolean, default=False, nullable=False)
-
     exacerbaties: Map[int] = mc(Integer(), nullable=False)
 
     score: Map[Optional[int]] = mc(Integer(), default=0)
@@ -106,6 +105,24 @@ def exists():
 
     return len(table) > 0
 
+class Metingen(db.Model):
+    __tablename__ = "measurement"
+
+    id: Map[int] = mc(primary_key=True)
+
+    pm25: Map[float] = mc(db.Float, nullable=False)
+    pm10: Map[float] = mc(db.Float, nullable=False)
+    aqi: Map[int] = mc(db.Integer, nullable=False)
+    co2: Map[int] = mc(db.Integer, nullable=False)
+
+    timestamp: Map[str] = mc(db.DateTime, default=db.func.now())
+
+    user_id: Map[int] = mc(FK("user.id"), nullable=True)
+    user: Map["User"] = rel(backref="measurements")
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+

@@ -25,7 +25,9 @@
         <ul class="nav-menu">
             <li><a href="/">Home</a></li>
             {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('dashboard') }}">Mijn profiel</a></li>
+            <li><a href="{{ url_for('vragenlijst') }}">Genereer profiel</a></li>
+            <li><a href="{{ url_for('results') }}">Mijn metingen</a></li>
+
             <li><a href="{{ url_for('logout') }}">Logout</a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Inloggen</a></li>
