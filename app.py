@@ -5,7 +5,7 @@ from main import app
 from forms import LoginForm, RegisterForm, WaardesForm
 from models import db, User, Waardes
 from config import DREMPELWAARDES
-from forms import LoginForm, RegisterForm, Drempelwaardes
+from forms import LoginForm, RegisterForm
 import requests
 import json
 
@@ -100,39 +100,6 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-@app.route("/vragenlijst", methods=['GET', 'POST'])
-# scoring en thresholds
-def bereken_score(data):
-    score = 0
-    # Leeftijd 65+
-    try:
-        if int(data.get("leeftijd", 0)) >= 65:
-            score += 1
-    except (TypeError, ValueError):
-        pass
-    # Roken
-    if data.get("rookt"):
-        score += 1
-    # Symptoomvragen (elke True/Ja = 1)
-    symptooms = ["symptoom_dag", "symptoom_nacht", "symptoom_saba", "symptoom_beperking"]
-    for s in symptooms:
-        if data.get(s):
-            score += 1
-    # Exacerbaties
-    ex = data.get("exacerbaties")
-    if ex == "1":
-        score += 1
-    elif ex == "2+" or ex == "2":
-        score += 2
-    # Hospitalisatie (afgelopen maanden) -> +1
-    if data.get("hospitalisatie"):
-        score += 1
-    # Prednisongebruik afgelopen 12 maanden -> +2
-    if data.get("prednison_gebruik"):
-        score += 2
-    # Maximaal 8
-    return min(score, 8)
-
 def map_score_naar_niveau(score):
     if score <= 2:
         return "Laag"
@@ -179,7 +146,7 @@ def save_thresholds():
     return redirect(url_for("dashboard"))
 
 
-@app.route("/drempelwaardes", methods=["GET", "POST"])
+@app.route("/vragenlijst", methods=["GET", "POST"])
 @login_required
 def vragenlijst():
     form = WaardesForm()
@@ -223,6 +190,7 @@ def vragenlijst():
             flash(f"Er is een fout opgetreden: {str(e)}", "danger")
     
     return rt("vragenlijst.html", form=form)
+
 
 if __name__ == "__main__":
     app.run()
