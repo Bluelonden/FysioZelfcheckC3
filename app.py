@@ -7,16 +7,14 @@ from models import db, User, Waardes
 from config import DREMPELWAARDES
 from forms import LoginForm, RegisterForm
 import requests
-import json
+import plotly
+import plotly.express as px
 
 ESP32_IP = "http://192.168.1.50"
 
 @app.route("/")
 def home():
     return rt('home.html')
-
-## GET = rt('route.html')
-## POST = redirect(url_for('route'))
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -91,6 +89,12 @@ def results():
     score = user.waardes.score
     drempels = DREMPELWAARDES[niveau]
 
+    try:
+        requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
+        flash("Drempelwaardes automatisch verzonden naar ESP32!", "success")
+    except:
+        flash("Kon geen verbinding maken met de ESP32.", "danger")
+
     return rt('results.html', niveau=niveau,
               score=score, drempels=drempels)
 
@@ -131,8 +135,7 @@ DREMPELWAARDES = {
 
 @app.route("/save_thresholds", methods=["POST"])
 def save_thresholds():
-    thresholds_raw = request.form.get("thresholds")
-    thresholds = json.loads(thresholds_raw)
+    thresholds = request.get_json()
 
     try:
         r = requests.post(f"{ESP32_IP}/update_thresholds", json=thresholds, timeout=3)
