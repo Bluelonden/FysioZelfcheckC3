@@ -8,49 +8,39 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/results.css') }}">
 {% endblock %}
 
-{% block content %}>
+{% block content %}
 <div class="custom-containerv3">
     <h2>Live metingen</h2>
     <br>
-    <div class="graph-grid">
 
-    <div class="graph-item">{{ pm25_plot|safe }}</div>
-    <div class="graph-item">{{ pm10_plot|safe }}</div>
-    <div class="graph-item">{{ pm1_plot|safe }}</div>
-    <div class="graph-item">{{ aqi_plot|safe }}</div>
-    <div class="graph-item">{{ co2_plot|safe }}</div>
-    <div class="graph-item">{{ tvoc_plot|safe }}</div>
+    <div class="graph-grid">
+        <div id="pm25_graph" class="graph-item"></div>
+        <div id="pm10_graph" class="graph-item"></div>
+        <div id="pm1_graph" class="graph-item"></div>
+        <div id="aqi_graph" class="graph-item"></div>
+        <div id="co2_graph" class="graph-item"></div>
+        <div id="tvoc_graph" class="graph-item"></div>
     </div>
 
-
     <script>
-    function updateAll() {
-        fetch("/api/latest")
-            .then(r => r.json())
-            .then(data => {
-                let t = new Date();
+        function updateGraph(id, endpoint) {
+            fetch(endpoint)
+                .then(r => r.json())
+                .then(fig => Plotly.react(id, fig.data, fig.layout, {displayModeBar: false, responsive: true}));
+        }
 
-                const updates = [
-                    { id: "pm25_plot", value: data.pm25 },
-                    { id: "pm10_plot", value: data.pm10 },
-                    { id: "pm1_plot",  value: data.pm1  },
-                    { id: "aqi_plot",  value: data.aqi  },
-                    { id: "co2_plot",  value: data.co2  },
-                    { id: "tvoc_plot",  value: data.tvoc  }
-                ];
+        function updateAllGraphs() {
+            updateGraph("pm25_graph", "/api/pm25_fig");
+            updateGraph("pm10_graph", "/api/pm10_fig");
+            updateGraph("pm1_graph", "/api/pm1_fig");
+            updateGraph("aqi_graph", "/api/aqi_fig");
+            updateGraph("co2_graph", "/api/co2_fig");
+            updateGraph("tvoc_graph", "/api/tvoc_fig");
+        }
 
-                updates.forEach(u => {
-                    Plotly.extendTraces(u.id, {
-                        x: [[t]],
-                        y: [[u.value]]
-                    }, [0]);
-                });
-            });
-    }
-
-    setInterval(updateAll, 5000);
+        setInterval(updateAllGraphs, 5000);
+        updateAllGraphs();
     </script>
-
 </div>
 
 <div class="custom-containerv3">

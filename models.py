@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 from typing import Optional, List
 from flask_login import UserMixin
 from flask_migrate import Migrate
@@ -20,7 +21,6 @@ class User(db.Model, UserMixin):
     email: Map[str] = mc(String(150), unique=True, nullable=False)
     pw_hash: Map[str] = mc(String(256), nullable=False)
     role: Map[str] = mc(String(20), nullable=False)
-
     waardes: Map[Optional['Waardes']] = rel(back_populates='user', uselist=False)
 
     # deze methode wordt gebruikt tijdens registratie
@@ -97,6 +97,13 @@ class Waardes(db.Model):
         else:
             self.niveau = "Hoog"
 
+def map_score_naar_niveau(score):
+        if score <= 2:
+            return "Laag"
+        if 3 <= score <= 4:
+            return "Midden"
+        else:
+            return "Hoog"
 
 def exists():
     engine = db.engine
@@ -112,11 +119,11 @@ class Metingen(db.Model):
 
     pm25: Map[float] = mc(db.Float, nullable=False)
     pm10: Map[float] = mc(db.Float, nullable=False)
-    pm1: Map[float] = mc(db.Integer, nullable=False)
-    aqi: Map[int] = mc(db.Integer, nullable=False)
-    co2: Map[int] = mc(db.Integer, nullable=False)
-    tvoc: Map[float] = mc(db.Integer, nullable=False)
-    timestamp: Map[str] = mc(db.DateTime, default=db.func.now())
+    pm1: Map[float] = mc(db.Float, nullable=False)
+    aqi: Map[float] = mc(db.Float, nullable=False)
+    co2: Map[float] = mc(db.Float, nullable=False)
+    tvoc: Map[float] = mc(db.Float, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now) #Haal de tijd uit de device die de server host
 
     user_id: Map[int] = mc(FK("user.id"), nullable=True)
     user: Map["User"] = rel(backref="measurements")
