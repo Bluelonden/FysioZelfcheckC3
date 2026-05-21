@@ -17,36 +17,18 @@
             {{ form.hidden_tag() }}
 
             <p>
-                {{ form.leeftijd.label }}<br>
-                {{ form.leeftijd(size=4) }}
+                {{ form.pm1.label }}<br>
+                {{ form.pm1 }}
             </p>
 
             <p>
-                {{ form.diagnose.label }}<br>
-                {{ form.diagnose() }}
+                {{ form.pm25.label }}<br>
+                {{ form.pm25() }}
             </p>
 
             <p>
-                {{ form.rookt.label }}{{ form.rookt() }}
-            </p>
-
-            <h4><strong>Symptoomvragen</strong></h4>
-            <p>{{ form.dag() }} {{ form.dag.label }}</p>
-            <p>{{ form.nacht() }} {{ form.nacht.label }}</p>
-            <p>{{ form.saba() }} {{ form.saba.label }}</p>
-            <p>{{ form.beperking() }} {{ form.beperking.label }}</p>
-
-            <p>
-                {{ form.hospital() }} {{ form.hospital.label }}
-            </p>
-
-            <p>
-                {{ form.prednison() }} {{ form.prednison.label }}
-            </p>
-
-            <p>
-                {{ form.exacerbaties.label }}<br>
-                {{ form.exacerbaties() }}
+                {{ form.pm10.label }}<br>
+                {{ form.pm10 }}
             </p>
 
             <p>{{ form.submit() }}</p>

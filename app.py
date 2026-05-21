@@ -2,7 +2,7 @@ from flask import render_template as rt, redirect, url_for, flash, request, json
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from main import app
 from models import db, User, Waardes, Metingen
-from forms import LoginForm, RegisterForm, WaardesForm
+from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm
 from config import DREMPELWAARDES
 import requests
 from apis import api
@@ -187,7 +187,9 @@ def vragenlijst():
 
 @app.route('/handmatig', methods=['POST', 'GET'])
 def handmatig():
-    return rt('handmatig.html')
+    form = HandmatigForm()
+
+    return rt('handmatig.html', form=form)
 
 @app.route('/update', methods=['POST', 'GET'])
 @login_required

@@ -46,15 +46,16 @@ class WaardesForm(FF):
 
 
 class HandmatigForm(FF):
-    pm1 = SelF('uitlaatgassen, roet, rook',
+    pm1 = SelF('uitlaatgassen, chemische/industrieële dampen, sigarettenrook',
                validators=[DataRequired()],
                choices=[('veel', 'Veel'), ('matig', 'Matig'),
                         ('weinig', 'Weinig')])
-    pm1 = SelF('uitlaatgassen, roet, rook',
-            validators=DataRequired(),
+    pm25 = SelF('schimmelsporen, keukenrook',
+            validators=[DataRequired()],
             choices=[('veel', 'Veel'), ('matig', 'Matig'),
                     ('weinig', 'Weinig')])
-    pm1 = SelF('uitlaatgassen, roet, rook',
-            validators=DataRequired(),
+    pm10 = SelF('huisstof, zand, stuifmeel, roet, vuurrook',
+            validators=[DataRequired()],
             choices=[('veel', 'Veel'), ('matig', 'Matig'),
                     ('weinig', 'Weinig')])
+    submit = SubF('Opslaan')
