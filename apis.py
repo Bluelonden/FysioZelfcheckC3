@@ -1,6 +1,6 @@
 
 from flask import Blueprint, jsonify
-from flask_login import current_user
+from flask_login import current_user, login_required
 from plotly.graph_objs import Figure, Scatter
 from models import Metingen
 from statuscalc import bereken_status
@@ -34,11 +34,14 @@ def livedata_grafiek(column, title, y_label):
     return fig.to_json()
 
 
-@api.route("/latest") #Haalt meetwaardes uit de database
-def api_latest():
-    m = Metingen.query.order_by(Metingen.id.desc()).first() #.first geeft de laatste meting terug
+from flask_login import login_required
 
-    #Als er geen meetwaarde is
+@api.route("/latest")
+@login_required
+def api_latest():
+    m = Metingen.query.order_by(Metingen.id.desc()).first()
+
+    # Als er geen meetwaarde is
     if m is None:
         return jsonify({
             "pm25": 0,
@@ -48,18 +51,18 @@ def api_latest():
             "co2": 0,
             "tvoc": 0,
             "status": {
-            "pm25": "grey",
-            "pm10": "grey",
-            "pm1":  "grey",
-            "aqi":  "grey",
-            "co2":  "grey",
-            "tvoc": "grey"
-        }
+                "pm25": "grey",
+                "pm10": "grey",
+                "pm1":  "grey",
+                "aqi":  "grey",
+                "co2":  "grey",
+                "tvoc": "grey"
+            }
         })
-    
+
+    # Nu is de gebruiker gegarandeerd ingelogd
     profiel = current_user.waardes.niveau
-    meting = m
-    status = bereken_status(meting, profiel)
+    status = bereken_status(m, profiel)
 
     return jsonify({
         "pm25": m.pm25,
@@ -70,6 +73,7 @@ def api_latest():
         "tvoc": m.tvoc,
         "status": status
     })
+
 
 @api.route("/pm25_fig")
 def pm25_fig():

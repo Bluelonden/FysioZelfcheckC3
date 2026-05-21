@@ -1,15 +1,14 @@
-
 from flask import render_template as rt, redirect, url_for, flash, request, jsonify
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from main import app
+from models import db, User, Waardes, Metingen
+from forms import LoginForm, RegisterForm, WaardesForm
+from config import DREMPELWAARDES
+import requests
 from apis import api
 app.register_blueprint(api, url_prefix="/api")
 
-from forms import LoginForm, RegisterForm, WaardesForm
-from models import db, User, Waardes, Metingen
-from config import DREMPELWAARDES
-from forms import LoginForm, RegisterForm
-import requests
+
 
 ESP32_IP = "http://192.168.1.50"
 
@@ -112,7 +111,7 @@ def logout():
 def save_thresholds():
     thresholds = request.get_json()
 
-    #Kijkt of je verbinding hebt met de ESP en zo ja post het de Drempelwaardes
+    #Kijkt of je verbinding hebt met de ESP en zo ja post de Drempelwaardes
     r = requests.post(f"{ESP32_IP}/update_thresholds", json=thresholds, timeout=3)
     if r.status_code == 200:
             flash("Drempelwaardes succesvol verzonden naar ESP32!", "success")
