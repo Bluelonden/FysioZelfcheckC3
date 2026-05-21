@@ -1,80 +1,45 @@
 {% extends "base.html" %}
+
 {% block title %}
 <title>results</title>
-{% endblock %}
 
-{% block stylesheet %}
+<!-- SCRIPT -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/results.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="custom-containerv3">
-    <h2>Live metingen</h2>
-    <br>
-
-    <div class="graph-grid">
-        <div id="pm25_graph" class="graph-item"></div>
-        <div id="pm10_graph" class="graph-item"></div>
-        <div id="pm1_graph" class="graph-item"></div>
-        <div id="aqi_graph" class="graph-item"></div>
-        <div id="co2_graph" class="graph-item"></div>
-        <div id="tvoc_graph" class="graph-item"></div>
-    </div>
-
-    <script>
-        function updateGraph(id, endpoint) {
-            fetch(endpoint)
-                .then(r => r.json())
-                .then(fig => Plotly.react(id, fig.data, fig.layout, {displayModeBar: false, responsive: true}));
-        }
-
-        function updateAllGraphs() {
-            updateGraph("pm25_graph", "/api/pm25_fig");
-            updateGraph("pm10_graph", "/api/pm10_fig");
-            updateGraph("pm1_graph", "/api/pm1_fig");
-            updateGraph("aqi_graph", "/api/aqi_fig");
-            updateGraph("co2_graph", "/api/co2_fig");
-            updateGraph("tvoc_graph", "/api/tvoc_fig");
-        }
-
-        setInterval(updateAllGraphs, 5000);
-        updateAllGraphs();
-    </script>
-</div>
-
-<div class="custom-containerv3">
-  <h2>Mijn drempelwaardes</h2>
+  <h2>Live metingen</h2>
   <br>
 
-  {% if score is not none %}
-    <p><strong>Totaalscore:</strong> {{ score }} / 8</p>
-    <p><strong>Niveau:</strong> {{ niveau }}</p>
+  <div class="graph-grid">
+    <div id="pm25_graph" class="graph-item"></div>
+    <div id="pm10_graph" class="graph-item"></div>
+    <div id="pm1_graph" class="graph-item"></div>
+    <div id="aqi_graph" class="graph-item"></div>
+    <div id="co2_graph" class="graph-item"></div>
+    <div id="tvoc_graph" class="graph-item"></div>
+  </div>
 
-    <h4>Op basis van uw antwoorden hebben wij het volgende profiel gegenereerd:</h4>
-    <br>
+  <script>
+    function updateGraph(id, endpoint) {
+      fetch(endpoint)
+        .then(r => r.json())
+        .then(fig => Plotly.react(id, fig.data, fig.layout, { displayModeBar: false, responsive: true }));
+    }
 
-    <ul>
-      {% for column, ranges in drempels.items() %}
-      <li><strong>{{ column }}</strong>
-        <ul>
-          <li>Groen: {{ ranges['groen'][0] }} – {{ ranges['groen'][1] }}</li>
-          <li>Oranje: {{ ranges['oranje'][0] }} – {{ ranges['oranje'][1] }}</li>
-          <li>Rood: ≥ {{ ranges['rood'][0] }}</li>
-        </ul>
-      </li>
-      {% endfor %}
-    </ul>
+    function updateAllGraphs() {
+      updateGraph("pm25_graph", "/api/pm25_fig");
+      updateGraph("pm10_graph", "/api/pm10_fig");
+      updateGraph("pm1_graph", "/api/pm1_fig");
+      updateGraph("aqi_graph", "/api/aqi_fig");
+      updateGraph("co2_graph", "/api/co2_fig");
+      updateGraph("tvoc_graph", "/api/tvoc_fig");
+    }
 
-    <a href="{{ url_for('vragenlijst') }}" class="btn">Vragenlijst invullen</a>
-    <br>
-    <a href="" class="btn">Maak zelf een configuratie</a>
-
-  {% else %}
-    <a href="{{ url_for('vragenlijst') }}" class="btn">Vragenlijst invullen</a>
-    <br>
-    <a href="" class="btn">Maak zelf een configuratie</a>
-  {% endif %}
+    setInterval(updateAllGraphs, 5000);
+    updateAllGraphs();
+  </script>
 </div>
 
 {% endblock %}

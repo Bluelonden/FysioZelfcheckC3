@@ -42,4 +42,19 @@ class WaardesForm(FF):
     prednison = BoolF("Ik heb in de afgelopen 12 maanden prednison gebruikt")
     exacerbaties = RadF("Aantal exacerbaties afgelopen 12 maanden", 
                         choices=[(0,"0"),(1,"1"),(2,"≥2")], default="0")
-    submit = SubF("Opslaan en berekenen")
+    submit = SubF("Bereken")
+
+
+class HandmatigForm(FF):
+    pm1 = SelF('uitlaatgassen, roet, rook',
+               validators=[DataRequired()],
+               choices=[('veel', 'Veel'), ('matig', 'Matig'),
+                        ('weinig', 'Weinig')])
+    pm1 = SelF('uitlaatgassen, roet, rook',
+            validators=DataRequired(),
+            choices=[('veel', 'Veel'), ('matig', 'Matig'),
+                    ('weinig', 'Weinig')])
+    pm1 = SelF('uitlaatgassen, roet, rook',
+            validators=DataRequired(),
+            choices=[('veel', 'Veel'), ('matig', 'Matig'),
+                    ('weinig', 'Weinig')])

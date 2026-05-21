@@ -13,14 +13,18 @@ migrate = Migrate()
 login_manager = LoginManager()
 
 class User(db.Model, UserMixin):
-    # updated model setup
     __tablename__ = 'user'
 
+    # int waardes
     id: Map[int] = mc(primary_key=True)
+
+    # str waardes
     username: Map[str] = mc(String(150), unique=True, nullable=False)
     email: Map[str] = mc(String(150), unique=True, nullable=False)
     pw_hash: Map[str] = mc(String(256), nullable=False)
     role: Map[str] = mc(String(20), nullable=False)
+
+    # optionele waardes
     waardes: Map[Optional['Waardes']] = rel(back_populates='user', uselist=False)
 
     # deze methode wordt gebruikt tijdens registratie
@@ -33,28 +37,33 @@ class User(db.Model, UserMixin):
 
 class Waardes(db.Model):
     __tablename__ = 'waardes'
-
+    
+    # int waardes
     id: Map[int] = mc(primary_key=True)
     leeftijd: Map[int] = mc(Integer(), nullable=False)
-
+   
+    # str waardes
     diagnose: Map[str] = mc(String(8), nullable=False)
-
-    rookt: Map[bool] = mc(Boolean, default=False, nullable=False)
-    dag: Map[bool] = mc(Boolean, default=False, nullable=False)
-    nacht: Map[bool] = mc(Boolean, default=False, nullable=False)
-    saba: Map[bool] = mc(Boolean, default=False, nullable=False)
-    beperking: Map[bool] = mc(Boolean, default=False, nullable=False)
-    hospital: Map[bool] = mc(Boolean, default=False, nullable=False)
-    prednison: Map[bool] = mc(Boolean, default=False, nullable=False)
+    
+    # bool waardes
+    rookt: Map[bool] = mc(Boolean, nullable=False)
+    dag: Map[bool] = mc(Boolean, nullable=False)
+    nacht: Map[bool] = mc(Boolean, nullable=False)
+    saba: Map[bool] = mc(Boolean, nullable=False)
+    beperking: Map[bool] = mc(Boolean, nullable=False)
+    hospital: Map[bool] = mc(Boolean, nullable=False)
+    prednison: Map[bool] = mc(Boolean, nullable=False)
     exacerbaties: Map[int] = mc(Integer(), nullable=False)
-
+    
+    # optionele waardes
     score: Map[Optional[int]] = mc(Integer(), default=0)
     niveau: Map[Optional[str]] = mc(String(6))
 
+    # foreign key setup
     user_id: Map[int] = mc(FK('user.id'), unique=True, nullable=False)
     user: Map['User'] = rel(back_populates='waardes')
     
-    def bereken_score(self) :
+    def bereken_score(self):
         score = 0
         # Leeftijd 65+
         try:
@@ -96,14 +105,6 @@ class Waardes(db.Model):
             self.niveau = "Midden"
         else:
             self.niveau = "Hoog"
-
-def map_score_naar_niveau(score):
-        if score <= 2:
-            return "Laag"
-        if 3 <= score <= 4:
-            return "Midden"
-        else:
-            return "Hoog"
 
 def exists():
     engine = db.engine

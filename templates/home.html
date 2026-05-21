@@ -1,16 +1,12 @@
 {% extends "base.html" %}
-{% block title %}
-<title>home</title>
-{% endblock %}
-{% block stylesheet %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-{% endblock %}
-{% block content %}
-<!-- content here -->
-<h1>
-    <span style="align-items: center;"> Luchtkwaliteit en Fysiozelfcheck </span>
-</h1>
 
+<!-- TITLE -->
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<h1> Luchtkwaliteit en Fysiozelfcheck</h1>
 
 <div class="custom-containerv2">
     <div class="box1">
@@ -20,29 +16,36 @@
         </h3>
         <br>
         <p>
-            Wij bij Fysiozelfcheck bieden een luchtkwaliteitsmeter aan die patienten met milde tot matige COPD of Asthma klachten helpt
-            te ondersteunen bij hun dagelijkste activiteiten. Dit doen wij door constante metingen terug te koppelen 
-            naar onze website en hier vervolgens een advies aan te verbinden. Het apparaat dat hierbij geleverd wordt is in staat
-            zelfstandig advies te geven zonder gebruik van de website, maar houdt er rekening mee dat terugkoppeling hierbij gelimiteerd is 
+            Wij bij Fysiozelfcheck bieden een luchtkwaliteitsmeter aan die patienten met milde tot matige COPD of Asthma
+            klachten helpt
+            te ondersteunen bij hun dagelijkste activiteiten. Dit doen wij door constante metingen terug te koppelen
+            naar onze website en hier vervolgens een advies aan te verbinden. Het apparaat dat hierbij geleverd wordt is
+            in staat
+            zelfstandig advies te geven zonder gebruik van de website, maar houdt er rekening mee dat terugkoppeling
+            hierbij gelimiteerd is
             tot simpele instructies.
         </p>
         <br>
 
         <p>
-            Voor onze gebruikers bieden wij een volledig aanpasbaar configuratiesysteem aan waarmee u de drempelwaardes voor adviezen en waarschuwingen kunt aanpassen. 
-            Daarnaast hebben wij een aantal basisprofielen waarmee u de door ons aanbevolen drempelwaardes kunt gebruiken.
+            Voor onze gebruikers bieden wij een volledig aanpasbaar configuratiesysteem aan waarmee u de drempelwaardes
+            voor adviezen en waarschuwingen kunt aanpassen.
+            Daarnaast hebben wij een aantal basisprofielen waarmee u de door ons aanbevolen drempelwaardes kunt
+            gebruiken.
         </p>
-            <a href="https://fysiozelfcheck.nl/"> <img class="logo" src="static/img/Logo.jpeg" alt="Logo"> </a>
-        
+        <a href="https://fysiozelfcheck.nl/"> <img class="logo" src="static/img/Logo.jpeg" alt="Logo"> </a>
+
     </div>
     <div class="box2">
         <img class="lung" src="static/img/Lungs.jpg">
     </div>
 
 </div>
+
 <blockquote class="quote">
     "Luchtkwaliteit bepaalt meer dan je denkt. - John Doe"
 </blockquote>
+
 <blockquote class="quote">
     "Absoluut het proberen waard mijn klachten nemen af sinds ik deze meter ben gaan gebruiken. -John Smith"
 </blockquote>
@@ -50,31 +53,34 @@
 <div class="custom-containerv3">
     <h3><strong>Voor wie zijn wij?</strong></h3>
     <p>Alhoewel iedereen kan profiteren van dit product is het belangrijk om als patient bewust te zijn van
-        wat wij wel en niet kunnen bieden. Bij ernstige klachten is het belangrijk om een passende oplossing te vinden met uw huisarts.
-        Dit product is gemaakt om mensen te helpen die geen extreme beperkingen ervaren bij normale dagelijkse inspanning.
+        wat wij wel en niet kunnen bieden. Bij ernstige klachten is het belangrijk om een passende oplossing te vinden
+        met uw huisarts.
+        Dit product is gemaakt om mensen te helpen die geen extreme beperkingen ervaren bij normale dagelijkse
+        inspanning.
     </p>
     <p>
         De meter leest en analyseert de volgende waardes:
-        
-        <ul>
+
+    <ul>
         <li>PM 2.5</li>
         <li>PM 10</li>
         <li>AQI</li>
         <li>CO2</li>
         <li>TVOC</li>
-        </ul>
+    </ul>
     </p>
     <p>
         Deze waardes worden uitgelezen en verwerkt via onze website zolang u verbinding heeft met het internet.
-        Als u deze verbinding tijdelijk verliest ... Geen probleem! de volgende keer dat u weer verbinding heeft wordt deze data toegevoegd.
+        Als u deze verbinding tijdelijk verliest ... Geen probleem! de volgende keer dat u weer verbinding heeft wordt
+        deze data toegevoegd.
     </p>
     <p>
-        Standaard geven wij een basisprofiel, maar houdt er rekening mee dat dit profiel niet bedoelt is om voor iedereen te werken.
-        Wanneer u toch merkt dat ons basisprofiel niet goed voor u werkt kunt u in uw accountinstellingen de drempelwaardes zelfstandig configureren.
+        Standaard geven wij een basisprofiel, maar houdt er rekening mee dat dit profiel niet bedoelt is om voor
+        iedereen te werken.
+        Wanneer u toch merkt dat ons basisprofiel niet goed voor u werkt kunt u in uw accountinstellingen de
+        drempelwaardes zelfstandig configureren.
         Op die manier kunt u slim en handig ook de feedback van het apparaat zelf aanpassen.
     </p>
-
-    <a href = "/drempelwaardes">Test deze link voor profiel</a>
 </div>
 
 {% endblock %}
