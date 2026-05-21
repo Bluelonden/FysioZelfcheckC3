@@ -41,5 +41,7 @@ class WaardesForm(FF):
     hospital = BoolF("Ik ben in de afgelopen 12 maanden vanwegen mijn ziekte/symptomen in het ziekenhuis opgenomen geweest")
     prednison = BoolF("Ik heb in de afgelopen 12 maanden prednison gebruikt")
     exacerbaties = RadF("Aantal exacerbaties afgelopen 12 maanden", 
-                        choices=[(0,"0"),(1,"1"),(2,"≥2")], default="0")
+                        choices=[(0, "0"), (1, "1"), (2, "≥2")], 
+                        coerce=int,  # Zorgt voor automatische conversie naar int
+                        default=0)   # Int in plaats van string
     submit = SubF("Opslaan en berekenen")
