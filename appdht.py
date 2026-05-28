@@ -3,9 +3,6 @@ import ssl
 import sqlite3
 import time
 
-
-x = input("wordt dit gerund?")
-
 app = Flask(__name__)
 API_KEY = "DitIsEchtEenGoedeAPIKey"
 
@@ -41,5 +38,7 @@ def receive_data():
     return jsonify({"status": "success"}), 200
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))
+    # Door ssl_context='adhoc' te gebruiken, genereert Flask 
+    # automatisch een tijdelijk SSL-certificaat bij het opstarten.
+    app.run(host='0.0.0.0', port=5000, ssl_context='adhoc')
    # ,host='0.0.0.0', port=5000)

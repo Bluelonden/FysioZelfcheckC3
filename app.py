@@ -13,7 +13,7 @@ app.register_blueprint(api, url_prefix="/api")
 ESP32_IP = "http://192.168.1.50"
 
 ## HOMEPAGE ##
-@app.route("/") #Dit is de homepage 
+@app.route("/") #Dit is de homepage
 def home():
     return rt('home.html')
 
@@ -84,22 +84,24 @@ def register():
 @login_required
 def results():
     user = current_user
-    
-    if user.waardes is None: #Als de gebruier nog geen Drempelwaardesprofiel heeft return dan niks
-        return rt('results.html', niveau=None, score=None, drempels=None)
-    
+
+    # CONTROLE: Heeft de gebruiker de vragenlijst al ingevuld?
+    if not user.waardes:
+        flash("Vul eerst de vragenlijst in om je resultaten en drempelwaardes te bekijken.", "warning")
+        return redirect(url_for('vragenlijst'))
+
     niveau = user.waardes.niveau
     score = user.waardes.score
     drempels = DREMPELWAARDES[niveau]
     m = Metingen.query.order_by(Metingen.id.desc()).first()
 
-    return rt(
-        'results.html',
-        niveau=niveau,
-        score=score,
-        drempels=drempels,
+    try:
+        requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
+        flash("Drempelwaardes automatisch verzonden naar ESP32!", "success")
+    except requests.exceptions.RequestException:
+        flash("Kon geen verbinding maken met de ESP32.", "danger")
 
-    )
+    return rt('results.html', niveau=niveau, score=score, drempels=drempels)
 
 ## LOGOUT ##
 @app.route('/logout')
@@ -112,14 +114,13 @@ def logout():
 @app.route('/profiel')
 @login_required
 def profiel():
-
     # check if user has filled in the form
     if current_user.waardes:
         user = current_user
         niveau = user.waardes.niveau
         score = user.waardes.score
         drempels = DREMPELWAARDES[niveau]
-        
+
         return rt('profiel.html', niveau=niveau,
               score=score, drempels=drempels)
 
@@ -144,7 +145,7 @@ def save_thresholds():
 @login_required
 def vragenlijst():
     form = WaardesForm()
-    
+
     # check if user has already filled in the form
     if request.method == 'GET':
         if current_user.waardes:
@@ -154,7 +155,7 @@ def vragenlijst():
             return rt('vragenlijst.html', form=form)
 
     if request.method == 'POST' and form.validate_on_submit():
-        try:    
+        try:
             leeftijd = form.leeftijd.data
             diagnose = form.diagnose.data
             rookt = form.rookt.data
@@ -164,25 +165,25 @@ def vragenlijst():
             beperking = form.beperking.data
             hospital = form.hospital.data
             prednison = form.prednison.data
-            exacerbaties = form.exacerbaties.data
+            exacerbaties = int(form.exacerbaties.data) #integer aan toegevoegd voor zekerheid (coercion error wtf-forms)
 
             data = Waardes(leeftijd=leeftijd, diagnose=diagnose, rookt=rookt,
                             dag=dag, nacht=nacht, saba=saba, beperking=beperking,
                             hospital=hospital, prednison=prednison,
                             exacerbaties=exacerbaties, user=current_user)
-            
+
             data.score_niveau()
-            
+
             db.session.add(data)
             db.session.commit()
 
             flash("Data succesvol opgeslagen!", "success")
             return redirect(url_for('results'))
-        
+
         except Exception as e:
             db.session.rollback()
             flash(f"Er is een fout opgetreden: {str(e)}", "danger")
-    
+
     return rt("vragenlijst.html", form=form)
 
 @app.route('/handmatig', methods=['POST', 'GET'])
@@ -194,16 +195,12 @@ def handmatig():
 @app.route('/update', methods=['POST', 'GET'])
 @login_required
 def update():
-    print('route hit')
-
     form = WaardesForm(obj=current_user)
     waardes = current_user.waardes
-    user = current_user
 
     if request.method == 'POST' and form.validate_on_submit():
-        
-        user.leeftijd = form.leeftijd.data
-        waardes.diagnose = form.diagnose.data 
+        waardes.leeftijd = form.leeftijd.data
+        waardes.diagnose = form.diagnose.data
         waardes.rookt = form.rookt.data
         waardes.dag = form.dag.data
         waardes.nacht = form.nacht.data
@@ -214,22 +211,22 @@ def update():
         waardes.exacerbaties = form.exacerbaties.data
 
         waardes.score_niveau()
-      
+
         try:
             db.session.commit()
 
             flash("Data succesvol geupdate!", "success")
             return redirect(url_for('profiel'))
-        
+
         except Exception as e:
             db.session.rollback()
             flash(f"Er is een fout opgetreden: {str(e)}", "danger")
             return rt('update.html', form=form)
-    
+
     return rt("update.html", form=form)
 
 
-@app.route("/sensordata", methods=["POST"]) 
+@app.route("/sensordata", methods=["POST"])
 def sensordata():
     data = request.get_json()
 
@@ -248,4 +245,4 @@ def sensordata():
     return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5000,debug=True)
+    app.run(host="0.0.0.0", port=5000)
