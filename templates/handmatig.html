@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if current_user.is_authenticated %}
+
+<section class="container">
+
+    <div class="heading">
+        <h1>Handmatig invoeren</h1>
+        <p>Hier kunt u handmatig invoeren waar u gevoellig voor bent en in welke mate.</p>
+    </div>
+
+    <div class="handmatig-form">
+        <form method="POST">
+            <h4><strong>Algemene vragen</strong></h4>
+            {{ form.hidden_tag() }}
+
+            <p>
+                {{ form.pm1.label }}<br>
+                {{ form.pm1 }}
+            </p>
+
+            <p>
+                {{ form.pm25.label }}<br>
+                {{ form.pm25() }}
+            </p>
+
+            <p>
+                {{ form.pm10.label }}<br>
+                {{ form.pm10 }}
+            </p>
+
+            <p>{{ form.submit() }}</p>
+        </form>
+
+    </div>
+
+</section>
+
+{% else %}
+
+<h1>Log eerst in!</h1>
+
+{% endif %}
+
+{% endblock %}

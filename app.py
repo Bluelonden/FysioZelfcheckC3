@@ -1,28 +1,31 @@
-
 from flask import render_template as rt, redirect, url_for, flash, request, jsonify
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from main import app
-from forms import LoginForm, RegisterForm, WaardesForm
-from models import db, User, Waardes
+from models import db, User, Waardes, Metingen
+from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm
 from config import DREMPELWAARDES
-from forms import LoginForm, RegisterForm
 import requests
-import plotly
-import plotly.express as px
+from apis import api
+app.register_blueprint(api, url_prefix="/api")
+
+
 
 ESP32_IP = "http://192.168.1.50"
 
-@app.route("/")
+## HOMEPAGE ##
+@app.route("/") #Dit is de homepage
 def home():
     return rt('home.html')
 
+## LOGIN ##
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
 
     if request.method == 'GET':
         if current_user.is_authenticated:
-            return rt('dashboard.html')
+            flash('Welkom terug! Je bent nu ingelogd.', 'success')
+            return rt('home.html')
         else:
             return rt('login.html', form=form)
 
@@ -36,12 +39,12 @@ def login():
             if user and user.check_password(password):
                 login_user(user)
                 flash('Welkom terug! Je bent nu ingelogd.', 'success')
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('home'))
             else:
                 flash('Ongeldige gebruikersnaam of wachtwoord.', 'danger')
                 return redirect(url_for('login'))
 
-
+## REGISTREREN ##
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -76,24 +79,21 @@ def register():
     
     return rt('register.html', form=form)
 
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    return rt('dashboard.html')
-
+## RESULTATEN WEERGEVEN ##
 @app.route('/results')
 @login_required
 def results():
     user = current_user
-    
+
     # CONTROLE: Heeft de gebruiker de vragenlijst al ingevuld?
     if not user.waardes:
         flash("Vul eerst de vragenlijst in om je resultaten en drempelwaardes te bekijken.", "warning")
         return redirect(url_for('vragenlijst'))
-        
+
     niveau = user.waardes.niveau
     score = user.waardes.score
     drempels = DREMPELWAARDES[niveau]
+    m = Metingen.query.order_by(Metingen.id.desc()).first()
 
     try:
         requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
@@ -103,51 +103,59 @@ def results():
 
     return rt('results.html', niveau=niveau, score=score, drempels=drempels)
 
+## LOGOUT ##
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
-def map_score_naar_niveau(score):
-    if score <= 2:
-        return "Laag"
-    if 3 <= score <= 4:
-        return "Midden"
-    else:
-        return "Hoog"
+## USER PROFIEL ##
+@app.route('/profiel')
+@login_required
+def profiel():
+    # check if user has filled in the form
+    if current_user.waardes:
+        user = current_user
+        niveau = user.waardes.niveau
+        score = user.waardes.score
+        drempels = DREMPELWAARDES[niveau]
 
+        return rt('profiel.html', niveau=niveau,
+              score=score, drempels=drempels)
+
+    return rt('profiel.html')
+
+#Dit is om de drempelwaardes naar de ESP te posten
 @app.route("/save_thresholds", methods=["POST"])
 def save_thresholds():
     thresholds = request.get_json()
 
-    try:
-        r = requests.post(f"{ESP32_IP}/update_thresholds", json=thresholds, timeout=3)
-        if r.status_code == 200:
+    #Kijkt of je verbinding hebt met de ESP en zo ja post de Drempelwaardes
+    r = requests.post(f"{ESP32_IP}/update_thresholds", json=thresholds, timeout=3)
+    if r.status_code == 200:
             flash("Drempelwaardes succesvol verzonden naar ESP32!", "success")
-        else:
+    else:
             flash("ESP32 gaf een foutmelding.", "danger")
-    except:
-        flash("ESP32 niet bereikbaar.", "danger")
 
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("results"))
 
-
+## SYMPTOMEN VRAGENLIJST ##
 @app.route("/vragenlijst", methods=["GET", "POST"])
 @login_required
 def vragenlijst():
     form = WaardesForm()
-    
-    if request.method == 'GET':
 
+    # check if user has already filled in the form
+    if request.method == 'GET':
         if current_user.waardes:
             flash('Formulier is al eerder ingevuld!', 'danger')
-            return redirect(url_for('results'))
+            return redirect(url_for('profiel'))
         else:
             return rt('vragenlijst.html', form=form)
 
     if request.method == 'POST' and form.validate_on_submit():
-        try:    
+        try:
             leeftijd = form.leeftijd.data
             diagnose = form.diagnose.data
             rookt = form.rookt.data
@@ -163,21 +171,82 @@ def vragenlijst():
                             dag=dag, nacht=nacht, saba=saba, beperking=beperking,
                             hospital=hospital, prednison=prednison,
                             exacerbaties=exacerbaties, user=current_user)
-            
+
             data.score_niveau()
-            
+
             db.session.add(data)
             db.session.commit()
 
             flash("Data succesvol opgeslagen!", "success")
             return redirect(url_for('results'))
-        
+
         except Exception as e:
             db.session.rollback()
             flash(f"Er is een fout opgetreden: {str(e)}", "danger")
-    
+
     return rt("vragenlijst.html", form=form)
 
+@app.route('/handmatig', methods=['POST', 'GET'])
+def handmatig():
+    form = HandmatigForm()
+
+    return rt('handmatig.html', form=form)
+
+@app.route('/update', methods=['POST', 'GET'])
+@login_required
+def update():
+    print('route hit')
+
+    form = WaardesForm(obj=current_user)
+    waardes = current_user.waardes
+    user = current_user
+
+    if request.method == 'POST' and form.validate_on_submit():
+
+        user.leeftijd = form.leeftijd.data
+        waardes.diagnose = form.diagnose.data
+        waardes.rookt = form.rookt.data
+        waardes.dag = form.dag.data
+        waardes.nacht = form.nacht.data
+        waardes.saba = form.saba.data
+        waardes.beperking = form.beperking.data
+        waardes.hospital = form.hospital.data
+        waardes.prednison = form.prednison.data
+        waardes.exacerbaties = form.exacerbaties.data
+
+        waardes.score_niveau()
+
+        try:
+            db.session.commit()
+
+            flash("Data succesvol geupdate!", "success")
+            return redirect(url_for('profiel'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Er is een fout opgetreden: {str(e)}", "danger")
+            return rt('update.html', form=form)
+
+    return rt("update.html", form=form)
+
+
+@app.route("/sensordata", methods=["POST"])
+def sensordata():
+    data = request.get_json()
+
+    m = Metingen(
+        pm25=data["pm25"],
+        pm10=data["pm10"],
+        pm1=data["pm1"],
+        aqi=data["aqi"],
+        co2=data["co2"],
+        tvoc=data["tvoc"]
+    )
+
+    db.session.add(m)
+    db.session.commit()
+
+    return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0",port=5000,debug=True)

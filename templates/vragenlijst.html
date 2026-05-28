@@ -1,50 +1,64 @@
 {% extends "base.html" %}
+
+<!-- TITLE -->
 {% block title %}
 <title>Vragenlijst</title>
 {% endblock %}
-{% block stylesheet %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/drempels.css') }}">
-{% endblock %}
+
+<!-- FORM -->
 {% block content %}
-<div class='custom-containerform'>
-  <form method="POST" id="vragen-form">
-    <h4><strong>Algemene vragen</strong></h4>
-    {{ form.hidden_tag() }}
 
-    <p>
-      {{ form.leeftijd.label }}<br>
-      {{ form.leeftijd(size=4) }}
-    </p>
+{% if current_user.is_authenticated %}
 
-    <p>
-      {{ form.diagnose.label }}<br>
-      {{ form.diagnose() }}
-    </p>
+<section class="container">
 
-    <p>
-      {{ form.rookt.label }}{{ form.rookt() }}
-    </p>
+  <div class='vragenlijst-form'>
+    <form method="POST">
+      <h4><strong>Algemene vragen</strong></h4>
+      {{ form.hidden_tag() }}
 
-    <h4><strong>Symptoomvragen</strong></h4>
-    <p>{{ form.dag() }} {{ form.dag.label }}</p>
-    <p>{{ form.nacht() }} {{ form.nacht.label }}</p>
-    <p>{{ form.saba() }} {{ form.saba.label }}</p>
-    <p>{{ form.beperking() }} {{ form.beperking.label }}</p>
+      <p>
+        {{ form.leeftijd.label }}<br>
+        {{ form.leeftijd(size=4) }}
+      </p>
 
-    <p>
-      {{ form.hospital() }} {{ form.hospital.label }}
-    </p>
+      <p>
+        {{ form.diagnose.label }}<br>
+        {{ form.diagnose() }}
+      </p>
 
-    <p>
-      {{ form.prednison() }} {{ form.prednison.label }}
-    </p>
+      <p>
+        {{ form.rookt.label }}{{ form.rookt() }}
+      </p>
 
-    <p>
-      {{ form.exacerbaties.label }}<br>
-      {{ form.exacerbaties() }}
-    </p>
+      <h4><strong>Symptoomvragen</strong></h4>
+      <p>{{ form.dag() }} {{ form.dag.label }}</p>
+      <p>{{ form.nacht() }} {{ form.nacht.label }}</p>
+      <p>{{ form.saba() }} {{ form.saba.label }}</p>
+      <p>{{ form.beperking() }} {{ form.beperking.label }}</p>
 
-    <p>{{ form.submit() }}</p>
-  </form>
-</div>
+      <p>
+        {{ form.hospital() }} {{ form.hospital.label }}
+      </p>
+
+      <p>
+        {{ form.prednison() }} {{ form.prednison.label }}
+      </p>
+
+      <p>
+        {{ form.exacerbaties.label }}<br>
+        {{ form.exacerbaties() }}
+      </p>
+
+      <p>{{ form.submit() }}</p>
+    </form>
+  </div>
+</section>
+
+{% else %}
+
+<h1>Log eerst in!</h1>
+
+{% endif %}
+
 {% endblock %}

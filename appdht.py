@@ -3,6 +3,9 @@ import ssl
 import sqlite3
 import time
 
+
+x = input("wordt dit gerund?")
+
 app = Flask(__name__)
 API_KEY = "DitIsEchtEenGoedeAPIKey"
 
