@@ -34,8 +34,6 @@ def livedata_grafiek(column, title, y_label):
     return fig.to_json()
 
 
-from flask_login import login_required
-
 @api.route("/latest")
 @login_required
 def api_latest():

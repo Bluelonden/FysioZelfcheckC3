@@ -195,15 +195,11 @@ def handmatig():
 @app.route('/update', methods=['POST', 'GET'])
 @login_required
 def update():
-    print('route hit')
-
     form = WaardesForm(obj=current_user)
     waardes = current_user.waardes
-    user = current_user
 
     if request.method == 'POST' and form.validate_on_submit():
-
-        user.leeftijd = form.leeftijd.data
+        waardes.leeftijd = form.leeftijd.data
         waardes.diagnose = form.diagnose.data
         waardes.rookt = form.rookt.data
         waardes.dag = form.dag.data
@@ -249,4 +245,4 @@ def sensordata():
     return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5000,debug=True)
+    app.run(host="0.0.0.0", port=5000)
