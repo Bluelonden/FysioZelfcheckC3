@@ -4,9 +4,8 @@
 results
 {% endblock %}
 
-<!-- SCRIPT -->
 {% block script %}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -15,89 +14,85 @@ results
   <br>
 
   <div class="status-row">
-    <div class="status-item">
-      <span>PM2.5</span>
+    <div class="status-item"><span>PM2.5</span>
       <div id="pm25_icon" class="status-icon"></div>
     </div>
-
-    <div class="status-item">
-      <span>PM10</span>
+    <div class="status-item"><span>PM10</span>
       <div id="pm10_icon" class="status-icon"></div>
     </div>
-
-    <div class="status-item">
-      <span>PM1</span>
+    <div class="status-item"><span>PM1</span>
       <div id="pm1_icon" class="status-icon"></div>
     </div>
-
-    <div class="status-item">
-      <span>CO₂</span>
+    <div class="status-item"><span>CO₂</span>
       <div id="co2_icon" class="status-icon"></div>
     </div>
-
-    <div class="status-item">
-      <span>TVOC</span>
+    <div class="status-item"><span>TVOC</span>
       <div id="tvoc_icon" class="status-icon"></div>
     </div>
-
-    <div class="status-item">
-      <span>AQI</span>
+    <div class="status-item"><span>AQI</span>
       <div id="aqi_icon" class="status-icon"></div>
     </div>
   </div>
 
   <br>
 
-  <!-- Lege grafiekegrids die gevult worden door JS -->
   <div class="graph-grid">
-    <div id="pm25_graph" class="graph-item"></div>
-    <div id="pm10_graph" class="graph-item"></div>
-    <div id="pm1_graph" class="graph-item"></div>
-    <div id="aqi_graph" class="graph-item"></div>
-    <div id="co2_graph" class="graph-item"></div>
-    <div id="tvoc_graph" class="graph-item"></div>
+    <canvas id="pm25_graph" class="graph-item"></canvas>
+    <canvas id="pm10_graph" class="graph-item"></canvas>
+    <canvas id="pm1_graph" class="graph-item"></canvas>
+    <canvas id="aqi_graph" class="graph-item"></canvas>
+    <canvas id="co2_graph" class="graph-item"></canvas>
+    <canvas id="tvoc_graph" class="graph-item"></canvas>
   </div>
 </div>
 
-<div class="custom-containerv3">
-  <h2>Mijn drempelwaardes</h2>
-  <br>
-
-  {% if score is not none %}
-  <p><strong>Totaalscore:</strong> {{ score }} / 8</p>
-  <p><strong>Niveau:</strong> {{ niveau }}</p>
-
-  <h4>Op basis van uw antwoorden hebben wij het volgende profiel gegenereerd:</h4>
-  <br>
-
-  <ul>
-    {% for column, ranges in drempels.items() %}
-    <li><strong>{{ column }}</strong>
-      <ul>
-        <li>Groen: {{ ranges['groen'][0] }} – {{ ranges['groen'][1] }}</li>
-        <li>Oranje: {{ ranges['oranje'][0] }} – {{ ranges['oranje'][1] }}</li>
-        <li>Rood: ≥ {{ ranges['rood'][0] }}</li>
-      </ul>
-    </li>
-    {% endfor %}
-  </ul>
-
-  <a href="{{ url_for('vragenlijst') }}" class="btn">Vragenlijst invullen</a>
-  <br>
-  <a href="" class="btn">Maak zelf een configuratie</a>
-
-  {% else %}
-  <a href="{{ url_for('vragenlijst') }}" class="btn">Vragenlijst invullen</a>
-  <br>
-  <a href="" class="btn">Maak zelf een configuratie</a>
-  {% endif %}
-</div>
+<!-- AI gegenereerde JS ik kan dat zelf nog niet maken-->
 
 <script>
-  function updateGraph(id, endpoint) {
+  const charts = {};
+
+  function createChart(canvasId, label, color) {
+    const ctx = document.getElementById(canvasId).getContext("2d");
+    charts[canvasId] = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [{
+          label: label,
+          data: [],
+          borderColor: color,
+          backgroundColor: color + "33",
+          tension: 0.2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,  // Om de grootte van de grafiek aan te kunnen passen
+        animation: false,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+
+    });
+  }
+
+  createChart("pm25_graph", "PM2.5 (µg/m³)", "rgb(255, 99, 132)");
+  createChart("pm10_graph", "PM10 (µg/m³)", "rgb(255, 159, 64)");
+  createChart("pm1_graph", "PM1 (µg/m³)", "rgb(75, 192, 192)");
+  createChart("aqi_graph", "AQI", "rgb(153, 102, 255)");
+  createChart("co2_graph", "CO₂ (ppm)", "rgb(54, 162, 235)");
+  createChart("tvoc_graph", "TVOC (ppb)", "rgb(255, 205, 86)");
+
+  function updateGraph(canvasId, endpoint) {
     fetch(endpoint)
       .then(r => r.json())
-      .then(fig => Plotly.react(id, fig.data, fig.layout, { displayModeBar: false, responsive: true }));
+      .then(json => {
+        const chart = charts[canvasId];
+        chart.data.labels = json.labels;
+        chart.data.datasets[0].data = json.values;
+        chart.update();
+      });
   }
 
   function updateAllGraphs() {
@@ -119,7 +114,6 @@ results
       .then(r => r.json())
       .then(data => {
         const s = data.status;
-
         document.getElementById("pm25_icon").style.backgroundColor = s.pm25;
         document.getElementById("pm10_icon").style.backgroundColor = s.pm10;
         document.getElementById("pm1_icon").style.backgroundColor = s.pm1;
@@ -132,4 +126,5 @@ results
   updateStatusIcons();
   setInterval(updateStatusIcons, 5000);
 </script>
+
 {% endblock %}

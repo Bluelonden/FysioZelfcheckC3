@@ -262,24 +262,6 @@ li {
 }
 
 /* GRAPH STYLING */
-.graph-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    min-width: 100%;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.graph-item {
-    min-width: 100%;
-    width: 100%;
-    height: 350px;
-    padding: 10px;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-}
 
 .status-row {
     display: flex;

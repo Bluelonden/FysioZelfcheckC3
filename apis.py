@@ -1,37 +1,29 @@
 
 from flask import Blueprint, jsonify
 from flask_login import current_user, login_required
-from plotly.graph_objs import Figure, Scatter
 from models import Metingen
 from statuscalc import bereken_status
 from datetime import datetime, timedelta
 
 api = Blueprint("api", __name__)
 
-def livedata_grafiek(column, title, y_label):
-
-    laatste_uur = datetime.now() - timedelta(hours=1)
-    metingen = (Metingen.query.filter(Metingen.timestamp >= laatste_uur).order_by(Metingen.timestamp.asc()).all())
-
-    x = [m.timestamp for m in metingen]
-    y = [getattr(m, column) for m in metingen]
-
-    fig = Figure()
-
-    fig.add_trace(Scatter(
-        x=x,
-        y=y,
-        mode="lines+markers"
-    ))
-
-    fig.update_layout(
-        title=title,
-        xaxis_title="Tijd",
-        yaxis_title=y_label,
-        showlegend= False
+def livedata_grafiek(column):
+    laatste_uur = datetime.now() - timedelta(minutes =1 )
+    metingen = (
+        Metingen.query
+        .filter(Metingen.timestamp >= laatste_uur)
+        .order_by(Metingen.timestamp.asc())
+        .all()
     )
 
-    return fig.to_json()
+    labels = [m.timestamp.strftime("%H:%M") for m in metingen]
+    values = [getattr(m, column) for m in metingen]
+
+    return jsonify({
+        "labels": labels,
+        "values": values
+    })
+
 
 
 @api.route("/latest")
@@ -75,24 +67,24 @@ def api_latest():
 
 @api.route("/pm25_fig")
 def pm25_fig():
-    return livedata_grafiek("pm25", "PM2.5", "µg/m³")
+    return livedata_grafiek("pm25")
 
 @api.route("/pm10_fig")
 def pm10_fig():
-    return livedata_grafiek("pm10", "PM10", "µg/m³")
+    return livedata_grafiek("pm10")
 
 @api.route("/pm1_fig")
 def pm1_fig():
-    return livedata_grafiek("pm1", "PM1", "µg/m³")
+    return livedata_grafiek("pm1")
 
 @api.route("/aqi_fig")
 def aqi_fig():
-    return livedata_grafiek("aqi", "AQI", "Index")
+    return livedata_grafiek("aqi")
 
 @api.route("/co2_fig")
 def co2_fig():
-    return livedata_grafiek("co2", "CO₂", "ppm")
+    return livedata_grafiek("co2")
 
 @api.route("/tvoc_fig")
 def tvoc_fig():
-    return livedata_grafiek("tvoc", "TVOC", "ppb")
+    return livedata_grafiek("tvoc")
