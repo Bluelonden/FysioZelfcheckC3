@@ -162,3 +162,34 @@
   border-color: #f5a3a3;
   color: #7a1c1c;
 }
+
+/* Layout voor de twee kolommen: links kaarten, rechts advies */
+.statuscards-wrapper {
+  display: grid;
+   grid-template-columns: minmax(500px, max-content) 700px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Container met de status-kaarten */
+.statuscards-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* Individuele status-kaarten */
+.status-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+/* Adviesblok rechts */
+.advice {
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
