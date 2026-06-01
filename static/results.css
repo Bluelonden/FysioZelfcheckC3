@@ -1,0 +1,164 @@
+/* Hetzelfde als de dokter pagina */
+
+/* Layout container (alleen als je dashboard-structuur gebruikt) */
+.dashboard-container {
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    align-items: flex-start;
+}
+
+/* Hoofdcontent */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Header card */
+.header.card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.header h1 {
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-size-xl);
+    text-align: left;
+    color: var(--text-main-color);
+}
+
+/* Status icons */
+.status-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+}
+
+.status-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: grey;
+  margin-top: 5px;
+  border: 2px solid #222;
+}
+
+/* Grafieken grid */
+.metrics-grid {
+    padding: 45px ;
+    padding-left: 70px;
+    padding-right: 70px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+
+/* Grafiek cards */
+.metric-card {
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.metric-card h3 {
+    margin: 0 0 10px 0;
+    font-size: var(--font-size-m);
+    color: #555;
+    font-weight: var(--font-weight-m);
+}
+
+
+
+/* Hier beginnen de tweaks van Tycho */
+
+/* Zorg dat grafiek-elementen (canvas/svg/iframe) de kaart vullen */
+.metric-card canvas,
+.metric-card svg,
+.metric-card iframe {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+
+.status-grid {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 0;
+  box-sizing: border-box;
+  overflow-x: auto;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.status-card {
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  min-width: 220px;
+  flex: 0 0 auto;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.status-card h3 { margin: 0 0 6px 0; 
+    font-size: 0.95rem; 
+    font-weight: 600; 
+    color: inherit; }
+
+.status-card .score-value { 
+    margin: 0; font-size: 1.2rem; 
+    font-weight: 700; 
+    color: inherit; }
+
+.status-card[data-status="goed"] {
+  background: #dff5e1;
+  border-color: #9ed8a6;
+  color: #1b5e20;
+}
+
+.status-card[data-status="matig"] {
+  background: #fff4cc;
+  border-color: #ffe08a;
+  color: #7a5c00;
+}
+
+.status-card[data-status="slecht"] {
+  background: #fde0e0;
+  border-color: #f5a3a3;
+  color: #7a1c1c;
+}
