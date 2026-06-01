@@ -166,7 +166,7 @@
 /* Layout voor de twee kolommen: links kaarten, rechts advies */
 .statuscards-wrapper {
   display: grid;
-   grid-template-columns: minmax(500px, max-content) 700px;
+  grid-template-columns: 40% 40%;
   gap: 20px;
   align-items: start;
 }
