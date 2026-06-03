@@ -24,15 +24,23 @@ class User(db.Model, UserMixin):
     pw_hash: Map[str] = mc(String(256), nullable=False)
     role: Map[str] = mc(String(20), nullable=False)
 
-    # optionele waardes
+    # relationship setup
     waardes: Map[Optional['Waardes']] = rel(back_populates='user', uselist=False)
+    triggers: Map[Optional['Triggers']] = rel(back_populates='user', uselist=False)
 
-    # deze methode wordt gebruikt tijdens registratie
-    def set_password(self, password):
+    def __init__(self, username:str,
+                 email:str, password:str,
+                 role:str):
+        """maak nieuwe user aan met gehasht password."""
+
+        self.username = username
+        self.email = email
         self.pw_hash = gen_hash(password)
+        self.role = role
 
     # deze methode wordt gebruikt tijdens login
-    def check_password(self, password):
+    def check_password(self, password:str) -> bool:
+        """controle van ingevoerd wachtwoord."""
         return check_hash(self.pw_hash, password)
 
 class Waardes(db.Model):
@@ -44,6 +52,7 @@ class Waardes(db.Model):
    
     # str waardes
     diagnose: Map[str] = mc(String(8), nullable=False)
+    level: Map[str] = mc(String(50), nullable=False)
     
     # bool waardes
     rookt: Map[bool] = mc(Boolean, nullable=False)
@@ -53,6 +62,7 @@ class Waardes(db.Model):
     beperking: Map[bool] = mc(Boolean, nullable=False)
     hospital: Map[bool] = mc(Boolean, nullable=False)
     prednison: Map[bool] = mc(Boolean, nullable=False)
+
     exacerbaties: Map[int] = mc(Integer(), nullable=False)
     
     # optionele waardes
@@ -61,8 +71,32 @@ class Waardes(db.Model):
 
     # foreign key setup
     user_id: Map[int] = mc(FK('user.id'), unique=True, nullable=False)
+
+    # relationship setup
     user: Map['User'] = rel(back_populates='waardes')
     
+    def __init__(self,
+                 leeftijd:int, diagnose:str,
+                 level:str, rookt:bool, dag:bool,
+                 nacht:bool, saba:bool,
+                 beperking:bool, hospital:bool,
+                 prednison:bool, exacerbaties:int,
+                 user_id:int):
+            
+            self.leeftijd = leeftijd
+            self.diagnose = diagnose
+            self.level = level
+            self.rookt = rookt
+            self.dag = dag
+            self.nacht = nacht
+            self.saba = saba
+            self.beperking = beperking
+            self.hospital = hospital
+            self.prednison = prednison
+            self.exacerbaties = exacerbaties
+            self.user_id = user_id
+
+
     def bereken_score(self):
         score = 0
         # Leeftijd 65+
@@ -74,7 +108,7 @@ class Waardes(db.Model):
         # Roken
         if self.rookt:
             score += 1
-        # Symptoomvragen (elke True/Ja = 1)
+        # Symptoomvragen (elke True/Ja = +1)
         symptooms = [self.dag, self.nacht, self.saba, self.beperking]
         for s in symptooms:
             if s:
@@ -106,6 +140,43 @@ class Waardes(db.Model):
         else:
             self.niveau = "Hoog"
 
+
+class Triggers(db.Model):
+    __tablename__ = 'triggers'
+
+    # int waardes
+    id: Map[int] = mc(primary_key=True)
+
+    # str waardes
+    allergens: Map[str] = mc(String(10), nullable=False)
+    irritants: Map[str] = mc(String(10), nullable=False)
+    infection: Map[str] = mc(String(10), nullable=False)
+    exercise: Map[str] = mc(String(10), nullable=False)
+    weather: Map[str] = mc(String(10), nullable=False)
+    pollution: Map[str] = mc(String(10), nullable=False)
+
+    # foreign key setup
+    user_id: Map[int] = mc(FK('user.id'), unique=True, nullable=False)
+
+    # relationship setup
+    user: Map['User'] = rel(back_populates='triggers')
+
+    def __init__(self,
+                 allergens:str, irritants:str,
+                 infection:str, exercise:str,
+                 weather:str, pollution:str,
+                 user_id:int):
+
+        self.allergens = allergens
+        self.irritants = irritants
+        self.infection = infection
+        self.exercise = exercise
+        self.weather = weather
+        self.pollution = pollution
+        self.user_id = user_id
+
+
+
 def exists():
     engine = db.engine
     inspector = inspect(engine)
@@ -129,6 +200,24 @@ class Metingen(db.Model):
     user_id: Map[int] = mc(FK("user.id"), nullable=True)
     user: Map["User"] = rel(backref="measurements")
 
+""" class Diagnose(db.Model):
+    __tablename__ = "diagnose"
+
+    id: Map[int] = mc(primary_key=True)
+
+    diagnose: Map[str] = mc(String(10), nullable=False)
+
+    level: Map['Level'] = rel(back_populates='diagnose')
+
+class Level(db.Model):
+    __tablename__ = "levels"
+
+    id: Map[int] = mc(primary_key=True)
+
+    level: Map[str] = mc(String(20), nullable=False)
+    diagnose_id: Map[int] = mc(FK('diagnose.id'), nullable=False)
+
+    diagnose: Map['Diagnose'] = rel(back_populates='level') """
 
 @login_manager.user_loader
 def load_user(user_id):

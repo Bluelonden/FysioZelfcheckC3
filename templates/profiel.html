@@ -5,76 +5,91 @@
 Profiel
 {% endblock %}
 
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
+{% endblock %}
+
 {% block content %}
 
 {% if current_user.is_authenticated %}
 <!-- BASE DASHBOARD -->
-<section class="container">
+<div class="dashboard-container">
 
-    <div class="heading">
-        <h1>Dashboard</h1>
-        <h2>Welkom, {{ current_user.username }}! Ingelogd als {{ current_user.role }}</h2>
-    </div>
+    <main class="main-content">
 
-    <!-- DISPLAY WAARDES -->
-    <div class="waardes-container">
-        <h2>Mijn drempelwaardes</h2>
-        <br>
+        <header class="header card">
+            <h1>Dashboard</h1>
+        </header>
 
-        {% if score %}
-        <p style="text-align: center;">
-            Wilt u de opgegeven gevoelligheden aanpassen?
-            <br><br>
-            <a class="btn btn-primary" href="{{ url_for('update')}}">Klik hier</a>
-        </p>
+        <!-- DISPLAY WAARDES -->
+        <div class="content-wrapper">
+            <div class="card p-3 item1">
+                {% if score is not none and niveau and waardes %}
 
-        {% endif %}
-
-        {% if score is not none and niveau and drempels %}
-        <br>
-        <br>
-        <p><strong>Totaalscore:</strong> {{ score }} / 8</p>
-        <p><strong>Niveau:</strong> {{ niveau }}</p>
-
-        <h4>Op basis van uw antwoorden hebben wij het volgende profiel gegenereerd:</h4>
-        <br>
-
-        <ul>
-            {% for column, ranges in drempels.items() %}
-            <li><strong>{{ column }}</strong>
+                <h2>Mijn Gegevens</h2>
+                <p><strong>Score:</strong> {{ score }} / 8</p>
+                <p><strong>Drempelwaarde niveau:</strong> {{ niveau }}</p>
                 <ul>
-                    <li>Groen: {{ ranges['groen'][0] }} – {{ ranges['groen'][1] }}</li>
-                    <li>Oranje: {{ ranges['oranje'][0] }} – {{ ranges['oranje'][1] }}</li>
-                    <li>Rood: ≥ {{ ranges['rood'][0] }}</li>
+                    {% for name, value in waardes.items() %}
+                    <li><strong>{{ name|capitalize }}:</strong> {{ value|capitalize }}</li>
+                    {% endfor %}
                 </ul>
-            </li>
-            {% endfor %}
-        </ul>
+            </div>
 
-        {% else %}
-        <div>
-            <p style="text-align: center;">
-                Om de sensoren af te kunnen stellen op uw situatie hebben we een aantal gegevens nodig.
-                <br>
-                <br>
-                Als u weet waar u gevoellig voor bent &#40;bijvoorbeeld tabaksrook, huisstof, smog, pollen, etc&#41;
-                kunt u dit hier handmatig invullen.
-                <br>
-                <br>
-                <a class="btn btn-primary" href="{{ url_for('handmatig') }}">Handmatig</a>
-                <br>
-                <br>
-                Als u twijfelt of nog niet weet waar u gevoellig voor bent kunt u ook een automatisch profiel aanmaken
-                door deze vragenlijst in te vullen.
-                <br>
-                <br>
-                <a class="btn btn-primary" href="{{ url_for('vragenlijst') }}">Vragenlijst</a>
-            </p>
+
+            {% if score %}
+            <div class="card p-3">
+                <h5>Wilt u de vragenlijst opnieuw invullen?</h5>
+                <div>
+                    <a class="btn btn-primary" href="{{ url_for('update_vragen')}}">Klik hier</a>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if triggers %}
+            <div class="card p-3">
+                <h5>Wilt u triggers opnieuw instellen?</h5>
+                <div>
+                    <a class="btn btn-primary" href="{{ url_for('update_triggers')}}">Klik hier</a>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <h2>Mijn Triggers</h2>
+                <ul style="align-self: center;">
+                    {% for name, value in triggers.items() %}
+                    <li><strong>{{ name|capitalize }}:</strong> {{ value|capitalize }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-    </div>
+    </main>
+</div>
 
-</section>
+{% else %}
+<div>
+    <h2>Geen gegevens gevonden</h2>
+    <p>
+        Om de sensoren af te kunnen stellen op uw situatie hebben we een aantal gegevens nodig.
+        <br>
+        <br>
+        Als u weet waar u gevoellig voor bent &#40;bijvoorbeeld tabaksrook, huisstof, smog, pollen, etc&#41;
+        kunt u dit hier handmatig invullen.
+        <br>
+        <br>
+        <a class="btn btn-primary" href="{{ url_for('handmatig') }}">Handmatig</a>
+        <br>
+        <br>
+        Als u twijfelt of nog niet weet waar u gevoellig voor bent kunt u ook een automatisch profiel
+        aanmaken
+        door deze vragenlijst in te vullen.
+        <br>
+        <br>
+        <a class="btn btn-primary" href="{{ url_for('vragenlijst') }}">Vragenlijst</a>
+    </p>
+</div>
+{% endif %}
 
 {% else %}
 

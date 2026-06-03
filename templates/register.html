@@ -9,7 +9,7 @@ Registreren
 <h1>Dit is de registratie pagina</h1>
 <div class="container">
     <div class="form-box" id="register-form">
-        <form method="POST">
+        <form method="POST" action="{{ url_for('register') }}">
             {{form.hidden_tag()}}
 
             <h2>Registreren</h2>
