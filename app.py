@@ -124,19 +124,28 @@ def profiel():
         # context["drempels"] = DREMPELWAARDES[user.waardes.niveau]
         context["niveau"] = waardes.niveau
         context["score"] = waardes.score
-        context["waardes"] = {
+        d = {
             "leeftijd": waardes.leeftijd,
             "diagnose": waardes.diagnose,
             "ernst": waardes.level,
             "rookt": waardes.rookt,
             "symptomen overdag": waardes.dag,
             "symptomen 's nachts": waardes.nacht,
-            "noodinhalator": waardes.saba,
+            "noodinhalator >2/week": waardes.saba,
             "activiteit beperking": waardes.beperking,
             "ziekenhuisopname afgelopen 12 maanden": waardes.hospital,
             "prednison gebruik afgelopen 12 maanden": waardes.prednison,
             "exacerbaties in afgelopen 12 maanden": waardes.exacerbaties,
         }
+    
+        for k,v in d.items():
+            if v == True:
+                d[k] = "Ja"
+            if v == False:
+                d[k] = "Nee"
+        
+        context["waardes"] = d
+
 
     if triggers:
         context["triggers"] = {

@@ -201,7 +201,7 @@
 /* Profiel styling */
 .content-wrapper {
   display: grid;
-  grid-template-columns: 60% 40%;
+  grid-template-columns: 65% 35%;
   gap: 1rem;
   justify-content: center;
   align-items: flex-start;
