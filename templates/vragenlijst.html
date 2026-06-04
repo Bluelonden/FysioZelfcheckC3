@@ -2,7 +2,7 @@
 
 <!-- TITLE -->
 {% block title %}
-<title>Vragenlijst</title>
+Vragenlijst
 {% endblock %}
 
 <!-- FORM -->
@@ -28,6 +28,11 @@
       </p>
 
       <p>
+        {{ form.level.label }}<br>
+        {{ form.level() }}
+      </p>
+
+      <p>
         {{ form.rookt.label }}{{ form.rookt() }}
       </p>
 
@@ -50,7 +55,7 @@
         {{ form.exacerbaties() }}
       </p>
 
-      <p>{{ form.submit() }}</p>
+      <p>{{ form.submit(class="btn btn-primary") }}</p>
     </form>
   </div>
 </section>

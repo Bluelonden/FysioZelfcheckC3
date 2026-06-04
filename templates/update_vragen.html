@@ -16,7 +16,7 @@ Update
     </div>
 
     <div class="vragenlijst-form">
-        <form method="POST" action="{{ url_for('update') }}">
+        <form method="POST" action="{{ url_for('update_vragen') }}">
             <h4><strong>Algemene vragen</strong></h4>
             {{ form.hidden_tag() }}
 
@@ -28,6 +28,11 @@ Update
             <p>
                 {{ form.diagnose.label }}<br>
                 {{ form.diagnose() }}
+            </p>
+
+            <p>
+                {{ form.level.label }}<br>
+                {{ form.level() }}
             </p>
 
             <p>

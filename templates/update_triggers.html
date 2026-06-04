@@ -25,17 +25,23 @@ Handmatig
         <div class="content-wrapper">
             <div style="text-align: center;" class="card p-3 item1">
                 <p>Aan de hand van onderstaande overzichten kunt u inschatten hoe erg u reageert op verschillende
-                    triggers</p>
-                <h4>Trigger nivueas met voorbeelden</h4>
-                <img src="static/img/trigger-levels.png" alt="voorbeeld van trigger niveaus">
-                <h4>Symptomen per trigger en astma niveau</h4>
-                <img src="static/img/astma-trigger.png" alt="overzicht van verhouding triggger en astma niveau">
-                <h4>Symptomen per trigger niveau en COPD klasse</h4>
-                <img src="static/img/COPD-trigger.png" alt="overzicht van verhouding triggger en COPD niveau">
+                    triggers.</p>
+                <h4>Trigger niveaus met voorbeelden</h4>
+                <img src="{{ url_for('static', filename='img/trigger-levels.png') }}"
+                    alt="voorbeeld van trigger niveaus">
+                <h4>Symptomen per astma niveau</h4>
+                <img src="{{ url_for('static', filename='img/astma.png') }}"
+                    alt="overzicht van symptomen per astma niveau">
+                <h4>Symptomen per COPD klasse</h4>
+                <img src="{{ url_for('static', filename='img/COPD.png') }}"
+                    alt="overzicht van symptomen per COPD niveau">
+                <h4>Inschatting gevoelligheid</h4>
+                <img src="{{ url_for('static', filename='img/gevoelligheid.png') }}"
+                    alt="overzicht inschatting gevoelligheid voor trigger">
             </div>
 
             <div class="card p-3">
-                <form method="POST" action="{{ url_for('handmatig') }}">
+                <form method="POST" action="{{ url_for('update_triggers') }}">
                     <h4><strong>Hoeveel last heeft u van de volgende triggers?</strong></h4>
                     {{ form.hidden_tag() }}
 

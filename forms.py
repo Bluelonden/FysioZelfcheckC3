@@ -2,7 +2,9 @@ from flask_wtf import FlaskForm as FF
 from wtforms import (StringField as StrF, PasswordField as PassF, SubmitField as SubF,
                      EmailField as MailF, SelectField as SelF, IntegerField as IntF,
                      RadioField as RadF, BooleanField as BoolF)
-from wtforms.validators import DataRequired, Length, NumberRange
+from wtforms.validators import DataRequired, Length, NumberRange, ValidationError
+from wtforms_sqlalchemy.fields import QuerySelectField as QSF
+from models import db, User
 
 
 class LoginForm(FF):
@@ -25,14 +27,31 @@ class RegisterForm(FF):
                 choices=[('patient', 'Patient'), ('arts', 'Arts')],
                 validators=[DataRequired()])
     submit = SubF('Registreren')
+    
+    def validate_email(self, field):
+        """controleert of email al in gebruik is"""
+        # zoek op ingevuld email in db en geef error als gevonden
+        if db.session.execute(db.select(User).filter_by(email=field.data)).scalar_one_or_none():
+            raise ValidationError('Dit e-mailadres is al in gebruik')
+    
+    def validate_username(self, field):
+        """controleert of email al in gebruik is"""
+        # zoek op ingevuld email in db en geef error als gevonden
+        if db.session.execute(db.select(User).filter_by(username=field.data)).scalar_one_or_none():
+            raise ValidationError('Deze username is al in gebruik')
 
 class WaardesForm(FF):
     leeftijd = IntF("Wat is uw leeftijd?",
                     validators=[DataRequired(), 
                                 NumberRange(min=0, max=120)])
     diagnose = SelF("Wat is uw Diagnose?",
-                    choices=[("astma","Astma"),("copd","COPD"),
-                             ("beide","Beide"),("onbekend","Onbekend")])
+                    choices=[("astma","Astma"),("copd","COPD")]
+                    )
+    level = SelF("Wat is de ernst van uw diagnose?",
+                 choices=[('intermittent', "Astma - intermittent"),
+                          ("mild", "Astma - mild"), ("matig","Astma - matig"),
+                          ("ernstig", "Astma - ernstig"), ("g1","GOLD 1"),
+                          ("g2", "GOLD 2"), ("g3", "GOLD 3"), ("g4", "GOLD 4")])
     rookt = BoolF("Rookt u?")
     dag = BoolF("Ik heb vaker dan 2x per week dagelijkse klachten")
     nacht = BoolF("Ik word regelmatig s'nachts wakker met ademhalingsproblemen")
@@ -48,16 +67,36 @@ class WaardesForm(FF):
 
 
 class HandmatigForm(FF):
-    pm1 = SelF('uitlaatgassen, chemische/industrieële dampen, sigarettenrook',
-               validators=[DataRequired()],
-               choices=[('veel', 'Veel'), ('matig', 'Matig'),
-                        ('weinig', 'Weinig')])
-    pm25 = SelF('schimmelsporen, keukenrook',
+    allergens = SelF('Allergenen: huisstofmijt, pollen, schimmel, huidschilfers van dieren',
+                      validators=[DataRequired()],
+                      choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+                               ('matig', 'Matig'), ('veel', 'Veel')
+                            ]
+                    )
+    irritants = SelF('Irriterende stoffen: rook (tabak/vuur), sterke geuren, chemische dampen',
             validators=[DataRequired()],
-            choices=[('veel', 'Veel'), ('matig', 'Matig'),
-                    ('weinig', 'Weinig')])
-    pm10 = SelF('huisstof, zand, stuifmeel, roet, vuurrook',
+            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+                     ('matig', 'Matig'), ('veel', 'Veel')
+                    ]
+                )
+    infection = SelF('Luchtweginfecties: griep, verkoudheid',
             validators=[DataRequired()],
-            choices=[('veel', 'Veel'), ('matig', 'Matig'),
-                    ('weinig', 'Weinig')])
+            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+                     ('matig', 'Matig'), ('veel', 'Veel')])
+    
+    exercise = SelF('Sporten',
+            validators=[DataRequired()],
+            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+                     ('matig', 'Matig'), ('veel', 'Veel')])
+    
+    weather = SelF('Weer: kou, hitte, hoge/lage luchtvochtigheid, harde wind',
+            validators=[DataRequired()],
+            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+                     ('matig', 'Matig'), ('veel', 'Veel')])
+
+    pollution = SelF('Luchtvervuiling: smog, uitlaatgassen, (fijn)stof',
+            validators=[DataRequired()],
+            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+                     ('matig', 'Matig'), ('veel', 'Veel')])
+    
     submit = SubF('Opslaan')
