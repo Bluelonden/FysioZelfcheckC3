@@ -1,0 +1,528 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    margin: 0;
+}
+
+:root {
+    /* colors */
+    --text-main-color: rgb(40, 40, 140);
+    --text-second-color: white;
+    --bg-main-color: rgb(40, 40, 140);
+    --bg-second-color: lightskyblue;
+    --bg-third-color: whitesmoke;
+
+
+
+    /* font size */
+    --font-size-s: 0.9rem;
+    --font-size-m: 1rem;
+    --font-size-l: 1.5rem;
+    --font-size-xl: 2rem;
+    --font-size-xxl: 2.5rem;
+
+    /* font weight */
+    --font-weight-n: 400;
+    --font-weight-m: 500;
+    --font-weight-sb: 600;
+    --font-weight-b: 700;
+
+    /* border radius */
+    --border-radius-s: 8px;
+    --border-radius-m: 30px;
+    --border-radius-c: 50%
+}
+
+h1 {
+    padding-top: 30px;
+    padding-bottom: 20px;
+    text-align: center;
+    font-size: var(--font-size-xxl);
+}
+
+h2 {
+    text-align: center;
+    font-size: var(--font-size-l);
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, var(--bg-second-color), lightgrey);
+    color: var(--text-main-color);
+    margin: 0;
+}
+
+/* NAVBAR */
+.custom-nav {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 15px;
+    padding-bottom: 0px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-main-color);
+}
+
+.custom-nav ul {
+    list-style: none;
+}
+
+.custom-nav a {
+    text-decoration: none;
+    color: var(--text-second-color);
+}
+
+.custom-nav .nav-menu {
+    display: flex;
+    gap: 10px;
+}
+
+.custom-nav .nav-menu a {
+    padding: 15px;
+}
+
+.custom-nav .nav-menu a:hover {
+    background: var(--bg-second-color);
+}
+
+.custom-nav .nav-menu .nav-link {
+    color: var(--text-second-color);
+    font-size: var(--font-size-m);
+}
+
+/* FORM */
+.custom-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-c);
+    margin-top: 1rem;
+}
+
+.form-box {
+    width: 100%;
+    max-width: 450px;
+    padding: 30px;
+    background: whitesmoke;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-box.active {
+    display: block;
+}
+
+.form-box h2 {
+    font-size: var(--font-size-xl);
+    text-align: center;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 12px;
+    background: #eee;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    background: var(--bg-main-color);
+    color: var(--text-second-color);
+    font-weight: 500;
+    margin-bottom: 20px;
+    transition: 0.5s;
+}
+
+.form-button:hover {
+    background: var(--bg-second-color);
+}
+
+.form-box p {
+    font-size: 14.5px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.form-box p a {
+    color: var(--main-color);
+}
+
+.custom-containerv2 {
+    width: 80%;
+    max-width: 1200px;
+    margin: 50px auto;
+    display: flex;
+    gap: 40px;
+
+}
+
+.waardes-container {
+    margin: 20px auto;
+    padding: 20px;
+    background: #f5f8ff;
+    border-left: 6px solid #88b0f5;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.custom-containerv3 {
+    width: 80%;
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #f5f8ff;
+    border-left: 6px solid #88b0f5;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* DASHBOARD */
+.container {
+    background: #fdfdfd;
+    border-radius: 2rem;
+    margin: 1rem;
+    padding: 0.5rem;
+}
+
+.container .heading p {
+    text-align: center;
+}
+
+.vragenlijst-form {
+    margin-left: 30px;
+}
+
+.vragenlijst-form ul,
+li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* HOMEPAGE */
+.box1 {
+    background: rgb(136, 176, 245);
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.box1,
+.box2 {
+    flex: 1;
+    ;
+}
+
+.lung {
+    width: 100%;
+}
+
+.logo {
+    width: 60%;
+    margin: 0;
+    margin-top: 30px;
+}
+
+.quote {
+    border-left: 4px solid #88b0f5;
+    padding-left: 140px;
+    margin: 30px 0;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: #333;
+}
+
+
+.custom-containerv3 h3 {
+    margin-top: 0;
+    font-size: 1.4rem;
+}
+
+.custom-containerv3 p {
+    margin-bottom: 15px;
+}
+
+.custom-containerv2 {
+    justify-content: flex-start;
+}
+
+.graph-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    min-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.graph-item {
+    min-width: 100%;
+    width: 100%;
+    height: 350px;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.status-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+}
+
+.status-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: grey;
+    margin-top: 5px;
+    border: 2px solid #222;
+}
+
+:root {
+    --bg-color: #f4f7fa;
+    --card-bg: #ffffff;
+    --text-main: #2d3748;
+    --text-muted: #718096;
+    --primary-color: #4299e1;
+    --danger-color: #e53e3e;
+    --radius: 20px; 
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+}
+
+/* ==========================================================================
+   LONGARTS DASHBOARD AANVULLINGEN
+   ========================================================================== */
+
+.dashboard-container {
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    align-items: flex-start;
+}
+
+/* Sidebar styling */
+.sidebar {
+    flex: 0 0 320px;
+    background: var(--bg-third-color);
+    border-radius: var(--border-radius-s);
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.patient-list-header h3 {
+    color: var(--text-main-color);
+    font-size: var(--font-size-l);
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--bg-second-color);
+    padding-bottom: 10px;
+}
+
+.patient-navigation {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.patient-navigation .list-group-item {
+    border-radius: var(--border-radius-s) !important;
+    margin-bottom: 5px;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: background-color 0.2s;
+}
+
+.patient-navigation .list-group-item.active {
+    background-color: var(--bg-main-color) !important;
+    border-color: var(--bg-main-color) !important;
+    color: var(--text-second-color) !important;
+}
+
+/* Patiënt profiel binnen de sidebar */
+.patient-profile {
+    text-align: center;
+    padding-top: 15px;
+}
+
+.patient-profile h2 {
+    font-size: var(--font-size-l);
+    color: var(--text-main-color);
+    margin: 10px 0 5px 0;
+}
+
+.patient-profile p {
+    font-size: var(--font-size-s);
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* Hoofdinhoud layout */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.header.card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.header h1 {
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-size-xl);
+    text-align: left;
+    color: var(--text-main-color);
+}
+
+/* Grid voor statistieken */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.metric-card {
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.metric-card h3 {
+    margin: 0 0 10px 0;
+    font-size: var(--font-size-m);
+    color: #555;
+    font-weight: var(--font-weight-m);
+}
+
+.metric-card .value {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-b);
+    color: var(--text-main-color);
+}
+
+.metric-card .unit {
+    font-size: var(--font-size-m);
+    font-weight: var(--font-weight-n);
+    color: #888;
+}
+
+.metric-card .subtitle {
+    margin: 5px 0 0 0;
+    font-size: var(--font-size-s);
+    color: #777;
+}
+
+/* Specifieke randen voor waarschuwingen */
+.border-danger {
+    border-left: 5px solid #dc3545 !important;
+}
+
+/* Grafiek sectie */
+.chart-section {
+    background: white;
+    padding: 25px;
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.chart-section h2 {
+    font-size: var(--font-size-l);
+    color: var(--text-main-color);
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Responsive optimalisatie */
+@media (max-width: 992px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        flex: none;
+    }
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/*PRINT STYLES: Zorgt voor nette uitlijning en volledige grafieken op PDF/A4*/
+@media print {
+    /* Verberg de sidebar en de printknop tijdens het printen */
+    .sidebar, .btn-primary {
+        display: none !important;
+    }
+
+    /* Zorg dat de hoofdcontent de volledige breedte van het papier gebruikt */
+    .dashboard-container {
+        display: block !important;
+    }
+
+    .main-content {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Forceer de grafiekkaarten en de grafieken zelf binnen de A4-grenzen */
+    .chart-section.card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-shadow: none !important; /* Verwijdert schaduw op papier */
+        border: 1px solid #ccc !important;
+        page-break-inside: avoid; /* Voorkomt dat een grafiek doormidden breekt over 2 pagina's */
+        margin-bottom: 20px !important;
+    }
+
+    /* Dwing ApexCharts om zich aan te passen aan de papierbreedte */
+    .apexcharts-canvas, 
+    .apexcharts-canvas svg {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}

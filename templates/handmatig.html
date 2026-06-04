@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+
+<!-- TITLE -->
+{% block title %}
+Handmatig
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% if current_user.is_authenticated %}
+
+<div class="dashboard-container">
+
+    <main class="main-content">
+
+        <header class="header card">
+            <h2>Handmatig invoeren</h2>
+        </header>
+
+        <div class="content-wrapper">
+            <div style="text-align: center;" class="card p-3 item1">
+                <h4>Trigger nivueas met voorbeelden</h4>
+                <img src="static/img/trigger-levels.png" alt="voorbeeld van trigger niveaus">
+                <h4>Symptomen per trigger en astma niveau</h4>
+                <img src="static/img/astma-trigger.png" alt="overzicht van verhouding triggger en astma niveau">
+                <h4>Symptomen per trigger niveau en COPD klasse</h4>
+                <img src="static/img/COPD-trigger.png" alt="overzicht van verhouding triggger en COPD niveau">
+            </div>
+
+            <div class="card p-3">
+                <form method="POST" action="{{ url_for('handmatig') }}">
+                    <h4><strong>Hoeveel last heeft u van de volgende triggers?</strong></h4>
+                    {{ form.hidden_tag() }}
+
+                    <p>
+                        {{ form.allergens.label }}<br>
+                        {{ form.allergens }}
+                    </p>
+
+                    <p>
+                        {{ form.irritants.label }}<br>
+                        {{ form.irritants }}
+                    </p>
+
+                    <p>
+                        {{ form.infection.label }}<br>
+                        {{ form.infection }}
+                    </p>
+
+                    <p>
+                        {{ form.exercise.label }}<br>
+                        {{ form.exercise }}
+                    </p>
+
+                    <p>
+                        {{ form.weather.label }}<br>
+                        {{ form.weather }}
+                    </p>
+
+                    <p>
+                        {{ form.pollution.label }}<br>
+                        {{ form.pollution }}
+                    </p>
+
+                    <p>{{ form.submit() }}</p>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% else %}
+
+<h1>Log eerst in!</h1>
+
+{% endif %}
+
+{% endblock %}

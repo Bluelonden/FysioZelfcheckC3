@@ -1,0 +1,64 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %} Portal {% endblock %}</title>
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block script %}
+    {% endblock %}
+
+</head>
+
+<body>
+
+    <nav class="custom-nav">
+        <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            
+            {% if current_user.is_authenticated %}
+                {# ALS DE INGELOGDE GEBRUIKER EEN ARTS IS #}
+                {% if current_user.role == 'arts' %}
+                    <li><a href="{{ url_for('doctor') }}">Artsenportaal</a></li>
+                
+                {# ALS DE INGELOGDE GEBRUIKER EEN PATIENT IS #}
+                {% else %}
+                    <li><a href="{{ url_for('results') }}">Live Dashboard</a></li>
+                    <li><a href="{{ url_for('profiel') }}">Mijn Profiel</a></li>
+                {% endif %}
+
+                {# ZICHTBAAR VOOR IEDEREEN DIE IS INGELOGD #}
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                
+            {% else %}
+                {# ZICHTBAAR ALS ER NIEMAND IS INGELOGD #}
+                <li><a href="{{ url_for('login') }}">Inloggen</a></li>
+                <li><a href="{{ url_for('register') }}">Registreren</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    {% for cat, msg in get_flashed_messages(with_categories=true) %}
+    <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+
+</html>

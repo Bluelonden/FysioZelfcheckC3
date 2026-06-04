@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+<!-- TITLE -->
+{% block title %}
+Vragenlijst
+{% endblock %}
+
+<!-- FORM -->
+{% block content %}
+
+{% if current_user.is_authenticated %}
+
+<section class="container">
+
+  <div class='vragenlijst-form'>
+    <form method="POST">
+      <h4><strong>Algemene vragen</strong></h4>
+      {{ form.hidden_tag() }}
+
+      <p>
+        {{ form.leeftijd.label }}<br>
+        {{ form.leeftijd(size=4) }}
+      </p>
+
+      <p>
+        {{ form.diagnose.label }}<br>
+        {{ form.diagnose() }}
+      </p>
+
+      <p>
+        {{ form.level.label }}<br>
+        {{ form.level() }}
+      </p>
+
+      <p>
+        {{ form.rookt.label }}{{ form.rookt() }}
+      </p>
+
+      <h4><strong>Symptoomvragen</strong></h4>
+      <p>{{ form.dag() }} {{ form.dag.label }}</p>
+      <p>{{ form.nacht() }} {{ form.nacht.label }}</p>
+      <p>{{ form.saba() }} {{ form.saba.label }}</p>
+      <p>{{ form.beperking() }} {{ form.beperking.label }}</p>
+
+      <p>
+        {{ form.hospital() }} {{ form.hospital.label }}
+      </p>
+
+      <p>
+        {{ form.prednison() }} {{ form.prednison.label }}
+      </p>
+
+      <p>
+        {{ form.exacerbaties.label }}<br>
+        {{ form.exacerbaties() }}
+      </p>
+
+      <p>{{ form.submit(class="btn btn-primary") }}</p>
+    </form>
+  </div>
+</section>
+
+{% else %}
+
+<h1>Log eerst in!</h1>
+
+{% endif %}
+
+{% endblock %}
