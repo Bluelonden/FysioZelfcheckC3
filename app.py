@@ -76,8 +76,7 @@ def register():
                 return redirect(url_for("register"))
 
             # Hier ging het mis, maar models.py accepteert dit nu correct:
-            new_user = User(username=username, email=email, role=role)
-            new_user.set_password(password)
+            new_user = User(username=username, email=email, password=password, role=role)
 
             db.session.add(new_user)
             db.session.commit()
