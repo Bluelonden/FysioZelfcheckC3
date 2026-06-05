@@ -1,168 +1,103 @@
 {% extends "base.html" %}
 
-{% block title %}Live Metingen{% endblock %}
-
-{% block style %}
-<link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
+{% block title %}
+results
 {% endblock %}
 
+<!-- SCRIPT -->
 {% block script %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
+<div class="custom-containerv3">
+  <h2><strong>Live metingen</strong></h2>
+  <br>
 
-  <main class="main-content">
-
-    <header class="header card">
-      <h1>Live Luchtkwaliteitsmetingen</h1>
-    </header>
-
-    <div class="statuscards-wrapper">
-      <div class="statuscards-container card p-3">
-        <div class="status-card" data-metric="pm25">
-          <h3>PM2.5</h3>
-          <p class="score-value">–</p>
-        </div>
-        <div class="status-card" data-metric="pm10">
-          <h3>PM10</h3>
-          <p class="score-value">–</p>
-        </div>
-        <div class="status-card" data-metric="pm1">
-          <h3>PM1</h3>
-          <p class="score-value">–</p>
-        </div>
-        <div class="status-card" data-metric="co2">
-          <h3>CO₂</h3>
-          <p class="score-value">–</p>
-        </div>
-        <div class="status-card" data-metric="tvoc">
-          <h3>TVOC</h3>
-          <p class="score-value">–</p>
-        </div>
-        <div class="status-card" data-metric="aqi">
-          <h3>AQI</h3>
-          <p class="score-value">–</p>
-        </div>
-      </div>
-
-      <div class="advice card p-3">
-        <h3>hier komt advies te staan</h3>
-      </div>
-      <div class="card p-3 form-card">
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <label for="minutes">{{ form.minutes.label }}</label>
-        {{ form.minutes(class="form-control", style="width:120px; display:inline-block;") }}
-        {{ form.submit(class="btn btn-primary") }}
-    </form>
-</div>
+  <div class="status-row">
+    <div class="status-item">
+      <span>PM2.5</span>
+      <div id="pm25_icon" class="status-icon"></div>
     </div>
- </div>
 
+    <div class="status-item">
+      <span>PM10</span>
+      <div id="pm10_icon" class="status-icon"></div>
+    </div>
 
+    <div class="status-item">
+      <span>PM1</span>
+      <div id="pm1_icon" class="status-icon"></div>
+    </div>
 
+    <div class="status-item">
+      <span>CO₂</span>
+      <div id="co2_icon" class="status-icon"></div>
+    </div>
 
-<!-- GRAPHS -->
-<div class="metrics-grid">
+    <div class="status-item">
+      <span>TVOC</span>
+      <div id="tvoc_icon" class="status-icon"></div>
+    </div>
 
-  <div class="metric-card card">
-    <h3>PM2.5</h3>
-    <div style="position: relative; height:260px;">
-      <canvas id="pm25_graph"></canvas>
+    <div class="status-item">
+      <span>AQI</span>
+      <div id="aqi_icon" class="status-icon"></div>
     </div>
   </div>
 
-  <div class="metric-card card">
-    <h3>PM10</h3>
-    <div style="position: relative; height:260px;">
-      <canvas id="pm10_graph"></canvas>
-    </div>
-  </div>
+  <br>
 
-  <div class="metric-card card">
-    <h3>PM1 </h3>
-    <div style="position: relative; height:260px;">
-      <canvas id="pm1_graph"></canvas>
-    </div>
+  <!-- Lege grafiekegrids die gevult worden door JS -->
+  <div class="graph-grid">
+    <div id="pm25_graph" class="graph-item"></div>
+    <div id="pm10_graph" class="graph-item"></div>
+    <div id="pm1_graph" class="graph-item"></div>
+    <div id="aqi_graph" class="graph-item"></div>
+    <div id="co2_graph" class="graph-item"></div>
+    <div id="tvoc_graph" class="graph-item"></div>
   </div>
-
-  <div class="metric-card card">
-    <h3>AQI </h3>
-    <div style="position: relative; height:260px;">
-      <canvas id="aqi_graph"></canvas>
-    </div>
-  </div>
-
-  <div class="metric-card card">
-    <h3>CO₂</h3>
-    <div style="position: relative; height:260px;">
-      <canvas id="co2_graph"></canvas>
-    </div>
-  </div>
-
-  <div class="metric-card card">
-    <h3>TVOC </h3>
-    <div style="position: relative; height:260px;">
-      <canvas id="tvoc_graph"></canvas>
-    </div>
-  </div>
-
 </div>
 
-</main>
+<div class="custom-containerv3">
+  <h2>Mijn drempelwaardes</h2>
+  <br>
+
+  {% if score is not none %}
+  <p><strong>Totaalscore:</strong> {{ score }} / 8</p>
+  <p><strong>Niveau:</strong> {{ niveau }}</p>
+
+  <h4>Op basis van uw antwoorden hebben wij het volgende profiel gegenereerd:</h4>
+  <br>
+
+  <ul>
+    {% for column, ranges in drempels.items() %}
+    <li><strong>{{ column }}</strong>
+      <ul>
+        <li>Groen: {{ ranges['groen'][0] }} – {{ ranges['groen'][1] }}</li>
+        <li>Oranje: {{ ranges['oranje'][0] }} – {{ ranges['oranje'][1] }}</li>
+        <li>Rood: ≥ {{ ranges['rood'][0] }}</li>
+      </ul>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <a href="{{ url_for('vragenlijst') }}" class="btn">Vragenlijst invullen</a>
+  <br>
+  <a href="" class="btn">Maak zelf een configuratie</a>
+
+  {% else %}
+  <a href="{{ url_for('vragenlijst') }}" class="btn">Vragenlijst invullen</a>
+  <br>
+  <a href="" class="btn">Maak zelf een configuratie</a>
+  {% endif %}
 </div>
 
 <script>
-  const minutes = {{ minutes }};
-
-  /* -----------------------------------------
-     GRAFIEKEN
-  ------------------------------------------*/
-  const charts = {};
-
-  function createChart(canvasId, label, color) {
-    const ctx = document.getElementById(canvasId).getContext("2d");
-    charts[canvasId] = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: [],
-        datasets: [{
-          label: label,
-          data: [],
-          borderColor: color,
-          backgroundColor: color + "33",
-          tension: 0.2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: false,
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-  }
-
-  createChart("pm25_graph", "PM2.5 (µg/m³)", "rgb(255, 99, 132)");
-  createChart("pm10_graph", "PM10 (µg/m³)", "rgb(255, 159, 64)");
-  createChart("pm1_graph", "PM1 (µg/m³)", "rgb(75, 192, 192)");
-  createChart("aqi_graph", "AQI", "rgb(153, 102, 255)");
-  createChart("co2_graph", "CO₂ (ppm)", "rgb(54, 162, 235)");
-  createChart("tvoc_graph", "TVOC (ppb)", "rgb(255, 205, 86)");
-
-  function updateGraph(canvasId, endpoint) {
-    fetch(`${endpoint}?minutes=${minutes}`)
+  function updateGraph(id, endpoint) {
+    fetch(endpoint)
       .then(r => r.json())
-      .then(json => {
-        const chart = charts[canvasId];
-        chart.data.labels = json.labels;
-        chart.data.datasets[0].data = json.values;
-        chart.update();
-      });
+      .then(fig => Plotly.react(id, fig.data, fig.layout, { displayModeBar: false, responsive: true }));
   }
 
   function updateAllGraphs() {
@@ -176,32 +111,25 @@
 
   setInterval(updateAllGraphs, 5000);
   updateAllGraphs();
+</script>
 
-  function updateStatusCards() {
+<script>
+  function updateStatusIcons() {
     fetch("/api/latest")
       .then(r => r.json())
       .then(data => {
         const s = data.status;
-        const v = data;
 
-        document.querySelectorAll(".status-card").forEach(card => {
-          const key = card.dataset.metric;
-
-          card.classList.remove("status-good", "status-matig", "status-slecht");
-
-          if (s[key] === "goed") card.classList.add("status-good");
-          if (s[key] === "matig") card.classList.add("status-matig");
-          if (s[key] === "slecht") card.classList.add("status-slecht");
-
-          card.setAttribute("data-status", s[key]);
-
-          card.querySelector(".score-value").textContent = v[key];
-        });
+        document.getElementById("pm25_icon").style.backgroundColor = s.pm25;
+        document.getElementById("pm10_icon").style.backgroundColor = s.pm10;
+        document.getElementById("pm1_icon").style.backgroundColor = s.pm1;
+        document.getElementById("co2_icon").style.backgroundColor = s.co2;
+        document.getElementById("tvoc_icon").style.backgroundColor = s.tvoc;
+        document.getElementById("aqi_icon").style.backgroundColor = s.aqi;
       });
   }
 
-  updateStatusCards();
-  setInterval(updateStatusCards, 5000);
+  updateStatusIcons();
+  setInterval(updateStatusIcons, 5000);
 </script>
-
 {% endblock %}

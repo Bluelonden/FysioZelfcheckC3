@@ -1,18 +1,18 @@
-
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
-from models import Metingen
+from models import Metingen, User
 from statuscalc import bereken_status
 from datetime import datetime, timedelta
+import random
+from config import DREMPELWAARDES
 
 api = Blueprint("api", __name__)
 
 def livedata_grafiek(column):
     minutes = request.args.get("minutes", default=1, type=int)
     minutes = max(1, min(minutes, 1440))
-
+    
     laatste_uur = datetime.now() - timedelta(minutes=minutes)
-
     metingen = (
         Metingen.query
         .filter(Metingen.timestamp >= laatste_uur)
@@ -23,8 +23,10 @@ def livedata_grafiek(column):
     labels = [m.timestamp.strftime("%H:%M") for m in metingen]
     values = [getattr(m, column) for m in metingen]
 
-    return jsonify({"labels": labels, "values": values})
-
+    return jsonify({
+        "labels": labels,
+        "values": values
+    })
 
 
 @api.route("/latest")
@@ -89,3 +91,44 @@ def co2_fig():
 @api.route("/tvoc_fig")
 def tvoc_fig():
     return livedata_grafiek("tvoc")
+
+
+@api.route('/arts/pacient_data/<int:patient_id>')
+@login_required
+def arts_pacient_data(patient_id):
+    # Zoekt de geselecteerde patiënt op in de database
+    patient = User.query.get_or_404(patient_id)
+    
+    # Bepaalt het risicoprofiel van deze patiënt
+    profiel = "Laag"
+    if patient.waardes and patient.waardes.niveau:
+        profiel = patient.waardes.niveau
+
+    # Haalt de specifieke drempelwaardes op uit config.py
+    drempels = DREMPELWAARDES.get(profiel, DREMPELWAARDES["Laag"])
+
+    # Genereert timestamps (labels) voor de afgelopen 7 metingen
+    labels = []
+    nu = datetime.now()
+    for i in range(6, -1, -1):
+        tijdstip = nu - timedelta(hours=i)
+        labels.append(tijdstip.strftime("%H:%M")) # Direct geformatteerd als UU:MM voor Chart.js
+
+    # Genereert dynamische testdata op basis van de drempels uit config.py
+    pm25_rood_grens = drempels["PM2.5"]["oranje"][1]
+    pm10_rood_grens = drempels["PM10"]["oranje"][1]
+    
+    pm25_data = [round(random.uniform(2, pm25_rood_grens + 8), 1) for _ in range(7)]
+    pm10_data = [round(random.uniform(5, pm10_rood_grens + 15), 1) for _ in range(7)]
+    no2_data = [round(random.uniform(10.0, 45.0), 1) for _ in range(7)]
+
+    # Geeft de data terug in exact dezelfde Chart.js structuur ("labels" en "values")
+    return jsonify({
+        "labels": labels,
+        "values": {
+            "pm25": pm25_data,
+            "pm10": pm10_data,
+            "no2": no2_data
+        },
+        "profiel": profiel
+    })
