@@ -100,3 +100,11 @@ class HandmatigForm(FF):
                      ('matig', 'Matig'), ('veel', 'Veel')])
     
     submit = SubF('Opslaan')
+
+class TimeRangeForm(FF):
+    minutes = IntF(
+        "Data (minuten)",
+        default=1,
+        validators=[NumberRange(min=1, max=1440)]
+    )
+    submit = SubF("Update grafiek")

@@ -1,5 +1,5 @@
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
 from models import Metingen
 from statuscalc import bereken_status
@@ -8,7 +8,11 @@ from datetime import datetime, timedelta
 api = Blueprint("api", __name__)
 
 def livedata_grafiek(column):
-    laatste_uur = datetime.now() - timedelta(minutes =1 )
+    minutes = request.args.get("minutes", default=1, type=int)
+    minutes = max(1, min(minutes, 1440))
+
+    laatste_uur = datetime.now() - timedelta(minutes=minutes)
+
     metingen = (
         Metingen.query
         .filter(Metingen.timestamp >= laatste_uur)
@@ -19,10 +23,7 @@ def livedata_grafiek(column):
     labels = [m.timestamp.strftime("%H:%M") for m in metingen]
     values = [getattr(m, column) for m in metingen]
 
-    return jsonify({
-        "labels": labels,
-        "values": values
-    })
+    return jsonify({"labels": labels, "values": values})
 
 
 

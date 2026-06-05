@@ -210,3 +210,15 @@
 .item1 {
   grid-row: 1 / span 8;
 }
+
+.form-card {
+  grid-column: 1;          /* zelfde kolom als statuscards */
+  width: 100%;             /* vult de kolom */
+  max-width: 400px;        /* blijft compact */
+  padding: 10px 15px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+

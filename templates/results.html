@@ -10,7 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
-
 {% block content %}
 <div class="dashboard-container">
 
@@ -51,8 +50,17 @@
       <div class="advice card p-3">
         <h3>hier komt advies te staan</h3>
       </div>
-    </div>
+      <div class="card p-3 form-card">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <label for="minutes">{{ form.minutes.label }}</label>
+        {{ form.minutes(class="form-control", style="width:120px; display:inline-block;") }}
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
 </div>
+    </div>
+ </div>
+
 
 
 
@@ -106,8 +114,9 @@
 </main>
 </div>
 
-
 <script>
+  const minutes = {{ minutes }};
+
   /* -----------------------------------------
      GRAFIEKEN
   ------------------------------------------*/
@@ -146,7 +155,7 @@
   createChart("tvoc_graph", "TVOC (ppb)", "rgb(255, 205, 86)");
 
   function updateGraph(canvasId, endpoint) {
-    fetch(endpoint)
+    fetch(`${endpoint}?minutes=${minutes}`)
       .then(r => r.json())
       .then(json => {
         const chart = charts[canvasId];
@@ -193,8 +202,6 @@
 
   updateStatusCards();
   setInterval(updateStatusCards, 5000);
-
-
-
 </script>
+
 {% endblock %}

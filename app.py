@@ -2,7 +2,7 @@ from flask import render_template as rt, redirect, url_for, flash, request, json
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from main import app
 from models import db, User, Waardes, Metingen, Triggers
-from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm
+from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm,TimeRangeForm
 from config import DREMPELWAARDES
 import requests
 from apis import api
@@ -79,7 +79,7 @@ def register():
     return rt('register.html', form=form)
 
 ## RESULTATEN WEERGEVEN ##
-@app.route('/results')
+@app.route('/results', methods=['GET', 'POST'])
 @login_required
 def results():
     user = current_user
@@ -100,7 +100,21 @@ def results():
     except requests.exceptions.RequestException:
         flash("Kon geen verbinding maken met de ESP32.", "danger")
 
-    return rt('results.html', niveau=niveau, score=score, drempels=drempels)
+    # FORMULIER VOOR TIJDSPANNE
+    form = TimeRangeForm()
+    minutes = 1  # standaard
+
+    if form.validate_on_submit():
+        minutes = form.minutes.data
+
+    return rt(
+        'results.html',
+        niveau=niveau,
+        score=score,
+        drempels=drempels,
+        form=form,
+        minutes=minutes
+    )
 
 ## LOGOUT ##
 @app.route('/logout')
@@ -341,3 +355,4 @@ def sensordata():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+

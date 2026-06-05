@@ -35,14 +35,13 @@ class User(db.Model, UserMixin):
 
     def __init__(self, username:str,
                  email:str, password:str,
-                 role:str, status:str):
+                 role:str):
         """maak nieuwe user aan met gehasht password."""
 
         self.username = username
         self.email = email
         self.pw_hash = gen_hash(password)
         self.role = role
-        self.status = status
 
     # deze methode wordt gebruikt tijdens login
     def check_password(self, password:str) -> bool:
