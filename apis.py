@@ -9,7 +9,6 @@ from config import DREMPELWAARDES
 api = Blueprint("api", __name__)
 
 def livedata_grafiek(column):
-    # Get flexible minute range from request, default 1 minute, max 1440 (1 day)
     minutes = request.args.get("minutes", default=1, type=int)
     minutes = max(1, min(minutes, 1440))
     
