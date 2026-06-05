@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
 from models import Metingen, User
 from statuscalc import bereken_status
@@ -9,9 +9,11 @@ from config import DREMPELWAARDES
 api = Blueprint("api", __name__)
 
 def livedata_grafiek(column):
-    # Let op: staat momenteel op 1 minuut op basis van je originele bestand. 
-    # Pas dit eventueel aan naar timedelta(hours=1) als je een heel uur wilt tonen.
-    laatste_uur = datetime.now() - timedelta(minutes=1)
+    # Get flexible minute range from request, default 1 minute, max 1440 (1 day)
+    minutes = request.args.get("minutes", default=1, type=int)
+    minutes = max(1, min(minutes, 1440))
+    
+    laatste_uur = datetime.now() - timedelta(minutes=minutes)
     metingen = (
         Metingen.query
         .filter(Metingen.timestamp >= laatste_uur)

@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 #Bestanden die niet geupload zullen woorden bij een push naar github
+=======
+#Bestanden die niet geupload zullen woorden bij een push naar github
+>>>>>>> b79da2e5f8d0049f934ef27abb12d8b6f1e4cd39
 .env 

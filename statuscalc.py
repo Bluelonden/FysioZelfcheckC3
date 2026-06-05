@@ -1,24 +1,31 @@
 from config import DREMPELWAARDES
 
-
 def bepaal_status(sensor, waarde, profiel):
-    #Bijvoorbeeld user1 => Laag sensor => PM2.5 dan krijg je dat deel van de dict
+    """
+    Bepaal status met zowel kleurcodes (HEAD) als Nederlands descriptoren (Base).
+    Return dict met beide formaten voor maximale compatibiliteit.
+    """
     drempels = DREMPELWAARDES[profiel][sensor]
 
-    #waarde is hier de laatste meting 
     if waarde is None:
-        return "grey"
+        return {"color": "grey", "status": "onbekend"}
 
+    # Check groene zone
     if drempels["groen"][0] <= waarde <= drempels["groen"][1]:
-        return "green"
+        return {"color": "green", "status": "goed"}
 
+    # Check oranje zone
     if drempels["oranje"][0] <= waarde <= drempels["oranje"][1]:
-        return "orange"
+        return {"color": "orange", "status": "matig"}
 
-    return "red"
+    # Rood/slecht
+    return {"color": "red", "status": "slecht"}
 
 
 def bereken_status(meting, profiel):
+    """
+    Bereken status voor alle sensoren - geeft kleurcodes en Nederlandse descriptoren.
+    """
     return {
         "pm25": bepaal_status("PM2.5", meting.pm25, profiel),
         "pm10": bepaal_status("PM10", meting.pm10, profiel),
