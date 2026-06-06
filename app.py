@@ -2,7 +2,8 @@ from flask import render_template as rt, redirect, url_for, flash, request, json
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from main import app
 from models import db, User, Waardes, Metingen, Triggers
-from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm
+# CRUCIAL: TimeRangeForm is hier toegevoegd aan de imports
+from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, TimeRangeForm
 from config import DREMPELWAARDES
 import requests
 from apis import api
@@ -75,7 +76,6 @@ def register():
                 flash("Dit e-mailadres is al in gebruik!", "danger")
                 return redirect(url_for("register"))
 
-            # Hier ging het mis, maar models.py accepteert dit nu correct:
             new_user = User(username=username, email=email, password=password, role=role)
 
             db.session.add(new_user)
@@ -91,7 +91,8 @@ def register():
     return rt('register.html', form=form)
 
 ## RESULTATEN WEERGEVEN ##
-@app.route('/results')
+# CRUCIAL: methods=['GET', 'POST'] toegevoegd en formulier-verwerking ingebouwd
+@app.route('/results', methods=['GET', 'POST'])
 @login_required
 def results():
     user = current_user
@@ -110,7 +111,29 @@ def results():
     except requests.exceptions.RequestException:
         flash("Kon geen verbinding maken met de ESP32.", "danger")
 
-    return rt('results.html', niveau=niveau, score=score, drempels=drempels)
+    # BIJGEWERKT: Laad het tijdsfilter-formulier in en vang dePOST-data op
+    form = TimeRangeForm()
+    minutes = 60  # Standaardwaarde (bijv. afgelopen uur)
+
+    # Zorg dat de waarde uit het formulier of de URL-parameters gehaald wordt
+    if form.validate_on_submit():
+        minutes = form.minutes.data
+    elif request.method == 'POST':
+        minutes = request.form.get('minutes', 60, type=int)
+    else:
+        # Vang eventueel ook GET-parameters op (?minutes=X) als de JS dit herlaadt
+        minutes = request.args.get('minutes', 60, type=int)
+
+    # Tevens vullen we het invoerveld alvast in met de huidige selectie voor de UI
+    if request.method == 'GET':
+        form.minutes.data = minutes
+
+    return rt('results.html', 
+              niveau=niveau, 
+              score=score, 
+              drempels=drempels, 
+              form=form, 
+              minutes=minutes)
 
 ## LOGOUT ##
 @app.route('/logout')

@@ -1,6 +1,6 @@
 /* Hetzelfde als de dokter pagina */
 
-/* Layout container (alleen als je dashboard-structuur gebruikt) */
+/* Layout container */
 .dashboard-container {
   display: flex;
   gap: 30px;
@@ -22,7 +22,7 @@
 .header.card {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center; /* Gecentreerd */
   align-items: center;
   padding: 20px;
   background: white;
@@ -34,11 +34,11 @@
   padding: 0;
   margin: 0;
   font-size: var(--font-size-xl);
-  text-align: left;
+  text-align: center;
   color: var(--text-main-color);
 }
 
-/* Status icons */
+/* Status rows & items (indien gebruikt) */
 .status-row {
   display: flex;
   gap: 20px;
@@ -62,163 +62,133 @@
   border: 2px solid #222;
 }
 
+/* Layout voor de twee kolommen bovenin: Links de metingen (max 400px), Rechts het advies */
+.statuscards-wrapper {
+  display: flex;
+  gap: 25px;
+  align-items: stretch; /* Zorgt dat advies even hoog is als de linkerkolom */
+  width: 100%;
+}
+
+/* De container waar de 6 kaarten in leven: NU STIPTE MAX BREEDTE VAN 400PX */
+.statuscards-container {
+  display: flex;
+  flex-direction: column; 
+  gap: 12px;
+  background: white;
+  border-radius: var(--border-radius-s);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  padding: 15px !important;
+  width: 100%;
+  max-width: 400px; /* Forceert de container naar 400px */
+  box-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* De individuele balkjes (Statuskaarten) */
+.status-card {
+  display: flex;
+  justify-content: space-between; /* Naam links, vierkantje rechts */
+  align-items: center; 
+  padding: 12px 15px;
+  border-radius: 6px;
+  background: #fff;
+  border: 2px solid #005941; /* Standaard moerasgroene buitenrand */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.status-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #005941;
+}
+
+/* Het mooie vierkantje (badge) voor de waardes achter de naam */
+.status-card .score-value {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 4px;
+  min-width: 65px;
+  text-align: center;
+  background: #005941; /* Standaard moerasgroen vierkantje */
+  color: white;
+}
+
+/* --- DYNAMISCHE KLEUREN OP BASIS VAN STATUS --- */
+.status-card[data-status="goed"] { border-color: #2e6f40; }
+.status-card[data-status="goed"] h3 { color: #2e6f40; }
+.status-card[data-status="goed"] .score-value { background: #2e6f40; color: #fff; }
+
+.status-card[data-status="matig"] { border-color: #ffaa00; }
+.status-card[data-status="matig"] h3 { color: #ffaa00; }
+.status-card[data-status="matig"] .score-value { background: #ffaa00; color: #fff; }
+
+.status-card[data-status="slecht"] { border-color: #e53e3e; }
+.status-card[data-status="slecht"] h3 { color: #e53e3e; }
+.status-card[data-status="slecht"] .score-value { background: #e53e3e; color: #fff; }
+
+/* Adviesblok rechts (pakt de rest van de breedte op) */
+.advice {
+  flex: 1;
+  background: #fff;
+  border-radius: var(--border-radius-s);
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 2px solid #005941;
+  box-sizing: border-box;
+}
+
 /* Grafieken grid */
 .metrics-grid {
-  padding: 45px;
-  padding-left: 70px;
-  padding-right: 70px;
+  padding: 45px 70px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
-
-/* Grafiek cards */
 .metric-card {
   background: white;
   padding: 20px;
   border-radius: var(--border-radius-s);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 2px solid #005941;
 }
 
 .metric-card h3 {
   margin: 0 0 10px 0;
   font-size: var(--font-size-m);
-  color: #555;
+  color: #005941;
   font-weight: var(--font-weight-m);
 }
 
-
-
-/* Hier beginnen de tweaks van Tycho */
-
-/* Zorg dat grafiek-elementen (canvas/svg/iframe) de kaart vullen */
-.metric-card canvas,
-.metric-card svg,
-.metric-card iframe {
+.metric-card canvas {
   width: 100% !important;
-  height: auto !important;
+  height: 100% !important; 
   display: block;
 }
 
-/* Responsive */
-@media (max-width: 992px) {
-  .metrics-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-}
-
-
-.status-grid {
-  display: flex;
-  gap: 16px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 8px 0;
-  box-sizing: border-box;
-  overflow-x: auto;
-  align-items: stretch;
-  justify-content: flex-start;
-}
-
-.status-card {
-  padding: 12px;
-  border-radius: 8px;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  min-width: 220px;
-  flex: 0 0 auto;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-.status-card h3 {
-  margin: 0 0 6px 0;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: inherit;
-}
-
-.status-card .score-value {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: inherit;
-}
-
-.status-card[data-status="goed"] {
-  background: #dff5e1;
-  border-color: #9ed8a6;
-  color: #1b5e20;
-}
-
-.status-card[data-status="matig"] {
-  background: #fff4cc;
-  border-color: #ffe08a;
-  color: #7a5c00;
-}
-
-.status-card[data-status="slecht"] {
-  background: #fde0e0;
-  border-color: #f5a3a3;
-  color: #7a1c1c;
-}
-
-/* Layout voor de twee kolommen: links kaarten, rechts advies */
-.statuscards-wrapper {
-  display: grid;
-  grid-template-columns: 40% 40%;
-  gap: 20px;
-  align-items: start;
-}
-
-/* Container met de status-kaarten */
-.statuscards-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-/* Individuele status-kaarten */
-.status-card {
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
-}
-
-/* Adviesblok rechts */
-.advice {
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-/* Profiel styling */
-.content-wrapper {
-  display: grid;
-  grid-template-columns: 65% 35%;
-  gap: 1rem;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.item1 {
-  grid-row: 1 / span 8;
-}
-
+/* Formulier kaart */
 .form-card {
-  grid-column: 1;          /* zelfde kolom als statuscards */
-  width: 100%;             /* vult de kolom */
-  max-width: 400px;        /* blijft compact */
+  width: 100%;             
+  max-width: 400px;        
   padding: 10px 15px;
   display: flex;
   gap: 10px;
   align-items: center;
+  background: #fff;
+  border: 2px solid #005941;
+  border-radius: 8px;
+  box-sizing: border-box;
+  margin-top: 15px;
 }
 
-
+/* Responsive */
+@media (max-width: 992px) {
+  .metrics-grid { grid-template-columns: 1fr; gap: 12px; }
+  .statuscards-wrapper { flex-direction: column; }
+  .statuscards-container { max-width: 100%; }
+}
