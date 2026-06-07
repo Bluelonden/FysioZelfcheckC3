@@ -20,7 +20,7 @@
     </header>
 
     <div class="statuscards-wrapper">
-      
+
       <div class="statuscards-container card p-3">
         <div class="status-card" data-metric="pm25">
           <h3>PM2.5</h3>
@@ -52,12 +52,13 @@
         <h3>hier komt advies te staan</h3>
       </div>
 
-    </div> <div class="card p-3 form-card" style="margin-top: 15px; max-width: 400px;">
+    </div>
+    <div class="card p-3 form-card" style="margin-top: 15px; max-width: 400px;">
       <form method="POST">
-          {{ form.hidden_tag() }}
-          <label for="minutes">{{ form.minutes.label }}</label>
-          {{ form.minutes(class="form-control", style="width:120px; display:inline-block; margin: 0 10px;") }}
-          {{ form.submit(class="btn btn-primary") }}
+        {{ form.hidden_tag() }}
+        <label for="minutes">{{ form.minutes.label }}</label>
+        {{ form.minutes(class="form-control", style="width:120px; display:inline-block; margin: 0 10px;") }}
+        {{ form.submit(class="btn btn-primary") }}
       </form>
     </div>
 
@@ -111,7 +112,11 @@
 </div>
 
 <script>
-  const minutes = parseInt("{{ minutes if minutes is not none else 60 }}") || 60;
+
+  /* Timedelta minutes standard */
+  const minutes = {{ minutes or 1 }};
+
+
 
   /* -----------------------------------------
       GRAFIEKEN INITIALISEREN
@@ -173,14 +178,12 @@
       .catch(err => console.error(`Fout bij laden van ${endpoint}:`, err));
   }
 
-  function updateAllGraphs() {
-    updateGraph("pm25_graph", "/api/arts/pacient_data/{{ current_user.id }}");
-    updateGraph("pm10_graph", "/api/arts/pacient_data/{{ current_user.id }}");
-    updateGraph("pm1_graph", "/api/arts/pacient_data/{{ current_user.id }}");
-    updateGraph("aqi_graph", "/api/arts/pacient_data/{{ current_user.id }}");
-    updateGraph("co2_graph", "/api/arts/pacient_data/{{ current_user.id }}");
-    updateGraph("tvoc_graph", "/api/arts/pacient_data/{{ current_user.id }}");
-  }
+  updateGraph("pm25_graph", "/api/pm25_fig");
+  updateGraph("pm10_graph", "/api/pm10_fig");
+  updateGraph("pm1_graph", "/api/pm1_fig");
+  updateGraph("aqi_graph", "/api/aqi_fig");
+  updateGraph("co2_graph", "/api/co2_fig");
+  updateGraph("tvoc_graph", "/api/tvoc_fig");
 
   /* -----------------------------------------
       STATUS RECHTHOEKJES BIJWERKEN
