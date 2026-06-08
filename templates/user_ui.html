@@ -20,26 +20,28 @@
 
 <script>
 function updateMetingen(raw) {
+
     const fijn = raw.groups.fijnstof;
     const gas = raw.groups.gassen;
 
-    document.querySelector("#fijnstof-card").innerHTML = `
-        <div class="simple-card ${fijn}">
-            <img src="/static/img/factory.png" class="card-icon">
-            <h3>Fijnstof</h3>
-            <div class="advies">${raw.status.pm25.status}</div>
-            <p class="sub">Laatste meting</p>
-        </div>
-    `;
+document.querySelector("#fijnstof-card").innerHTML = `
+    <div class="simple-card ${fijn}" data-tooltip="Fijnstof: PM1, PM2.5 en PM10">
+        <img src="/static/img/factory.png" class="card-icon">
+        <h3>Fijnstof</h3>
+        <div class="advies">${raw.status.pm25.status}</div>
+        <p class="sub">Laatste meting</p>
+    </div>
+`;
 
-    document.querySelector("#gassen-card").innerHTML = `
-        <div class="simple-card ${gas}">
-            <img src="/static/img/gasicon.png" class="card-icon">
-            <h3>Gassen</h3>
-            <div class="advies">${raw.status.co2.status}</div>
-            <p class="sub">Laatste meting</p>
-        </div>
-    `;
+document.querySelector("#gassen-card").innerHTML = `
+    <div class="simple-card ${gas}" data-tooltip="Gassen: CO2, TVOC en AQI">
+        <img src="/static/img/gasicon.png" class="card-icon">
+        <h3>Gassen</h3>
+        <div class="advies">${raw.status.co2.status}</div>
+        <p class="sub">Laatste meting</p>
+    </div>
+`;
+
 }
 
 function updateAdvies(raw) {

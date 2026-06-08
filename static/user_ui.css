@@ -93,3 +93,22 @@
 .advies-tekst {
     font-size: 2rem;
 }
+
+/* Tooltip styling */
+.simple-card {
+    position: relative;
+}
+
+.simple-card[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 104%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000000cc;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
