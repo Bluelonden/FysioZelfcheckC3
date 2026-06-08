@@ -411,8 +411,23 @@ def sensordata():
 
 @app.route("/user_ui")
 def user():
-    pass
+    user = current_user
 
+    if not user.waardes:
+        flash("Vul eerst de vragenlijst in om je resultaten en drempelwaardes te bekijken.", "warning")
+        return redirect(url_for('vragenlijst'))
+
+    niveau = user.waardes.niveau
+    score = user.waardes.score
+    drempels = DREMPELWAARDES[niveau]
+
+    try:
+        requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
+        flash("Drempelwaardes automatisch verzonden naar ESP32!", "success")
+    except requests.exceptions.RequestException:
+        flash("Kon geen verbinding maken met de ESP32.", "danger")
+
+    
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
