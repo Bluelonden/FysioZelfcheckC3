@@ -111,29 +111,22 @@ def results():
     except requests.exceptions.RequestException:
         flash("Kon geen verbinding maken met de ESP32.", "danger")
 
-    # BIJGEWERKT: Laad het tijdsfilter-formulier in en vang dePOST-data op
+    # BIJGEWERKT: Laad het tijdsfilter-formulier in
     form = TimeRangeForm()
-    minutes = 60  # Standaardwaarde (bijv. afgelopen uur)
 
-    # Zorg dat de waarde uit het formulier of de URL-parameters gehaald wordt
-    if form.validate_on_submit():
-        minutes = form.minutes.data
-    elif request.method == 'POST':
-        minutes = request.form.get('minutes', 60, type=int)
-    else:
-        # Vang eventueel ook GET-parameters op (?minutes=X) als de JS dit herlaadt
-        minutes = request.args.get('minutes', 60, type=int)
+    # FIXED: minutes komt ALTIJD uit GET, zodat hij niet terugvalt naar 60
+    minutes = request.args.get("minutes", default=60, type=int)
 
-    # Tevens vullen we het invoerveld alvast in met de huidige selectie voor de UI
-    if request.method == 'GET':
-        form.minutes.data = minutes
+    # UI: vul het formulier automatisch met de huidige waarde
+    form.minutes.data = minutes
 
-    return rt('results.html', 
-              niveau=niveau, 
-              score=score, 
-              drempels=drempels, 
-              form=form, 
+    return rt('results.html',
+              niveau=niveau,
+              score=score,
+              drempels=drempels,
+              form=form,
               minutes=minutes)
+
 
 ## LOGOUT ##
 @app.route('/logout')
@@ -415,5 +408,11 @@ def sensordata():
 
     return jsonify({"status": "ok"})
 
+
+@app.route("/user_ui")
+def user():
+    pass
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+

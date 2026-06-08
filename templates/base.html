@@ -29,8 +29,8 @@
                 
                 {# ALS DE INGELOGDE GEBRUIKER EEN PATIENT IS #}
                 {% else %}
-                    <li><a href="{{ url_for('results') }}">Live Dashboard</a></li>
                     <li><a href="{{ url_for('profiel') }}">Mijn Profiel</a></li>
+                    <li><a href="{{ url_for('user_ui') }}">Metingen</a></li>
                 {% endif %}
 
                 {# ZICHTBAAR VOOR IEDEREEN DIE IS INGELOGD #}

@@ -54,7 +54,7 @@
 
     </div>
     <div class="card p-3 form-card" style="margin-top: 15px; max-width: 400px;">
-      <form method="POST">
+      <form method="GET">
         {{ form.hidden_tag() }}
         <label for="minutes">{{ form.minutes.label }}</label>
         {{ form.minutes(class="form-control", style="width:120px; display:inline-block; margin: 0 10px;") }}
@@ -178,12 +178,14 @@
       .catch(err => console.error(`Fout bij laden van ${endpoint}:`, err));
   }
 
+  function updateAllGraphs() {
   updateGraph("pm25_graph", "/api/pm25_fig");
   updateGraph("pm10_graph", "/api/pm10_fig");
   updateGraph("pm1_graph", "/api/pm1_fig");
   updateGraph("aqi_graph", "/api/aqi_fig");
   updateGraph("co2_graph", "/api/co2_fig");
   updateGraph("tvoc_graph", "/api/tvoc_fig");
+}
 
   /* -----------------------------------------
       STATUS RECHTHOEKJES BIJWERKEN
