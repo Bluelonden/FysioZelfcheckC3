@@ -427,7 +427,7 @@ def user_ui():
     except requests.exceptions.RequestException:
         flash("Kon geen verbinding maken met de ESP32.", "danger")
    
-    return rt('results.html',
+    return rt('user_ui.html',
               niveau=niveau,
               score=score,
               drempels=drempels,)
