@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
 from models import Metingen, User
-from statuscalc import bereken_status
+from statuscalc import bereken_status, volledige_status
 from datetime import datetime, timedelta
 import random
 from config import DREMPELWAARDES
@@ -34,39 +34,32 @@ def livedata_grafiek(column):
 def api_latest():
     m = Metingen.query.order_by(Metingen.id.desc()).first()
 
-    # Als er geen meetwaarde is
     if m is None:
         return jsonify({
-            "pm25": 0,
-            "pm10": 0,
-            "pm1": 0,
-            "aqi": 0,
-            "co2": 0,
-            "tvoc": 0,
-            "status": {
-                "pm25": "grey",
-                "pm10": "grey",
-                "pm1":  "grey",
-                "aqi":  "grey",
-                "co2":  "grey",
-                "tvoc": "grey"
+            "values": {
+                "pm25": 0,
+                "pm10": 0,
+                "pm1": 0,
+                "aqi": 0,
+                "co2": 0,
+                "tvoc": 0
+            },
+            "status": {},
+            "groups": {
+                "fijnstof": "grey",
+                "gassen": "grey"
+            },
+            "eind": "grey",
+            "advies": {
+                "binnenbuiten": {"text": "Onbekend", "icon": "house.png", "color": "advies-orange"},
+                "sport": {"text": "Onbekend", "icon": "rest.png", "color": "advies-orange"}
             }
         })
 
-    # Nu is de gebruiker gegarandeerd ingelogd
     profiel = current_user.waardes.niveau
-    status = bereken_status(m, profiel)
+    data = volledige_status(m, profiel)
 
-    return jsonify({
-        "pm25": m.pm25,
-        "pm10": m.pm10,
-        "pm1": m.pm1,
-        "aqi": m.aqi,
-        "co2": m.co2,
-        "tvoc": m.tvoc,
-        "status": status
-    })
-
+    return jsonify(data)
 
 @api.route("/pm25_fig")
 def pm25_fig():
@@ -132,3 +125,28 @@ def arts_pacient_data(patient_id):
         },
         "profiel": profiel
     })
+
+@api.route("/average")
+@login_required
+def api_average():
+
+    metingen = (
+        Metingen.query
+        .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=5)) #Je wilt het gemiddelde van de afgelopen 5 minuten
+        .all()
+    )
+
+    if not metingen:
+        return jsonify({})  # of een fallback
+
+    # gemiddelde berekenen
+    avg = {
+        "pm1": sum(m.pm1 for m in metingen) / len(metingen),
+        "pm25": sum(m.pm25 for m in metingen) / len(metingen),
+        "pm10": sum(m.pm10 for m in metingen) / len(metingen),
+        "co2": sum(m.co2 for m in metingen) / len(metingen),
+        "tvoc": sum(m.tvoc for m in metingen) / len(metingen),
+        "aqi": sum(m.aqi for m in metingen) / len(metingen),
+    }
+
+    return jsonify(data)

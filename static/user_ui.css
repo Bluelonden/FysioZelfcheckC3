@@ -41,9 +41,9 @@
 }
 
 .card-icon {
-    width: 90px;          /* pas dit aan naar smaak: 60, 80, 100, 120 */
-    height: 90px;         /* zelfde als width voor perfecte verhouding */
-    object-fit: contain;  /* voorkomt vervorming */
+    width: 140px;          
+    height: 140px;        
+    object-fit: contain; 
     margin-bottom: 12px;
     opacity: 0.95;
     display: block;
@@ -53,14 +53,43 @@
 
 .card-row {
     display: flex;
-    justify-content: center;   /* centreert horizontaal */
+    justify-content: center;   
     align-items: flex-start;
-    gap: 30px;                 /* ruimte tussen de cards */
+    gap: 30px;                
     margin-top: 30px;
-    flex-wrap: wrap;           /* zorgt dat het mobiel ook werkt */
+    flex-wrap: wrap;           
 }
 
 #fijnstof-card, 
 #gassen-card {
-    flex: 0 1 300px;           /* cards blijven mooi 300px breed */
+    flex: 0 1 300px;          
+}
+
+.advies-card {
+    width: 340px;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+    margin: 30px auto;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.advies-red { background: #ef4444; }
+.advies-orange { background: #f59e0b; }
+.advies-green { background: #22c55e; }
+
+.advies-icon {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.advies-tekst {
+    font-size: 2rem;
 }

@@ -9,66 +9,69 @@
 {% block content %}
 
 <div class="card-row">
+    <div id="sport-card"></div>
+    <div id="binnenbuiten-card"></div>
+</div>
+
+<div class="card-row">
     <div id="fijnstof-card"></div>
     <div id="gassen-card"></div>
 </div>
 
 <script>
-function statusLabel(kleur) {
-    if (kleur === "green") return "Goed";
-    if (kleur === "orange") return "Matig";
-    if (kleur === "red") return "Slecht";
-    return "Onbekend";
-}
-
-function updateCards(data) {
-    const fijnstof = ["pm1", "pm25", "pm10"];
-    const fijnstofStatussen = fijnstof.map(g => data.status[g].color);
-    const fijnstofAdvies = bepaalGroepsAdvies(fijnstofStatussen);
+function updateMetingen(raw) {
+    const fijn = raw.groups.fijnstof;
+    const gas = raw.groups.gassen;
 
     document.querySelector("#fijnstof-card").innerHTML = `
-    <div class="simple-card ${fijnstofAdvies}">
-        <img src="/static/img/factory.png" class="card-icon">
-        <h3>Fijnstof</h3>
-        <div class="advies">${statusLabel(fijnstofAdvies)}</div>
-        <p class="sub">Laatste meting</p>
-    </div>
-`;
-
-
-    const gassen = ["co2", "tvoc", "aqi"];
-    const gassenStatussen = gassen.map(g => data.status[g].color);
-    const gassenAdvies = bepaalGroepsAdvies(gassenStatussen);
+        <div class="simple-card ${fijn}">
+            <img src="/static/img/factory.png" class="card-icon">
+            <h3>Fijnstof</h3>
+            <div class="advies">${raw.status.pm25.status}</div>
+            <p class="sub">Laatste meting</p>
+        </div>
+    `;
 
     document.querySelector("#gassen-card").innerHTML = `
-        <div class="simple-card ${gassenAdvies}">
-            <img src="/static/img/gasicon.jpg" class="card-icon">
+        <div class="simple-card ${gas}">
+            <img src="/static/img/gasicon.png" class="card-icon">
             <h3>Gassen</h3>
-            <div class="advies">${statusLabel(gassenAdvies)}</div>
+            <div class="advies">${raw.status.co2.status}</div>
             <p class="sub">Laatste meting</p>
         </div>
     `;
 }
 
-function bepaalGroepsAdvies(statusList) {
-    let rood = statusList.filter(s => s === "red").length;
-    let geel = statusList.filter(s => s === "orange").length;
-    if (rood >= 1) return "red";
-    if (geel >= 2) return "orange";
-    return "green";
+function updateAdvies(raw) {
+    const bb = raw.advies.binnenbuiten;
+    const sp = raw.advies.sport;
+
+    document.querySelector("#binnenbuiten-card").innerHTML = `
+        <div class="advies-card ${bb.color}">
+            <img src="/static/img/${bb.icon}" class="advies-icon">
+            <div class="advies-tekst">${bb.text}</div>
+        </div>
+    `;
+
+    document.querySelector("#sport-card").innerHTML = `
+        <div class="advies-card ${sp.color}">
+            <img src="/static/img/${sp.icon}" class="advies-icon">
+            <div class="advies-tekst">${sp.text}</div>
+        </div>
+    `;
 }
 
-// Eerste load
-fetch("/api/latest")
-    .then(r => r.json())
-    .then(updateCards);
-
-// Auto-refresh elke 10 seconden
-setInterval(() => {
+function fetchLatest() {
     fetch("/api/latest")
         .then(r => r.json())
-        .then(updateCards);
-}, 10000);
+        .then(data => {
+            updateMetingen(data);
+            updateAdvies(data);
+        });
+}
+
+fetchLatest();
+setInterval(fetchLatest, 10000);
 </script>
 
 {% endblock %}
