@@ -64,14 +64,21 @@ function updateAdvies(raw) {
 function fetchLatest() {
     fetch("/api/latest")
         .then(r => r.json())
-        .then(data => {
-            updateMetingen(data);
-            updateAdvies(data);
-        });
+        .then(updateMetingen);
+}
+
+function fetchAverage() {
+    fetch("/api/average")
+        .then(r => r.json())
+        .then(updateAdvies);
 }
 
 fetchLatest();
+fetchAverage();
+
 setInterval(fetchLatest, 10000);
+setInterval(fetchAverage, 300000);
 </script>
+
 
 {% endblock %}

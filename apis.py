@@ -149,4 +149,16 @@ def api_average():
         "aqi": sum(m.aqi for m in metingen) / len(metingen),
     }
 
+    class Fake: pass
+    f = Fake()
+    f.pm1 = avg["pm1"]
+    f.pm25 = avg["pm25"]
+    f.pm10 = avg["pm10"]
+    f.co2 = avg["co2"]
+    f.tvoc = avg["tvoc"]
+    f.aqi = avg["aqi"]
+
+    profiel = current_user.waardes.niveau
+    data = volledige_status(f, profiel)
+
     return jsonify(data)
