@@ -2,3 +2,88 @@
 
 {% block title %}Metingen{% endblock %}
 
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='user_ui.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div id="fijnstof-card"></div>
+<div id="gassen-card"></div>
+
+<script>
+function updateCards(data) {
+    const fijnstof = ["pm1", "pm25", "pm10"];
+    const fijnstofStatussen = fijnstof.map(g => data.status[g]);
+    const fijnstofAdvies = bepaalGroepsAdvies(fijnstofStatussen);
+
+    document.querySelector("#fijnstof-card").innerHTML = `
+        <div class="card ${fijnstofAdvies}">
+            <div class="container">
+                <div class="sun sunshine"></div>
+                <div class="cloud front">
+                    <div class="left-front"></div>
+                    <div class="right-front"></div>
+                </div>
+                <div class="cloud back">
+                    <div class="left-back"></div>
+                    <div class="right-back"></div>
+                </div>
+            </div>
+            <div class="card-header">
+                <span>Fijnstof</span>
+                <span>Laatste meting</span>
+            </div>
+            <div class="temp">${data.pm25}</div>
+            <div class="temp-scale"><span>µg/m³</span></div>
+        </div>
+    `;
+
+    const gassen = ["co2", "tvoc", "aqi"];
+    const gassenStatussen = gassen.map(g => data.status[g]);
+    const gassenAdvies = bepaalGroepsAdvies(gassenStatussen);
+
+    document.querySelector("#gassen-card").innerHTML = `
+        <div class="card ${gassenAdvies}">
+            <div class="container">
+                <div class="sun sunshine"></div>
+                <div class="cloud front">
+                    <div class="left-front"></div>
+                    <div class="right-front"></div>
+                </div>
+                <div class="cloud back">
+                    <div class="left-back"></div>
+                    <div class="right-back"></div>
+                </div>
+            </div>
+            <div class="card-header">
+                <span>Gassen</span>
+                <span>Laatste meting</span>
+            </div>
+            <div class="temp">${data.co2}</div>
+            <div class="temp-scale"><span>ppm</span></div>
+        </div>
+    `;
+}
+
+function bepaalGroepsAdvies(statusList) {
+    let rood = statusList.filter(s => s === "red").length;
+    let geel = statusList.filter(s => s === "orange").length;
+    if (rood >= 1) return "red";
+    if (geel >= 2) return "orange";
+    return "green";
+}
+
+
+fetch("/api/latest")
+    .then(r => r.json())
+    .then(updateCards);
+
+setInterval(() => {
+    fetch("/api/latest")
+        .then(r => r.json())
+        .then(updateCards);
+}, 10000);
+</script>
+
+{% endblock %}

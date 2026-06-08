@@ -90,44 +90,6 @@ def register():
     
     return rt('register.html', form=form)
 
-## RESULTATEN WEERGEVEN ##
-# CRUCIAL: methods=['GET', 'POST'] toegevoegd en formulier-verwerking ingebouwd
-@app.route('/results', methods=['GET', 'POST'])
-@login_required
-def results():
-    user = current_user
-
-    if not user.waardes:
-        flash("Vul eerst de vragenlijst in om je resultaten en drempelwaardes te bekijken.", "warning")
-        return redirect(url_for('vragenlijst'))
-
-    niveau = user.waardes.niveau
-    score = user.waardes.score
-    drempels = DREMPELWAARDES[niveau]
-
-    try:
-        requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
-        flash("Drempelwaardes automatisch verzonden naar ESP32!", "success")
-    except requests.exceptions.RequestException:
-        flash("Kon geen verbinding maken met de ESP32.", "danger")
-
-    # BIJGEWERKT: Laad het tijdsfilter-formulier in
-    form = TimeRangeForm()
-
-    # FIXED: minutes komt ALTIJD uit GET, zodat hij niet terugvalt naar 60
-    minutes = request.args.get("minutes", default=60, type=int)
-
-    # UI: vul het formulier automatisch met de huidige waarde
-    form.minutes.data = minutes
-
-    return rt('results.html',
-              niveau=niveau,
-              score=score,
-              drempels=drempels,
-              form=form,
-              minutes=minutes)
-
-
 ## LOGOUT ##
 @app.route('/logout')
 @login_required
@@ -188,7 +150,7 @@ def save_thresholds():
     except requests.exceptions.RequestException:
         flash("Kon geen verbinding maken met de ESP32.", "danger")
 
-    return redirect(url_for("results"))
+    return redirect(url_for("user_ui"))
 
 ## SYMPTOMEN VRAGENLIJST ##
 @app.route("/vragenlijst", methods=["GET", "POST"])
@@ -229,7 +191,7 @@ def vragenlijst():
             db.session.commit()
 
             flash("Data succesvol opgeslagen!", "success")
-            return redirect(url_for('results'))
+            return redirect(url_for('user_ui'))
 
         except Exception as e:
             db.session.rollback()
@@ -400,7 +362,8 @@ def sensordata():
         pm1=data["pm1"],
         aqi=data["aqi"],
         co2=data["co2"],
-        tvoc=data["tvoc"]
+        tvoc=data["tvoc"],
+        user_id=data.get("user_id", 1)  # test: stuur user_id mee
     )
 
     db.session.add(m)

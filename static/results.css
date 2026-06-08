@@ -192,3 +192,18 @@
   .statuscards-wrapper { flex-direction: column; }
   .statuscards-container { max-width: 100%; }
 }
+
+/* Als het scherm een hoge resolutie heeft (zoals jouw 3K laptop) */
+@media screen and (min-width: 1920px) {
+  html {
+    font-size: 18px; /* Maakt de basistekst groter, waardoor alles mooi meeschaalt */
+  }
+  
+  .dashboard-container {
+    max-width: 1800px; /* Geeft het dashboard meer ademruimte op brede schermen */
+  }
+
+  .statuscards-container {
+    max-width: 500px; /* Schlaalt de statuskaarten netjes mee omhoog naar 500px */
+  }
+}

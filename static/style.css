@@ -546,3 +546,9 @@ li {
     border-color: var(--text-nav-color);
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
+
+.emoji-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
