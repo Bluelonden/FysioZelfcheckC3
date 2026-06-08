@@ -409,8 +409,8 @@ def sensordata():
     return jsonify({"status": "ok"})
 
 
-@app.route("/user_ui")
-def user():
+@app.route("/user_ui",methods=['GET', 'POST'])
+def user_ui():
     user = current_user
 
     if not user.waardes:
@@ -426,6 +426,13 @@ def user():
         flash("Drempelwaardes automatisch verzonden naar ESP32!", "success")
     except requests.exceptions.RequestException:
         flash("Kon geen verbinding maken met de ESP32.", "danger")
+   
+    return rt('results.html',
+              niveau=niveau,
+              score=score,
+              drempels=drempels,)
+
+    
 
     
 if __name__ == "__main__":
