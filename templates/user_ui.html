@@ -8,60 +8,44 @@
 
 {% block content %}
 
-<div id="fijnstof-card"></div>
-<div id="gassen-card"></div>
+<div class="card-row">
+    <div id="fijnstof-card"></div>
+    <div id="gassen-card"></div>
+</div>
 
 <script>
+function statusLabel(kleur) {
+    if (kleur === "green") return "Goed";
+    if (kleur === "orange") return "Matig";
+    if (kleur === "red") return "Slecht";
+    return "Onbekend";
+}
+
 function updateCards(data) {
     const fijnstof = ["pm1", "pm25", "pm10"];
-    const fijnstofStatussen = fijnstof.map(g => data.status[g]);
+    const fijnstofStatussen = fijnstof.map(g => data.status[g].color);
     const fijnstofAdvies = bepaalGroepsAdvies(fijnstofStatussen);
 
     document.querySelector("#fijnstof-card").innerHTML = `
-        <div class="card ${fijnstofAdvies}">
-            <div class="container">
-                <div class="sun sunshine"></div>
-                <div class="cloud front">
-                    <div class="left-front"></div>
-                    <div class="right-front"></div>
-                </div>
-                <div class="cloud back">
-                    <div class="left-back"></div>
-                    <div class="right-back"></div>
-                </div>
-            </div>
-            <div class="card-header">
-                <span>Fijnstof</span>
-                <span>Laatste meting</span>
-            </div>
-            <div class="temp">${data.pm25}</div>
-            <div class="temp-scale"><span>µg/m³</span></div>
-        </div>
-    `;
+    <div class="simple-card ${fijnstofAdvies}">
+        <img src="/static/img/factory.png" class="card-icon">
+        <h3>Fijnstof</h3>
+        <div class="advies">${statusLabel(fijnstofAdvies)}</div>
+        <p class="sub">Laatste meting</p>
+    </div>
+`;
+
 
     const gassen = ["co2", "tvoc", "aqi"];
-    const gassenStatussen = gassen.map(g => data.status[g]);
+    const gassenStatussen = gassen.map(g => data.status[g].color);
     const gassenAdvies = bepaalGroepsAdvies(gassenStatussen);
 
     document.querySelector("#gassen-card").innerHTML = `
-        <div class="card ${gassenAdvies}">
-            <div class="container">
-                <div class="sun sunshine"></div>
-                <div class="cloud front">
-                    <div class="left-front"></div>
-                    <div class="right-front"></div>
-                </div>
-                <div class="cloud back">
-                    <div class="left-back"></div>
-                    <div class="right-back"></div>
-                </div>
-            </div>
-            <div class="card-header">
-                <span>Gassen</span>
-                <span>Laatste meting</span>
-            </div>
-            <div class="temp">${data.co2}</div>
-            <div class="temp-scale"><span>ppm</span></div>
+        <div class="simple-card ${gassenAdvies}">
+            <img src="/static/img/gasicon.jpg" class="card-icon">
+            <h3>Gassen</h3>
+            <div class="advies">${statusLabel(gassenAdvies)}</div>
+            <p class="sub">Laatste meting</p>
         </div>
     `;
 }
@@ -74,11 +58,12 @@ function bepaalGroepsAdvies(statusList) {
     return "green";
 }
 
-
+// Eerste load
 fetch("/api/latest")
     .then(r => r.json())
     .then(updateCards);
 
+// Auto-refresh elke 10 seconden
 setInterval(() => {
     fetch("/api/latest")
         .then(r => r.json())
