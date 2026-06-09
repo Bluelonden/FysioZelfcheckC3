@@ -10,55 +10,129 @@ Vragenlijst
 
 {% if current_user.is_authenticated %}
 
-<section class="container">
+<section class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="mb-4 text-center">Vragenlijst</h2>
 
-  <div class='vragenlijst-form'>
-    <form method="POST">
-      <h4><strong>Algemene vragen</strong></h4>
-      {{ form.hidden_tag() }}
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
 
-      <p>
-        {{ form.leeftijd.label }}<br>
-        {{ form.leeftijd(size=4) }}
-      </p>
+                        <h5 class="mt-4 mb-3 text-primary">Algemene vragen</h5>
 
-      <p>
-        {{ form.diagnose.label }}<br>
-        {{ form.diagnose() }}
-      </p>
+                        <div class="mb-3">
+                            {{ form.leeftijd.label(class="form-label") }}
+                            {{ form.leeftijd(class="form-control", size=4) }}
+                        </div>
 
-      <p>
-        {{ form.level.label }}<br>
-        {{ form.level() }}
-      </p>
+                        <div class="mb-4 p-3 bg-light rounded">
+                            <label class="form-label d-block fw-bold">Welke diagnose(s) heb je gekregen?</label>
 
-      <p>
-        {{ form.rookt.label }}{{ form.rookt() }}
-      </p>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="astmaSwitch" name="astma"
+                                    value="true" onchange="toggleAstmaLevel()">
+                                <label class="form-check-label" for="astmaSwitch">Astma</label>
+                            </div>
 
-      <h4><strong>Symptoomvragen</strong></h4>
-      <p>{{ form.dag() }} {{ form.dag.label }}</p>
-      <p>{{ form.nacht() }} {{ form.nacht.label }}</p>
-      <p>{{ form.saba() }} {{ form.saba.label }}</p>
-      <p>{{ form.beperking() }} {{ form.beperking.label }}</p>
+                            <div class="mb-3 ms-4" id="astmaLevelContainer" style="display: none;">
+                                <label for="astma_level" class="form-label small">Ernst van Astma:</label>
+                                <select class="form-select" id="astma_level" name="astma_level">
+                                    <option value="Fluctuerend">Fluctuerend</option>
+                                    <option value="Mild">Mild</option>
+                                    <option value="Matig">Matig</option>
+                                    <option value="Ernstig">Ernstig</option>
+                                </select>
+                            </div>
 
-      <p>
-        {{ form.hospital() }} {{ form.hospital.label }}
-      </p>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="copdSwitch" name="copd" value="true"
+                                    onchange="toggleCopdLevel()">
+                                <label class="form-check-label" for="copdSwitch">COPD</label>
+                            </div>
 
-      <p>
-        {{ form.prednison() }} {{ form.prednison.label }}
-      </p>
+                            <div class="mb-3 ms-4" id="copdLevelContainer" style="display: none;">
+                                <label for="copd_level" class="form-label small">Ernst van COPD (GOLD status):</label>
+                                <select class="form-select" id="copd_level" name="copd_level">
+                                    <option value="GOLD 1">GOLD 1 (Licht)</option>
+                                    <option value="GOLD 2">GOLD 2 (Matig)</option>
+                                    <option value="GOLD 3">GOLD 3 (Ernstig)</option>
+                                    <option value="GOLD 4">GOLD 4 (Zeer ernstig)</option>
+                                </select>
+                            </div>
+                        </div>
 
-      <p>
-        {{ form.exacerbaties.label }}<br>
-        {{ form.exacerbaties() }}
-      </p>
+                        <p>
+                            {{ form.level.label }}<br>
+                            {{ form.level() }}
+                        </p>
 
-      <p>{{ form.submit(class="btn btn-primary") }}</p>
-    </form>
-  </div>
+                        <div class="mb-3">
+                            {{ form.rookt.label(class="form-check-label") }}
+                            {{ form.rookt(class="form-check-input") }}
+                        </div>
+
+                        <h5 class="mt-4 mb-3 text-primary">Symptoomvragen</h5>
+
+                        <div class="mb-3 form-check">
+                            {{ form.dag(class="form-check-input") }}
+                            {{ form.dag.label(class="form-check-label") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.nacht(class="form-check-input") }}
+                            {{ form.nacht.label(class="form-check-label") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.saba(class="form-check-input") }}
+                            {{ form.saba.label(class="form-check-label") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.beperking(class="form-check-input") }}
+                            {{ form.beperking.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.hospital(class="form-check-input") }}
+                            {{ form.hospital.label(class="form-check-label") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.prednison(class="form-check-input") }}
+                            {{ form.prednison.label(class="form-check-label") }}
+                        </div>
+
+                        <p>
+                            {{ form.prednison() }} {{ form.prednison.label }}
+                        </p>
+
+                        <p>
+                            {{ form.exacerbaties.label }}<br>
+                            {{ form.exacerbaties() }}
+                        </p>
+
+                        <p>{{ form.submit(class="btn btn-primary") }}</p>
+                    </form>
+                </div>
 </section>
+
+<script>
+    function toggleAstmaLevel() {
+        var checkBox = document.getElementById("astmaSwitch");
+        var container = document.getElementById("astmaLevelContainer");
+        container.style.display = checkBox.checked ? "block" : "none";
+    }
+
+    function toggleCopdLevel() {
+        var checkBox = document.getElementById("copdSwitch");
+        var container = document.getElementById("copdLevelContainer");
+        container.style.display = checkBox.checked ? "block" : "none";
+    }
+
+    window.onload = function () {
+        toggleAstmaLevel();
+        toggleCopdLevel();
+    };
+</script>
 
 {% else %}
 

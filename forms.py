@@ -67,36 +67,36 @@ class WaardesForm(FF):
 
 
 class HandmatigForm(FF):
-    allergens = SelF('Allergenen: huisstofmijt, pollen, schimmel, huidschilfers van dieren',
+    allergens = SelF('Allergenen',
                       validators=[DataRequired()],
-                      choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+                      choices=[('niet', 'Niet'),
                                ('matig', 'Matig'), ('veel', 'Veel')
                             ]
                     )
-    irritants = SelF('Irriterende stoffen: rook (tabak/vuur), sterke geuren, chemische dampen',
+    irritants = SelF('Irriterende stoffen',
             validators=[DataRequired()],
-            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+            choices=[('niet', 'Niet'),
                      ('matig', 'Matig'), ('veel', 'Veel')
                     ]
                 )
-    infection = SelF('Luchtweginfecties: griep, verkoudheid',
+    infection = SelF('Luchtweginfecties',
             validators=[DataRequired()],
-            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+            choices=[('niet', 'Niet'),
                      ('matig', 'Matig'), ('veel', 'Veel')])
     
     exercise = SelF('Sporten',
             validators=[DataRequired()],
-            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+            choices=[('niet', 'Niet'),
                      ('matig', 'Matig'), ('veel', 'Veel')])
     
-    weather = SelF('Weer: kou, hitte, hoge/lage luchtvochtigheid, harde wind',
+    weather = SelF('Weer',
             validators=[DataRequired()],
-            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+            choices=[('niet', 'Niet'),
                      ('matig', 'Matig'), ('veel', 'Veel')])
 
-    pollution = SelF('Luchtvervuiling: smog, uitlaatgassen, (fijn)stof',
+    pollution = SelF('Luchtvervuiling',
             validators=[DataRequired()],
-            choices=[('niet', 'Niet'), ('weinig', 'Weinig'),
+            choices=[('niet', 'Niet'),
                      ('matig', 'Matig'), ('veel', 'Veel')])
     
     submit = SubF('Opslaan')
