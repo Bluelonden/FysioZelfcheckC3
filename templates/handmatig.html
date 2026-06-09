@@ -21,18 +21,32 @@ Handmatig
                 <div class="card-body p-4">
                     <h2 class="mb-4 text-center">Vragenlijst</h2>
 
-                    <div class="gauges">
-                        <div id="gauge" data-min="0" data-max="100" data-initial="0"></div>
-                        <br>
-                        <div class="gauge-icons">
-                            <button style="border-radius: 50%;"><img
-                                    src="{{ url_for('static', filename='img/icons/smile.svg')}}" alt=""></button>
+                    <div id="uitleg-box" style="border: 1px solid black;">
+                        <div class="uitleg-item" style="border: 1px solid red;">
+                            <button class="icon-btn" id="niet" disabled="True">
+                                <img src="{{ url_for('static', filename='img/icons/smile.svg')}}" alt="happy face">
+                            </button>
+                            <div class="uitleg-txt" style="border: 1px solid blue;">
+                                <p>Ik ervaar geen of lichte symptomen</p>
+                            </div>
+                        </div>
+                        <div class="uitleg-item" style="border: 1px solid red;">
+                            <button class="icon-btn" id="matig" disabled="True">
+                                <img src="{{ url_for('static', filename='img/icons/sad.svg')}}" alt="sad face">
+                            </button>
+                            <div class="uitleg-txt" style="border: 1px solid blue;">
+                                <p>Ik ervaar weinig en/of milde symptomen</p>
+                            </div>
+                        </div>
+                        <div class="uitleg-item" style="border: 1px solid red;">
+                            <button class="icon-btn" id="veel" disabled="True">
+                                <img src="{{ url_for('static', filename='img/icons/tired.svg')}}" alt="upset face">
+                            </button>
+                            <div class="uitleg-txt" style="border: 1px solid blue;">
+                                <p>Ik ervaar veel en/of ernstige symptomen</p>
+                            </div>
                         </div>
                     </div>
-
-                    <br>
-                    <button type="button" onclick="gauge.set('#gauge', 25)">Set 25</button>
-                    <button type="button" onclick="gauge.reset('#gauge')">Reset</button>
 
                     <form method="POST">
                         {{ form.hidden_tag() }}
