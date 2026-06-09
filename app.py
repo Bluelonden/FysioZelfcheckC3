@@ -136,22 +136,6 @@ def profiel():
 
     return rt("profiel.html", **context)
 
-## DREMPELWAARDES NAAR ESP POSTEN ##
-@app.route("/save_thresholds", methods=["POST"])
-def save_thresholds():
-    thresholds = request.get_json()
-
-    try:
-        r = requests.post(f"{ESP32_IP}/update_thresholds", json=thresholds, timeout=3)
-        if r.status_code == 200:
-            flash("Drempelwaardes succesvol verzonden naar ESP32!", "success")
-        else:
-            flash("ESP32 gaf een foutmelding.", "danger")
-    except requests.exceptions.RequestException:
-        flash("Kon geen verbinding maken met de ESP32.", "danger")
-
-    return redirect(url_for("user_ui"))
-
 ## SYMPTOMEN VRAGENLIJST ##
 @app.route("/vragenlijst", methods=["GET", "POST"])
 @login_required
@@ -177,18 +161,32 @@ def vragenlijst():
             beperking = form.beperking.data
             hospital = form.hospital.data
             prednison = form.prednison.data
+            esp_id = form.esp_id.data
             exacerbaties = int(form.exacerbaties.data)
 
-            data = Waardes(leeftijd=leeftijd, diagnose=diagnose, level=level,
-                           rookt=rookt, dag=dag, nacht=nacht, saba=saba,
-                           beperking=beperking, hospital=hospital,
-                           prednison=prednison, exacerbaties=exacerbaties,
-                           user_id=current_user.id)
+            # ESP-ID opslaan bij de user
+            current_user.esp_id = esp_id
+
+            # Waardes opslaan
+            data = Waardes(
+                leeftijd=leeftijd,
+                diagnose=diagnose,
+                level=level,
+                rookt=rookt,
+                dag=dag,
+                nacht=nacht,
+                saba=saba,
+                beperking=beperking,
+                hospital=hospital,
+                prednison=prednison,
+                exacerbaties=exacerbaties,
+                user_id=current_user.id
+            )
 
             data.score_niveau()
 
             db.session.add(data)
-            db.session.commit()
+            db.session.commit()  # <-- commit slaat zowel waardes als esp_id op
 
             flash("Data succesvol opgeslagen!", "success")
             return redirect(url_for('user_ui'))
@@ -371,33 +369,55 @@ def sensordata():
 
     return jsonify({"status": "ok"})
 
+#Paired een user aan esp_id
+@app.route("/user_esp_pairing", methods=['GET', 'POST']) 
+@login_required
+def user_esp_pairing():
+    if request.method == 'POST':
+        esp_id = request.form.get("esp_id")
 
-@app.route("/user_ui",methods=['GET', 'POST'])
+        if not esp_id:
+            flash("Voer een geldig ESP-ID in.", "danger")
+            return redirect(url_for("user_esp_pairing"))
+
+        # Sla ESP-ID op bij de user
+        current_user.esp_id = esp_id
+        db.session.commit()
+
+        flash("ESP-ID succesvol gekoppeld!", "success")
+        return redirect(url_for("profiel"))
+
+    return rt("user_ui.html", esp_id=current_user.esp_id)
+
+
+@app.route("/user_ui", methods=['GET', 'POST'])
+@login_required
 def user_ui():
     user = current_user
 
+    # 1. User moet eerst de vragenlijst invullen
     if not user.waardes:
         flash("Vul eerst de vragenlijst in om je resultaten en drempelwaardes te bekijken.", "warning")
         return redirect(url_for('vragenlijst'))
 
+    # 2.User moet aan esp gekoppeld zijn
+    if not user.esp_id:
+        flash("Je hebt nog geen ESP‑device gekoppeld. Koppel eerst je apparaat.", "warning")
+        return redirect(url_for('user_esp_pairing'))
+
+    #Toon de UI
     niveau = user.waardes.niveau
     score = user.waardes.score
     drempels = DREMPELWAARDES[niveau]
 
-    try:
-        requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
-        flash("Drempelwaardes automatisch verzonden naar ESP32!", "success")
-    except requests.exceptions.RequestException:
-        flash("Kon geen verbinding maken met de ESP32.", "danger")
-   
     return rt('user_ui.html',
               niveau=niveau,
               score=score,
-              drempels=drempels,)
+              drempels=drempels)
 
-    
 
-    
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 

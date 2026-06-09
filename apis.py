@@ -88,34 +88,28 @@ def tvoc_fig():
 
 @api.route('/arts/pacient_data/<int:patient_id>')
 @login_required
+
 def arts_pacient_data(patient_id):
-    # Zoekt de geselecteerde patiënt op in de database
     patient = User.query.get_or_404(patient_id)
-    
-    # Bepaalt het risicoprofiel van deze patiënt
+
     profiel = "Laag"
     if patient.waardes and patient.waardes.niveau:
         profiel = patient.waardes.niveau
 
-    # Haalt de specifieke drempelwaardes op uit config.py
     drempels = DREMPELWAARDES.get(profiel, DREMPELWAARDES["Laag"])
 
-    # Genereert timestamps (labels) voor de afgelopen 7 metingen
-    labels = []
-    nu = datetime.now()
-    for i in range(6, -1, -1):
-        tijdstip = nu - timedelta(hours=i)
-        labels.append(tijdstip.strftime("%H:%M")) # Direct geformatteerd als UU:MM voor Chart.js
+    pm25_rood_grens = drempels["PM25"]["oranje_max"]
+    pm10_rood_grens = drempels["PM10"]["oranje_max"]
 
-    # Genereert dynamische testdata op basis van de drempels uit config.py
-    pm25_rood_grens = drempels["PM2.5"]["oranje"][1]
-    pm10_rood_grens = drempels["PM10"]["oranje"][1]
-    
     pm25_data = [round(random.uniform(2, pm25_rood_grens + 8), 1) for _ in range(7)]
     pm10_data = [round(random.uniform(5, pm10_rood_grens + 15), 1) for _ in range(7)]
     no2_data = [round(random.uniform(10.0, 45.0), 1) for _ in range(7)]
 
-    # Geeft de data terug in exact dezelfde Chart.js structuur ("labels" en "values")
+    labels = []
+    nu = datetime.now()
+    for i in range(6, -1, -1):
+        labels.append((nu - timedelta(hours=i)).strftime("%H:%M"))
+
     return jsonify({
         "labels": labels,
         "values": {
@@ -125,6 +119,7 @@ def arts_pacient_data(patient_id):
         },
         "profiel": profiel
     })
+
 
 @api.route("/average")
 @login_required
@@ -162,3 +157,22 @@ def api_average():
     data = volledige_status(f, profiel)
 
     return jsonify(data)
+
+@api.route("/esp/get_thresholds")
+def esp_get_thresholds():
+    esp_id = request.args.get("esp_id")
+
+    if not esp_id:
+        return jsonify({"error": "esp_id missing"}), 400
+
+    user = User.query.filter_by(esp_id=esp_id).first()
+
+    if not user or not user.waardes:
+        return jsonify({"error": "not linked"}), 404
+
+    profiel = user.waardes.niveau
+    drempels = DREMPELWAARDES[profiel]
+
+    return jsonify(drempels)
+
+

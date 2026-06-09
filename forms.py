@@ -60,6 +60,7 @@ class WaardesForm(FF):
                         choices=[(0, "0"), (1, "1"), (2, "≥2")],
                         coerce=int,
                         default=0)
+    esp_id = StrF("ESP-ID", validators=[DataRequired()])
     submit = SubF("Opslaan en berekenen")
 
 

@@ -1,23 +1,31 @@
 from config import DREMPELWAARDES
 
+#Update voor het nieuwe drempelwaardes format
 def bepaal_status(sensor, waarde, profiel):
     drempels = DREMPELWAARDES[profiel][sensor]
 
     if waarde is None:
         return {"color": "grey", "status": "onbekend"}
 
-    if drempels["groen"][0] <= waarde <= drempels["groen"][1]:
+    # Groen
+    if drempels["groen_min"] <= waarde <= drempels["groen_max"]:
         return {"color": "green", "status": "goed"}
 
-    if drempels["oranje"][0] <= waarde <= drempels["oranje"][1]:
+    # Oranje
+    if drempels["oranje_min"] <= waarde <= drempels["oranje_max"]:
         return {"color": "orange", "status": "matig"}
 
-    return {"color": "red", "status": "slecht"}
+    # Rood
+    if waarde >= drempels["rood_min"]:
+        return {"color": "red", "status": "slecht"}
 
+    # Fallback (zou nooit moeten gebeuren)
+    return {"color": "grey", "status": "onbekend"}
 
+#Werkt met nieuwe drempelwaardesform
 def bereken_status(meting, profiel):
     return {
-        "pm25": bepaal_status("PM2.5", meting.pm25, profiel),
+        "pm25": bepaal_status("PM25", meting.pm25, profiel),
         "pm10": bepaal_status("PM10", meting.pm10, profiel),
         "pm1":  bepaal_status("PM1",  meting.pm1,  profiel),
         "co2":  bepaal_status("CO2",  meting.co2,  profiel),
