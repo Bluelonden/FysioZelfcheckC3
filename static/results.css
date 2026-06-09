@@ -69,7 +69,7 @@
 
 .statuscards-container {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   gap: 12px;
   background: white;
   border-radius: var(--border-radius-s);
@@ -84,7 +84,7 @@
 .status-card {
   display: flex;
   justify-content: space-between;
-  align-items: center; 
+  align-items: center;
   padding: 12px 15px;
   border-radius: 6px;
   background: #fff;
@@ -114,17 +114,41 @@
 }
 
 /* --- Dynamische Statussen --- */
-.status-card[data-status="goed"] { border-color: #2e6f40; }
-.status-card[data-status="goed"] h3 { color: #2e6f40; }
-.status-card[data-status="goed"] .score-value { background: #2e6f40; }
+.status-card[data-status="goed"] {
+  border-color: #2e6f40;
+}
 
-.status-card[data-status="matig"] { border-color: #d97706; }
-.status-card[data-status="matig"] h3 { color: #d97706; }
-.status-card[data-status="matig"] .score-value { background: #d97706; }
+.status-card[data-status="goed"] h3 {
+  color: #2e6f40;
+}
 
-.status-card[data-status="slecht"] { border-color: #c53030; }
-.status-card[data-status="slecht"] h3 { color: #c53030; }
-.status-card[data-status="slecht"] .score-value { background: #c53030; }
+.status-card[data-status="goed"] .score-value {
+  background: #2e6f40;
+}
+
+.status-card[data-status="matig"] {
+  border-color: #d97706;
+}
+
+.status-card[data-status="matig"] h3 {
+  color: #d97706;
+}
+
+.status-card[data-status="matig"] .score-value {
+  background: #d97706;
+}
+
+.status-card[data-status="slecht"] {
+  border-color: #c53030;
+}
+
+.status-card[data-status="slecht"] h3 {
+  color: #c53030;
+}
+
+.status-card[data-status="slecht"] .score-value {
+  background: #c53030;
+}
 
 /* --- Adviesblok & Grafieken (Rechts) --- */
 .advice {
@@ -159,11 +183,44 @@
   font-weight: var(--font-weight-m);
 }
 
+
+
+/* Hier beginnen de tweaks van Tycho */
+
+/* Zorg dat grafiek-elementen (canvas/svg/iframe) de kaart vullen */
+.metric-card canvas,
+.metric-card svg,
+.metric-card iframe {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
 /* --- Formulier kaart --- */
 .form-card {
-  width: 100%;            
-  max-width: 400px;        
+  width: 100%;
+  max-width: 400px;
   padding: 10px 15px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #fff;
+  border: 2px solid #005941;
+  border-radius: 8px;
+  box-sizing: border-box;
+  margin-top: 15px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+
+.status-grid {
   display: flex;
   gap: 10px;
   align-items: center;
@@ -176,40 +233,160 @@
 
 /* --- Responsive & 3K laptop --- */
 @media (max-width: 992px) {
-  .metrics-grid { grid-template-columns: 1fr; gap: 12px; }
-  .statuscards-wrapper { flex-direction: column; }
-  .statuscards-container { max-width: 100%; }
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .statuscards-wrapper {
+    flex-direction: column;
+  }
+
+  .statuscards-container {
+    max-width: 100%;
+  }
 }
 
 @media screen and (min-width: 1920px) {
-  html { font-size: 18px; }
-  .dashboard-container { max-width: 1800px; }
-  .statuscards-container { max-width: 500px; }
+  html {
+    font-size: 18px;
+  }
+
+  .dashboard-container {
+    max-width: 1800px;
+  }
+
+  .statuscards-container {
+    max-width: 500px;
+  }
 }
 
 /* Styling voor de vragenlijst-card */
 .card {
-    border: none;
-    border-radius: 12px;
+  border: none;
+  border-radius: 12px;
 }
 
 .bg-light {
-    background-color: #f8f9fa !important;
-    border: 1px solid #e9ecef;
+  background-color: #f8f9fa !important;
+  border: 1px solid #e9ecef;
 }
 
 /* Zorgt dat de switches opvallen */
 .form-check-input:checked {
-    background-color: #005941;
-    border-color: #005941;
+  background-color: #005941;
+  border-color: #005941;
 }
 
 /* De knop consistent maken met je dashboard */
 .btn-primary {
-    background-color: #005941;
-    border: none;
+  background-color: #005941;
+  border: none;
+}
+
+.item1 {
+  grid-row: 1 / span 8;
+
+  .statuscards-wrapper {
+    flex-direction: column;
+  }
+
+  .statuscards-container {
+    max-width: 100%;
+  }
+}
+
+@media screen and (min-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+
+  .dashboard-container {
+    max-width: 1800px;
+  }
+
+  .statuscards-container {
+    max-width: 500px;
+  }
+}
+
+/* Styling voor de vragenlijst-card */
+.card {
+  border: none;
+  border-radius: 12px;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+  border: 1px solid #e9ecef;
+}
+
+/* Zorgt dat de switches opvallen */
+.form-check-input:checked {
+  background-color: #005941;
+  border-color: #005941;
+}
+
+/* De knop consistent maken met je dashboard */
+.btn-primary {
+  background-color: #005941;
+  border: none;
 }
 
 .btn-primary:hover {
-    background-color: #004d38;
+  background-color: #004d38;
+}
+
+/* ICONS TRIGGER PAGE*/
+.icon-btn {
+  border-radius: 50%;
+  border: none;
+  padding: 5px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.icon-btn img {
+  min-height: 40px;
+}
+
+#niet {
+  background-color: #16a816;
+}
+
+#matig {
+  background-color: #ffa500;
+}
+
+#veel {
+  background-color: #da3d3d;
+}
+
+#uitleg-box {
+  min-width: 1fr;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+
+.uitleg-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 5px;
+  align-items: center;
+}
+
+.uitleg-txt {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  /* make it fill the grid row */
+}
+
+.uitleg-txt p {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

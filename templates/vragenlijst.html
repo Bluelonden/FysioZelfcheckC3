@@ -14,12 +14,12 @@ Vragenlijst
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <h2 class="mb-4 text-center">Vragenlijst</h2>
-                    
+
                     <form method="POST">
                         {{ form.hidden_tag() }}
 
                         <h5 class="mt-4 mb-3 text-primary">Algemene vragen</h5>
-                        
+
                         <div class="mb-3">
                             {{ form.leeftijd.label(class="form-label") }}
                             {{ form.leeftijd(class="form-control", size=4) }}
@@ -27,15 +27,17 @@ Vragenlijst
 
                         <div class="mb-4 p-3 bg-light rounded">
                             <label class="form-label d-block fw-bold">Welke diagnose(s) heb je gekregen?</label>
-                            
+
                             <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" id="astmaSwitch" name="astma" value="true" onchange="toggleAstmaLevel()">
+                                <input class="form-check-input" type="checkbox" id="astmaSwitch" name="astma"
+                                    value="true" onchange="toggleAstmaLevel()">
                                 <label class="form-check-label" for="astmaSwitch">Astma</label>
                             </div>
-                            
+
                             <div class="mb-3 ms-4" id="astmaLevelContainer" style="display: none;">
                                 <label for="astma_level" class="form-label small">Ernst van Astma:</label>
                                 <select class="form-select" id="astma_level" name="astma_level">
+                                    <option value="Fluctuerend">Fluctuerend</option>
                                     <option value="Mild">Mild</option>
                                     <option value="Matig">Matig</option>
                                     <option value="Ernstig">Ernstig</option>
@@ -43,10 +45,11 @@ Vragenlijst
                             </div>
 
                             <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" id="copdSwitch" name="copd" value="true" onchange="toggleCopdLevel()">
+                                <input class="form-check-input" type="checkbox" id="copdSwitch" name="copd" value="true"
+                                    onchange="toggleCopdLevel()">
                                 <label class="form-check-label" for="copdSwitch">COPD</label>
                             </div>
-                            
+
                             <div class="mb-3 ms-4" id="copdLevelContainer" style="display: none;">
                                 <label for="copd_level" class="form-label small">Ernst van COPD (GOLD status):</label>
                                 <select class="form-select" id="copd_level" name="copd_level">
@@ -58,41 +61,36 @@ Vragenlijst
                             </div>
                         </div>
 
-                        <div style="display: none;">
-                            {{ form.diagnose() }}
-                            {{ form.level() }}
-                        </div>
-
                         <div class="mb-3">
-                            {{ form.rookt.label(class="form-check-label") }} 
+                            {{ form.rookt.label(class="form-check-label") }}
                             {{ form.rookt(class="form-check-input") }}
                         </div>
 
                         <h5 class="mt-4 mb-3 text-primary">Symptoomvragen</h5>
-                        
+
                         <div class="mb-3 form-check">
-                            {{ form.dag(class="form-check-input") }} 
+                            {{ form.dag(class="form-check-input") }}
                             {{ form.dag.label(class="form-check-label") }}
                         </div>
                         <div class="mb-3 form-check">
-                            {{ form.nacht(class="form-check-input") }} 
+                            {{ form.nacht(class="form-check-input") }}
                             {{ form.nacht.label(class="form-check-label") }}
                         </div>
                         <div class="mb-3 form-check">
-                            {{ form.saba(class="form-check-input") }} 
+                            {{ form.saba(class="form-check-input") }}
                             {{ form.saba.label(class="form-check-label") }}
                         </div>
                         <div class="mb-3 form-check">
-                            {{ form.beperking(class="form-check-input") }} 
+                            {{ form.beperking(class="form-check-input") }}
                             {{ form.beperking.label(class="form-check-label") }}
                         </div>
 
                         <div class="mb-3 form-check">
-                            {{ form.hospital(class="form-check-input") }} 
+                            {{ form.hospital(class="form-check-input") }}
                             {{ form.hospital.label(class="form-check-label") }}
                         </div>
                         <div class="mb-3 form-check">
-                            {{ form.prednison(class="form-check-input") }} 
+                            {{ form.prednison(class="form-check-input") }}
                             {{ form.prednison.label(class="form-check-label") }}
                         </div>
 
@@ -102,16 +100,13 @@ Vragenlijst
                         </div>
                         <div class="form-group">
                             <label for="esp_id">ESP-ID</label>
-                             {{ form.esp_id(class="form-control") }}
+                            {{ form.esp_id(class="form-control") }}
                         </div>
                         <div class="d-grid">
                             {{ form.submit(class="btn btn-primary btn-lg") }}
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
-    </div>
 </section>
 
 <script>
@@ -127,7 +122,7 @@ Vragenlijst
         container.style.display = checkBox.checked ? "block" : "none";
     }
 
-    window.onload = function() {
+    window.onload = function () {
         toggleAstmaLevel();
         toggleCopdLevel();
     };
