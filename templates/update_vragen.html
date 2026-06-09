@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-<!-- TITLE -->
 {% block title %}
 Update
 {% endblock %}
@@ -9,65 +8,140 @@ Update
 
 {% if current_user.is_authenticated %}
 
-<section class="container">
+<section class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="mb-4 text-center">Profiel updaten</h2>
 
-    <div class="heading">
-        <h1>Profiel updaten</h1>
+                    {# Logic voor het laden van huidige status #}
+                    {% if current_user.waardes %}
+                        {% set laatste_waarde = current_user.waardes[-1] if current_user.waardes is iterable and current_user.waardes is not string else current_user.waardes %}
+                        {% set heeft_astma = "Astma" in laatste_waarde.diagnose %}
+                        {% set heeft_copd = "COPD" in laatste_waarde.diagnose %}
+                        {% set huidige_ernst = laatste_waarde.level %}
+                    {% else %}
+                        {% set heeft_astma = false %}
+                        {% set heeft_copd = false %}
+                        {% set huidige_ernst = "" %}
+                    {% endif %}
+
+                    <form method="POST" action="{{ url_for('update_vragen') }}">
+                        {{ form.hidden_tag() }}
+
+                        <h5 class="mt-4 mb-3 text-primary">Algemene vragen</h5>
+
+                        <div class="mb-3">
+                            {{ form.leeftijd.label(class="form-label") }}
+                            {{ form.leeftijd(class="form-control", size=4) }}
+                        </div>
+
+                        <div class="mb-4 p-3 bg-light rounded">
+                            <label class="form-label d-block fw-bold">Welke diagnose(s) heb je gekregen?</label>
+
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="astmaSwitch" name="astma" value="true" {% if heeft_astma %}checked{% endif %} onchange="toggleAstmaLevel()">
+                                <label class="form-check-label" for="astmaSwitch">Astma</label>
+                            </div>
+
+                            <div class="mb-3 ms-4" id="astmaLevelContainer" style="display: none;">
+                                <label for="astma_level" class="form-label small">Ernst van Astma:</label>
+                                <select class="form-select" id="astma_level" name="astma_level">
+                                    <option value="Mild" {% if "Mild" in huidige_ernst %}selected{% endif %}>Mild</option>
+                                    <option value="Matig" {% if "Matig" in huidige_ernst %}selected{% endif %}>Matig</option>
+                                    <option value="Ernstig" {% if "Ernstig" in huidige_ernst %}selected{% endif %}>Ernstig</option>
+                                </select>
+                            </div>
+
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="copdSwitch" name="copd" value="true" {% if heeft_copd %}checked{% endif %} onchange="toggleCopdLevel()">
+                                <label class="form-check-label" for="copdSwitch">COPD</label>
+                            </div>
+
+                            <div class="mb-3 ms-4" id="copdLevelContainer" style="display: none;">
+                                <label for="copd_level" class="form-label small">Ernst van COPD (GOLD status):</label>
+                                <select class="form-select" id="copd_level" name="copd_level">
+                                    <option value="GOLD 1" {% if "GOLD 1" in huidige_ernst %}selected{% endif %}>GOLD 1 (Licht)</option>
+                                    <option value="GOLD 2" {% if "GOLD 2" in huidige_ernst %}selected{% endif %}>GOLD 2 (Matig)</option>
+                                    <option value="GOLD 3" {% if "GOLD 3" in huidige_ernst %}selected{% endif %}>GOLD 3 (Ernstig)</option>
+                                    <option value="GOLD 4" {% if "GOLD 4" in huidige_ernst %}selected{% endif %}>GOLD 4 (Zeer ernstig)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display: none;">
+                            {{ form.diagnose() }}
+                            {{ form.level() }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.rookt.label(class="form-check-label") }} 
+                            {{ form.rookt(class="form-check-input") }}
+                        </div>
+
+                        <h5 class="mt-4 mb-3 text-primary">Symptoomvragen</h5>
+                        
+                        <div class="mb-3 form-check">
+                            {{ form.dag(class="form-check-input") }} {{ form.dag.label(class="form-check-label") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.nacht(class="form-check-input") }} {{ form.nacht.label(class="form-check-label") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.saba(class="form-check-input") }} {{ form.saba.label(class="form-check-label") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.beperking(class="form-check-input") }} {{ form.beperking.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.hospital(class="form-check-input") }} {{ form.hospital.label(class="form-check-label") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.prednison(class="form-check-input") }} {{ form.prednison.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.exacerbaties.label(class="form-label") }}
+                            {{ form.exacerbaties(class="form-control") }}
+                        </div>
+
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="vragenlijst-form">
-        <form method="POST" action="{{ url_for('update_vragen') }}">
-            <h4><strong>Algemene vragen</strong></h4>
-            {{ form.hidden_tag() }}
-
-            <p>
-                {{ form.leeftijd.label }}
-                {{ form.leeftijd(size=4) }}
-            </p>
-
-            <p>
-                {{ form.diagnose.label }}<br>
-                {{ form.diagnose() }}
-            </p>
-
-            <p>
-                {{ form.level.label }}<br>
-                {{ form.level() }}
-            </p>
-
-            <p>
-                {{ form.rookt.label }}{{ form.rookt() }}
-            </p>
-
-            <h4><strong>Symptoomvragen</strong></h4>
-            <p>{{ form.dag() }} {{ form.dag.label }}</p>
-            <p>{{ form.nacht() }} {{ form.nacht.label }}</p>
-            <p>{{ form.saba() }} {{ form.saba.label }}</p>
-            <p>{{ form.beperking() }} {{ form.beperking.label }}</p>
-
-            <p>
-                {{ form.hospital() }} {{ form.hospital.label }}
-            </p>
-
-            <p>
-                {{ form.prednison() }} {{ form.prednison.label }}
-            </p>
-
-            <p>
-                {{ form.exacerbaties.label }}<br>
-                {{ form.exacerbaties() }}
-            </p>
-
-            <p>{{ form.submit(class="btn btn-primary") }}</p>
-        </form>
-
-    </div>
-
 </section>
+
+<script>
+    function toggleAstmaLevel() {
+        var checkBox = document.getElementById("astmaSwitch");
+        var container = document.getElementById("astmaLevelContainer");
+        container.style.display = checkBox.checked ? "block" : "none";
+    }
+
+    function toggleCopdLevel() {
+        var checkBox = document.getElementById("copdSwitch");
+        var container = document.getElementById("copdLevelContainer");
+        container.style.display = checkBox.checked ? "block" : "none";
+    }
+
+    // Directe uitvoering bij laden van pagina
+    window.onload = function () {
+        toggleAstmaLevel();
+        toggleCopdLevel();
+    };
+</script>
 
 {% else %}
 
-<h1>Log eerst in!</h1>
+<div class="container text-center mt-5">
+    <h1>Log eerst in!</h1>
+</div>
 
 {% endif %}
 

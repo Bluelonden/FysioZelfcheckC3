@@ -1,14 +1,18 @@
-
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
-from models import Metingen
-from statuscalc import bereken_status
+from models import Metingen, User
+from statuscalc import bereken_status, volledige_status
 from datetime import datetime, timedelta
+import random
+from config import DREMPELWAARDES
 
 api = Blueprint("api", __name__)
 
 def livedata_grafiek(column):
-    laatste_uur = datetime.now() - timedelta(minutes =1 )
+    minutes = request.args.get("minutes", default=1, type=int)
+    minutes = max(1, min(minutes, 1440))
+    
+    laatste_uur = datetime.now() - timedelta(minutes=minutes)
     metingen = (
         Metingen.query
         .filter(Metingen.timestamp >= laatste_uur)
@@ -25,45 +29,37 @@ def livedata_grafiek(column):
     })
 
 
-
 @api.route("/latest")
 @login_required
 def api_latest():
     m = Metingen.query.order_by(Metingen.id.desc()).first()
 
-    # Als er geen meetwaarde is
     if m is None:
         return jsonify({
-            "pm25": 0,
-            "pm10": 0,
-            "pm1": 0,
-            "aqi": 0,
-            "co2": 0,
-            "tvoc": 0,
-            "status": {
-                "pm25": "grey",
-                "pm10": "grey",
-                "pm1":  "grey",
-                "aqi":  "grey",
-                "co2":  "grey",
-                "tvoc": "grey"
+            "values": {
+                "pm25": 0,
+                "pm10": 0,
+                "pm1": 0,
+                "aqi": 0,
+                "co2": 0,
+                "tvoc": 0
+            },
+            "status": {},
+            "groups": {
+                "fijnstof": "grey",
+                "gassen": "grey"
+            },
+            "eind": "grey",
+            "advies": {
+                "binnenbuiten": {"text": "Onbekend", "icon": "house.png", "color": "advies-orange"},
+                "sport": {"text": "Onbekend", "icon": "rest.png", "color": "advies-orange"}
             }
         })
 
-    # Nu is de gebruiker gegarandeerd ingelogd
     profiel = current_user.waardes.niveau
-    status = bereken_status(m, profiel)
+    data = volledige_status(m, profiel)
 
-    return jsonify({
-        "pm25": m.pm25,
-        "pm10": m.pm10,
-        "pm1": m.pm1,
-        "aqi": m.aqi,
-        "co2": m.co2,
-        "tvoc": m.tvoc,
-        "status": status
-    })
-
+    return jsonify(data)
 
 @api.route("/pm25_fig")
 def pm25_fig():
@@ -88,3 +84,81 @@ def co2_fig():
 @api.route("/tvoc_fig")
 def tvoc_fig():
     return livedata_grafiek("tvoc")
+
+
+@api.route('/arts/pacient_data/<int:patient_id>')
+@login_required
+def arts_pacient_data(patient_id):
+    # Zoekt de geselecteerde patiënt op in de database
+    patient = User.query.get_or_404(patient_id)
+    
+    # Bepaalt het risicoprofiel van deze patiënt
+    profiel = "Laag"
+    if patient.waardes and patient.waardes.niveau:
+        profiel = patient.waardes.niveau
+
+    # Haalt de specifieke drempelwaardes op uit config.py
+    drempels = DREMPELWAARDES.get(profiel, DREMPELWAARDES["Laag"])
+
+    # Genereert timestamps (labels) voor de afgelopen 7 metingen
+    labels = []
+    nu = datetime.now()
+    for i in range(6, -1, -1):
+        tijdstip = nu - timedelta(hours=i)
+        labels.append(tijdstip.strftime("%H:%M")) # Direct geformatteerd als UU:MM voor Chart.js
+
+    # Genereert dynamische testdata op basis van de drempels uit config.py
+    pm25_rood_grens = drempels["PM2.5"]["oranje"][1]
+    pm10_rood_grens = drempels["PM10"]["oranje"][1]
+    
+    pm25_data = [round(random.uniform(2, pm25_rood_grens + 8), 1) for _ in range(7)]
+    pm10_data = [round(random.uniform(5, pm10_rood_grens + 15), 1) for _ in range(7)]
+    no2_data = [round(random.uniform(10.0, 45.0), 1) for _ in range(7)]
+
+    # Geeft de data terug in exact dezelfde Chart.js structuur ("labels" en "values")
+    return jsonify({
+        "labels": labels,
+        "values": {
+            "pm25": pm25_data,
+            "pm10": pm10_data,
+            "no2": no2_data
+        },
+        "profiel": profiel
+    })
+
+@api.route("/average")
+@login_required
+def api_average():
+
+    metingen = (
+        Metingen.query
+        .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=5)) #Je wilt het gemiddelde van de afgelopen 5 minuten
+        .all()
+    )
+
+    if not metingen:
+        return jsonify({})  # of een fallback
+
+    # gemiddelde berekenen
+    avg = {
+        "pm1": sum(m.pm1 for m in metingen) / len(metingen),
+        "pm25": sum(m.pm25 for m in metingen) / len(metingen),
+        "pm10": sum(m.pm10 for m in metingen) / len(metingen),
+        "co2": sum(m.co2 for m in metingen) / len(metingen),
+        "tvoc": sum(m.tvoc for m in metingen) / len(metingen),
+        "aqi": sum(m.aqi for m in metingen) / len(metingen),
+    }
+
+    class Fake: pass
+    f = Fake()
+    f.pm1 = avg["pm1"]
+    f.pm25 = avg["pm25"]
+    f.pm10 = avg["pm10"]
+    f.co2 = avg["co2"]
+    f.tvoc = avg["tvoc"]
+    f.aqi = avg["aqi"]
+
+    profiel = current_user.waardes.niveau
+    data = volledige_status(f, profiel)
+
+    return jsonify(data)

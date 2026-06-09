@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 
-<!-- TITLE -->
 {% block title %}
 Vragenlijst
 {% endblock %}
 
-<!-- FORM -->
 {% block content %}
 
 {% if current_user.is_authenticated %}
@@ -136,7 +134,9 @@ Vragenlijst
 
 {% else %}
 
-<h1>Log eerst in!</h1>
+<div class="container text-center mt-5">
+    <h1>Log eerst in!</h1>
+</div>
 
 {% endif %}
 

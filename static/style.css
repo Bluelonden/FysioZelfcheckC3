@@ -3,19 +3,26 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-    margin: 0;
-}
-
 :root {
     /* colors */
-    --text-main-color: rgb(40, 40, 140);
-    --text-second-color: white;
-    --bg-main-color: rgb(40, 40, 140);
-    --bg-second-color: lightskyblue;
-    --bg-third-color: whitesmoke;
+    --text-main-color: #1e293b;     /* Donkergrijs voor de gewone teksten op de pagina */
+    --text-second-color: #ffffff;   /* Wit voor op knoppen */
 
+    /* NAV MENU KLEUREN: Prachtig medisch groen/teal met witte letters */
+    --bg-nav-color: #0f766e;        /* Diep, rustgevend teal-groen */
+    --text-nav-color: #ffffff;      /* Puur wit, zodat het perfect leesbaar is op het groen */
+    --nav-hover-color: #115e59;     /* Iets donkerder groen voor hover-effecten */
 
+    /* NIEUW: Licht medisch groen voor de login/registratie box */
+    --bg-form-lightgreen: #e6f4f1;  /* Zacht, licht medisch groen */
+
+    /* Pagina achtergronden */
+    --bg-main-color: #f8fafc;       /* Zachte lichtgrijze algehele pagina-achtergrond */
+    --bg-second-color: #0284c7;     /* Helderblauw voor de primaire actie-knoppen */
+    --bg-third-color: #ffffff;      /* Wit voor de dashboards/cards */
+    --bg-accent-hover: #0369a1;     /* Hover-kleur voor de blauwe knoppen */
+    --moerasgroen: #008b66;
+    
 
     /* font size */
     --font-size-s: 0.9rem;
@@ -33,7 +40,14 @@ body {
     /* border radius */
     --border-radius-s: 8px;
     --border-radius-m: 30px;
-    --border-radius-c: 50%
+    --border-radius-c: 50%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--bg-main-color); /* Rustig, zacht lichtgrijs in plaats van felle gradient */
+    color: var(--text-main-color);
 }
 
 h1 {
@@ -48,33 +62,28 @@ h2 {
     font-size: var(--font-size-l);
 }
 
-body {
-    min-height: 100vh;
-    background: linear-gradient(to bottom, var(--bg-second-color), lightgrey);
-    color: var(--text-main-color);
-    margin: 0;
-}
-
-/* NAVBAR */
 .custom-nav {
     padding-left: 20px;
     padding-right: 20px;
-    padding-top: 15px;
-    padding-bottom: 0px;
+    padding-top: 15px;    /* Verhoogd van 5px naar 15px voor extra hoogte */
+    padding-bottom: 15px; /* Verhoogd van 5px naar 15px voor extra hoogte */
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg-main-color);
+    background-color: var(--bg-nav-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 .custom-nav ul {
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .custom-nav a {
     text-decoration: none;
-    color: var(--text-second-color);
+    color: var(--text-nav-color); /* Verplicht witte tekst */
 }
 
 .custom-nav .nav-menu {
@@ -83,19 +92,27 @@ body {
 }
 
 .custom-nav .nav-menu a {
-    padding: 15px;
+    padding: 10px 20px;          /* Ruimte binnen de knop (hoogte en breedte) */
+    margin: 0 5px;               /* Ruimte tussen de knoppen onderling */
+    border-radius: var(--border-radius-s); /* Mooie afgeronde hoeken (8px) */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtiele, half-transparante witte omlijning */
+    background-color: rgba(255, 255, 255, 0.05); /* Hele lichte witte gloed als basis */
+    transition: all 0.2s ease;   /* Zorgt voor een vloeiende overgang bij hover */
 }
 
 .custom-nav .nav-menu a:hover {
-    background: var(--bg-second-color);
+    background-color: var(--nav-hover-color); /* Het donkerdere medische groen */
+    border-color: var(--text-nav-color);       /* De omlijning wordt feller wit */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Geeft een kleine diepte-schaduw */
 }
 
 .custom-nav .nav-menu .nav-link {
-    color: var(--text-second-color);
+    color: var(--text-nav-color); /* Zorgt dat alle linkjes wit worden */
     font-size: var(--font-size-m);
+    font-weight: var(--font-weight-m);
 }
 
-/* FORM */
+/* FORM (Omgezet naar strakke witte cards) */
 .custom-container {
     display: flex;
     align-items: center;
@@ -108,9 +125,12 @@ body {
     width: 100%;
     max-width: 450px;
     padding: 30px;
-    background: whitesmoke;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-form-lightgreen);
+    border: 1px solid #cbd5e1;
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    text-align: center;
+    margin: 0 auto; 
 }
 
 .form-box.active {
@@ -126,13 +146,19 @@ body {
 .form-select {
     width: 100%;
     padding: 12px;
-    background: #eee;
+    background: #ffffff; /* Wit in plaats van grijs, staat super strak op het lichtgroen! */
+    border: 1px solid #cbd5e1;
     border-radius: 6px;
-    border: none;
     outline: none;
     font-size: 16px;
-    color: #333;
+    color: var(--text-main-color);
     margin-bottom: 20px;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--bg-second-color); /* Blauwe rand bij selectie */
 }
 
 .form-button {
@@ -142,15 +168,15 @@ body {
     border: none;
     cursor: pointer;
     font-size: 16px;
-    background: var(--bg-main-color);
+    background: var(--bg-second-color); /* Helderblauw zodat de knop popt */
     color: var(--text-second-color);
-    font-weight: 500;
+    font-weight: var(--font-weight-m);
     margin-bottom: 20px;
-    transition: 0.5s;
+    transition: background-color 0.2s;
 }
 
 .form-button:hover {
-    background: var(--bg-second-color);
+    background: var(--bg-accent-hover); /* Donkerblauw bij hover */
 }
 
 .form-box p {
@@ -160,7 +186,8 @@ body {
 }
 
 .form-box p a {
-    color: var(--main-color);
+    color: var(--bg-second-color);
+    font-weight: var(--font-weight-m);
 }
 
 .custom-containerv2 {
@@ -169,35 +196,27 @@ body {
     margin: 50px auto;
     display: flex;
     gap: 40px;
-
+    justify-content: flex-start;
 }
 
-.waardes-container {
+.waardes-container,
+.custom-containerv3 {
     margin: 20px auto;
     padding: 20px;
-    background: #f5f8ff;
-    border-left: 6px solid #88b0f5;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-.custom-containerv3 {
-    width: 80%;
-    max-width: 1200px;
-    margin: 50px auto;
-    padding: 20px;
-    background: #f5f8ff;
-    border-left: 6px solid #88b0f5;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    background: var(--bg-third-color);
+    border-left: 6px solid var(--bg-second-color);
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 /* DASHBOARD */
 .container {
-    background: #fdfdfd;
-    border-radius: 2rem;
-    margin: 1rem;
-    padding: 0.5rem;
+    background: var(--bg-third-color);
+    border-radius: var(--border-radius-s);
+    margin: 2rem auto;
+    padding: 2rem;
+    max-width: 1200px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .container .heading p {
@@ -217,15 +236,15 @@ li {
 
 /* HOMEPAGE */
 .box1 {
-    background: rgb(136, 176, 245);
+    background: #e0f2fe; /* Zacht blauwe infobox */
     padding: 20px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .box1,
 .box2 {
     flex: 1;
-    ;
 }
 
 .lung {
@@ -234,19 +253,17 @@ li {
 
 .logo {
     width: 60%;
-    margin: 0;
-    margin-top: 30px;
+    margin: 30px 0 0 0;
 }
 
 .quote {
-    border-left: 4px solid #88b0f5;
-    padding-left: 140px;
+    border-left: 4px solid var(--bg-second-color);
+    padding-left: 40px;
     margin: 30px 0;
     font-size: 1.3rem;
     font-style: italic;
-    color: #333;
+    color: #475569;
 }
-
 
 .custom-containerv3 h3 {
     margin-top: 0;
@@ -257,11 +274,25 @@ li {
     margin-bottom: 15px;
 }
 
-.custom-containerv2 {
-    justify-content: flex-start;
+.graph-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    min-width: 100%;
+    width: 100%;
+    margin: 0 auto;
 }
 
-/* GRAPH STYLING */
+.graph-item {
+    min-width: 100%;
+    width: 100%;
+    height: 350px;
+    padding: 10px;
+    background: var(--bg-third-color);
+    border-radius: var(--border-radius-s);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
 
 .status-row {
     display: flex;
@@ -284,4 +315,241 @@ li {
     background-color: grey;
     margin-top: 5px;
     border: 2px solid #222;
+}
+
+/* ==========================================================================
+    LONGARTS DASHBOARD AANVULLINGEN
+   ========================================================================== */
+.dashboard-container {
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    align-items: flex-start;
+}
+
+/* Sidebar styling */
+.sidebar {
+    flex: 0 0 320px;
+    background: var(--bg-third-color);
+    border-radius: var(--border-radius-s);
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.patient-list-header h3 {
+    color: var(--text-main-color);
+    font-size: var(--font-size-l);
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--bg-second-color);
+    padding-bottom: 10px;
+}
+
+.patient-navigation {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.patient-navigation .list-group-item {
+    border-radius: var(--border-radius-s) !important;
+    margin-bottom: 5px;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: background-color 0.2s;
+}
+
+.patient-navigation .list-group-item.active {
+    background-color: var(--bg-second-color) !important; /* Gecorrigeerd naar actieve knopkleur */
+    border-color: var(--bg-second-color) !important;
+    color: var(--text-second-color) !important;
+}
+
+/* Patiënt profiel binnen de sidebar */
+.patient-profile {
+    text-align: center;
+    padding-top: 15px;
+}
+
+.patient-profile h2 {
+    font-size: var(--font-size-l);
+    color: var(--text-main-color);
+    margin: 10px 0 5px 0;
+}
+
+.patient-profile p {
+    font-size: var(--font-size-s);
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+/* Hoofdinhoud layout */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.header.card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: var(--bg-third-color);
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.header h1 {
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-size-xl);
+    text-align: left;
+    color: var(--text-main-color);
+}
+
+/* Grid voor statistieken */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.metric-card {
+    background: var(--bg-third-color);
+    padding: 20px;
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.metric-card h3 {
+    margin: 0 0 10px 0;
+    font-size: var(--font-size-m);
+    color: #64748b;
+    font-weight: var(--font-weight-m);
+}
+
+.metric-card .value {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-b);
+    color: var(--text-main-color);
+}
+
+.metric-card .unit {
+    font-size: var(--font-size-m);
+    font-weight: var(--font-weight-n);
+    color: #94a3b8;
+}
+
+.metric-card .subtitle {
+    margin: 5px 0 0 0;
+    font-size: var(--font-size-s);
+    color: #64748b;
+}
+
+/* Specifieke randen voor waarschuwingen */
+.border-danger {
+    border-left: 5px solid #ef4444 !important; /* Moderne kleur rood */
+}
+
+/* Grafiek sectie */
+.chart-section {
+    background: var(--bg-third-color);
+    padding: 25px;
+    border-radius: var(--border-radius-s);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.chart-section h2 {
+    font-size: var(--font-size-l);
+    color: var(--text-main-color);
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Responsive optimalisatie */
+@media (max-width: 992px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        flex: none;
+    }
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* PRINT STYLES */
+@media print {
+    .sidebar, .btn-primary, .form-button {
+        display: none !important;
+    }
+
+    .dashboard-container {
+        display: block !important;
+    }
+
+    .main-content {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .chart-section.card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        page-break-inside: avoid;
+        margin-bottom: 20px !important;
+    }
+
+    .apexcharts-canvas, 
+    .apexcharts-canvas svg {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* Container voor de font-size knoppen */
+.font-size-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 15px; /* Geeft wat afstand tot je normale menu-links */
+}
+
+/* De knoppen zelf */
+.font-size-controls button {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-nav-color);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    border-radius: var(--border-radius-s);
+    cursor: pointer;
+    font-weight: var(--font-weight-sb);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+/* Hover effect voor de font knoppen */
+.font-size-controls button:hover {
+    background-color: var(--text-nav-color);
+    color: var(--bg-nav-color); /* Kleuren draaien om bij hover! */
+    border-color: var(--text-nav-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.emoji-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
 }

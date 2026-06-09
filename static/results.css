@@ -1,6 +1,4 @@
-/* Hetzelfde als de dokter pagina */
-
-/* Layout container (alleen als je dashboard-structuur gebruikt) */
+/* --- Basis Layout --- */
 .dashboard-container {
   display: flex;
   gap: 30px;
@@ -10,7 +8,6 @@
   align-items: flex-start;
 }
 
-/* Hoofdcontent */
 .main-content {
   flex: 1;
   display: flex;
@@ -18,11 +15,11 @@
   gap: 25px;
 }
 
-/* Header card */
+/* --- Header Card --- */
 .header.card {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 20px;
   background: white;
@@ -34,11 +31,11 @@
   padding: 0;
   margin: 0;
   font-size: var(--font-size-xl);
-  text-align: left;
+  text-align: center;
   color: var(--text-main-color);
 }
 
-/* Status icons */
+/* --- Status Row & Icons --- */
 .status-row {
   display: flex;
   gap: 20px;
@@ -165,28 +162,24 @@
 }
 
 .metrics-grid {
-  padding: 45px;
-  padding-left: 70px;
-  padding-right: 70px;
+  padding: 45px 70px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
-
-/* Grafiek cards */
 .metric-card {
   background: white;
   padding: 20px;
   border-radius: var(--border-radius-s);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 2px solid #005941;
 }
 
 .metric-card h3 {
   margin: 0 0 10px 0;
   font-size: var(--font-size-m);
-  color: #555;
+  color: #005941;
   font-weight: var(--font-weight-m);
 }
 
@@ -229,98 +222,66 @@
 
 .status-grid {
   display: flex;
-  gap: 16px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 8px 0;
-  box-sizing: border-box;
-  overflow-x: auto;
-  align-items: stretch;
-  justify-content: flex-start;
-}
-
-.status-card {
-  padding: 12px;
-  border-radius: 8px;
+  gap: 10px;
+  align-items: center;
   background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  min-width: 220px;
-  flex: 0 0 auto;
-  text-align: center;
+  border: 2px solid #005941;
+  border-radius: 8px;
   box-sizing: border-box;
+  margin-top: 15px;
 }
 
-.status-card h3 {
-  margin: 0 0 6px 0;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: inherit;
+/* --- Responsive & 3K laptop --- */
+@media (max-width: 992px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .statuscards-wrapper {
+    flex-direction: column;
+  }
+
+  .statuscards-container {
+    max-width: 100%;
+  }
 }
 
-.status-card .score-value {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: inherit;
+@media screen and (min-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+
+  .dashboard-container {
+    max-width: 1800px;
+  }
+
+  .statuscards-container {
+    max-width: 500px;
+  }
 }
 
-.status-card[data-status="goed"] {
-  background: #dff5e1;
-  border-color: #9ed8a6;
-  color: #1b5e20;
+/* Styling voor de vragenlijst-card */
+.card {
+  border: none;
+  border-radius: 12px;
 }
 
-.status-card[data-status="matig"] {
-  background: #fff4cc;
-  border-color: #ffe08a;
-  color: #7a5c00;
+.bg-light {
+  background-color: #f8f9fa !important;
+  border: 1px solid #e9ecef;
 }
 
-.status-card[data-status="slecht"] {
-  background: #fde0e0;
-  border-color: #f5a3a3;
-  color: #7a1c1c;
+/* Zorgt dat de switches opvallen */
+.form-check-input:checked {
+  background-color: #005941;
+  border-color: #005941;
 }
 
-/* Layout voor de twee kolommen: links kaarten, rechts advies */
-.statuscards-wrapper {
-  display: grid;
-  grid-template-columns: 40% 40%;
-  gap: 20px;
-  align-items: start;
-}
-
-/* Container met de status-kaarten */
-.statuscards-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-/* Individuele status-kaarten */
-.status-card {
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
-}
-
-/* Adviesblok rechts */
-.advice {
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-/* Profiel styling */
-.content-wrapper {
-  display: grid;
-  grid-template-columns: 65% 35%;
-  gap: 1rem;
-  justify-content: center;
-  align-items: flex-start;
+/* De knop consistent maken met je dashboard */
+.btn-primary {
+  background-color: #005941;
+  border: none;
 }
 
 .item1 {

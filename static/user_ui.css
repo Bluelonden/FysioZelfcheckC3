@@ -1,0 +1,114 @@
+.simple-card {
+    background: var(--bg-third-color);
+    border-radius: var(--border-radius-s);
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 2px solid transparent;
+    transition: 0.2s ease;
+    max-width: 300px;
+    margin: 20px auto;
+}
+
+.simple-card h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--text-main-color);
+}
+
+.simple-card .advies {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+.simple-card .sub {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* Kleuren */
+.simple-card.green {
+    border-color: #22c55e;
+}
+
+.simple-card.orange {
+    border-color: #f59e0b;
+}
+
+.simple-card.red {
+    border-color: #ef4444;
+}
+
+.card-icon {
+    width: 140px;          
+    height: 140px;        
+    object-fit: contain; 
+    margin-bottom: 12px;
+    opacity: 0.95;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card-row {
+    display: flex;
+    justify-content: center;   
+    align-items: flex-start;
+    gap: 30px;                
+    margin-top: 30px;
+    flex-wrap: wrap;           
+}
+
+#fijnstof-card, 
+#gassen-card {
+    flex: 0 1 300px;          
+}
+
+.advies-card {
+    width: 340px;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+    margin: 30px auto;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.advies-red { background: #ef4444; }
+.advies-orange { background: #f59e0b; }
+.advies-green { background: #22c55e; }
+
+.advies-icon {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.advies-tekst {
+    font-size: 2rem;
+}
+
+/* Tooltip styling */
+.simple-card {
+    position: relative;
+}
+
+.simple-card[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 104%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000000cc;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}

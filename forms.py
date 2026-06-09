@@ -3,15 +3,12 @@ from wtforms import (StringField as StrF, PasswordField as PassF, SubmitField as
                      EmailField as MailF, SelectField as SelF, IntegerField as IntF,
                      RadioField as RadF, BooleanField as BoolF)
 from wtforms.validators import DataRequired, Length, NumberRange, ValidationError
-from wtforms_sqlalchemy.fields import QuerySelectField as QSF
 from models import db, User
 
 
 class LoginForm(FF):
-    username = StrF('Username',
-                    validators=[DataRequired()])
-    password = PassF('Wachtwoord',
-                     validators=[DataRequired()])
+    username = StrF('Gebruikersnaam', validators=[DataRequired()])
+    password = PassF('Wachtwoord', validators=[DataRequired()])
     submit = SubF('Login')
 
 
@@ -100,3 +97,11 @@ class HandmatigForm(FF):
                      ('matig', 'Matig'), ('veel', 'Veel')])
     
     submit = SubF('Opslaan')
+
+class TimeRangeForm(FF):
+    minutes = IntF(
+        "Data (minuten)",
+        default=1,
+        validators=[NumberRange(min=1, max=1440)]
+    )
+    submit = SubF("Update grafiek")
