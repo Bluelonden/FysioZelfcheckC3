@@ -127,7 +127,7 @@ def api_average():
 
     metingen = (
         Metingen.query
-        .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=5))
+        .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=3))
         .all()
     )
 

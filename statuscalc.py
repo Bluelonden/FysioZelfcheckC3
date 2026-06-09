@@ -64,18 +64,18 @@ def eind_status(status):
 
 def binnen_buiten_advies(kleur):
     if kleur == "red":
-        return {"text": "Blijf binnen", "icon": "house.png", "color": "advies-red"}
+        return {"text": "Luchtkwaliteit is slecht", "icon": "house.png", "color": "advies-red"}
     if kleur == "orange":
-        return {"text": "Liever binnen", "icon": "house.png", "color": "advies-orange"}
-    return {"text": "Buiten is gezond", "icon": "sun.png", "color": "advies-green"}
+        return {"text": "Luchtkwaliteit is matig", "icon": "house.png", "color": "advies-orange"}
+    return {"text": "Luchtkwaliteit is goed", "icon": "sun.png", "color": "advies-green"}
 
 
 def sport_advies(kleur):
     if kleur == "red":
-        return {"text": "Niet sporten", "icon": "no-sport.png", "color": "advies-red"}
+        return {"text": "Pas op met bewegen", "icon": "no-sport.png", "color": "advies-red"}
     if kleur == "orange":
-        return {"text": "Beweeg rustig", "icon": "rest.png", "color": "advies-orange"}
-    return {"text": "Sporten kan nu", "icon": "sport.png", "color": "advies-green"}
+        return {"text": "Bewegen alleen rustig", "icon": "rest.png", "color": "advies-orange"}
+    return {"text": "Bewegen kan hier goed", "icon": "sport.png", "color": "advies-green"}
 
 
 def volledige_status(meting, profiel):
