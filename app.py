@@ -2,10 +2,10 @@ from flask import render_template as rt, redirect, url_for, flash, request, json
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from main import app
 from models import db, User, Waardes, Metingen, Triggers
-# CRUCIAL: TimeRangeForm is hier toegevoegd aan de imports
 from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, TimeRangeForm
 from config import DREMPELWAARDES
 import requests
+from sqlalchemy.exc import IntegrityError
 from apis import api
 
 # Registreer de API blueprint
@@ -186,16 +186,23 @@ def vragenlijst():
             data.score_niveau()
 
             db.session.add(data)
-            db.session.commit()  # <-- commit slaat zowel waardes als esp_id op
+            db.session.commit()  
 
             flash("Data succesvol opgeslagen!", "success")
             return redirect(url_for('user_ui'))
 
+        except IntegrityError:
+            db.session.rollback()
+            flash("Deze ESP is al gekoppeld aan een andere gebruiker.", "danger")
+            return redirect(url_for('vragenlijst'))
+
         except Exception as e:
             db.session.rollback()
-            flash(f"Er is een fout opgetreden: {str(e)}", "danger")
+            flash("Er is een onverwachte fout opgetreden.", "danger")
+            return redirect(url_for('vragenlijst'))
 
     return rt("vragenlijst.html", form=form)
+
 
 ## HANDMATIGE TRIGGERS INVOER ##
 @app.route('/handmatig', methods=['POST', 'GET'])
@@ -237,37 +244,46 @@ def handmatig():
             
     return rt('handmatig.html', form=form)
 
-## UPDATE VRAGENLIJST ##
-@app.route('/update/vragen', methods=['POST', 'GET'])
+## UPDATE VRAGENLIJST ## 
+## Heb deze 10/06 herschreven zodat hij oude formulierwaardes behoudt ##
+@app.route('/update/vragen', methods=['GET', 'POST'])
 @login_required
 def update_vragen():
-    form = WaardesForm(obj=current_user)
+
     waardes = current_user.waardes
+    form = WaardesForm(obj=waardes)
 
-    if request.method == 'POST' and form.validate_on_submit():
-        waardes.leeftijd = form.leeftijd.data
-        waardes.diagnose = form.diagnose.data
-        if hasattr(form, 'level') and hasattr(waardes, 'level'):
-            waardes.level = form.level.data
-        waardes.rookt = form.rookt.data
-        waardes.dag = form.dag.data
-        waardes.nacht = form.nacht.data
-        waardes.saba = form.saba.data
-        waardes.beperking = form.beperking.data
-        waardes.hospital = form.hospital.data
-        waardes.prednison = form.prednison.data
-        waardes.exacerbaties = form.exacerbaties.data
+    if request.method == "GET":
+        form.esp_id.data = current_user.esp_id
 
+    if form.validate_on_submit():
+        form.populate_obj(waardes)
+        current_user.esp_id = form.esp_id.data
         waardes.score_niveau()
+        
 
+        #Failsave for ESP constraitns
         try:
             db.session.commit()
-            flash("Data succesvol geupdate!", "success")
+
+            flash("Data succesvol geüpdatet!", "success")
             return redirect(url_for('profiel'))
+
+        except IntegrityError:
+            db.session.rollback()
+
+            flash(
+                "Deze ESP-ID is al gekoppeld aan een andere gebruiker.",
+                "danger"
+            )
+
         except Exception as e:
             db.session.rollback()
-            flash(f"Er is een fout opgetreden: {str(e)}", "danger")
-            return rt('update_vragen.html', form=form)
+
+            flash(
+                f"Er is een fout opgetreden: {e}",
+                "danger"
+            )
 
     return rt("update_vragen.html", form=form)
 
@@ -369,7 +385,7 @@ def sensordata():
 
     return jsonify({"status": "ok"})
 
-#Paired een user aan esp_id
+#Paired een user aan esp_id (voor nu nog niet nodig meer voor de toekomst als we een gebruiker het laten aanpassen)
 @app.route("/user_esp_pairing", methods=['GET', 'POST']) 
 @login_required
 def user_esp_pairing():
@@ -399,12 +415,7 @@ def user_ui():
     if not user.waardes:
         flash("Vul eerst de vragenlijst in om je resultaten en drempelwaardes te bekijken.", "warning")
         return redirect(url_for('vragenlijst'))
-
-    # 2.User moet aan esp gekoppeld zijn
-    if not user.esp_id:
-        flash("Je hebt nog geen ESP‑device gekoppeld. Koppel eerst je apparaat.", "warning")
-        return redirect(url_for('user_esp_pairing'))
-
+    
     #Toon de UI
     niveau = user.waardes.niveau
     score = user.waardes.score
