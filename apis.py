@@ -127,12 +127,15 @@ def api_average():
 
     metingen = (
         Metingen.query
-        .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=5)) #Je wilt het gemiddelde van de afgelopen 5 minuten
+        .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=5))
         .all()
     )
 
+    profiel = current_user.waardes.niveau
+
+    #De fallback heb ik nu in de volledige status functie gebouwt.
     if not metingen:
-        return jsonify({})  # of een fallback
+        return jsonify(volledige_status(None, profiel))
 
     # gemiddelde berekenen
     avg = {
@@ -153,10 +156,10 @@ def api_average():
     f.tvoc = avg["tvoc"]
     f.aqi = avg["aqi"]
 
-    profiel = current_user.waardes.niveau
     data = volledige_status(f, profiel)
 
     return jsonify(data)
+
 
 @api.route("/esp/get_thresholds")
 def esp_get_thresholds():

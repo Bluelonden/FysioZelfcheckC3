@@ -112,3 +112,10 @@
     font-size: 0.75rem;
     white-space: nowrap;
 }
+
+/* advies bij nodata */
+.advies-grey {
+    background-color: #d0d0d0;   
+    color: #333;                 
+    border: 1px solid #b5b5b5;
+}

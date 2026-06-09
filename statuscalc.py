@@ -79,6 +79,46 @@ def sport_advies(kleur):
 
 
 def volledige_status(meting, profiel):
+
+    #Als er geen data is voor deze gebruiker:
+    if meting is None:
+     return {
+        "values": {
+            "pm1": None,
+            "pm25": None,
+            "pm10": None,
+            "co2": None,
+            "tvoc": None,
+            "aqi": None
+        },
+        "status": {
+            "pm1":  {"color": "grey", "status": "geen data"},
+            "pm25": {"color": "grey", "status": "geen data"},
+            "pm10": {"color": "grey", "status": "geen data"},
+            "co2":  {"color": "grey", "status": "geen data"},
+            "tvoc": {"color": "grey", "status": "geen data"},
+            "aqi":  {"color": "grey", "status": "geen data"}
+        },
+        "groups": {
+            "fijnstof": "grey",
+            "gassen": "grey"
+        },
+        "eind": "grey",
+        "advies": {
+            "binnenbuiten": {
+                "text": "Geen data beschikbaar",
+                "icon": "house.png",      # zelfde als oranje
+                "color": "advies-grey"    # nieuwe kleurklasse
+            },
+            "sport": {
+                "text": "Geen data beschikbaar",
+                "icon": "rest.png",       # zelfde als oranje
+                "color": "advies-grey"    # nieuwe kleurklasse
+            }
+        }
+    }
+
+    #Als er data is voor deze gebruiker...
     status = bereken_status(meting, profiel)
     eind = eind_status(status)
 
