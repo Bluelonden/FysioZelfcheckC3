@@ -370,6 +370,14 @@ def get_pacient_json(pacient_id):
 def sensordata():
     data = request.get_json()
 
+    esp_id = data.get("esp_id")
+    if not esp_id:
+        return jsonify({"error": "esp_id missing"}), 400
+
+    user = User.query.filter_by(esp_id=esp_id).first()
+    if not user:
+        return jsonify({"error": "esp_id not linked"}), 404
+
     m = Metingen(
         pm25=data["pm25"],
         pm10=data["pm10"],
@@ -377,13 +385,14 @@ def sensordata():
         aqi=data["aqi"],
         co2=data["co2"],
         tvoc=data["tvoc"],
-        user_id=data.get("user_id", 1)  # test: stuur user_id mee
+        user_id=user.id
     )
 
     db.session.add(m)
     db.session.commit()
 
     return jsonify({"status": "ok"})
+
 
 #Paired een user aan esp_id (voor nu nog niet nodig meer voor de toekomst als we een gebruiker het laten aanpassen)
 @app.route("/user_esp_pairing", methods=['GET', 'POST']) 
