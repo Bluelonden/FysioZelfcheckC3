@@ -370,10 +370,12 @@ def get_pacient_json(pacient_id):
 def sensordata():
     data = request.get_json()
 
+    #Is de ESP_ID aanwezig
     esp_id = data.get("esp_id")
     if not esp_id:
         return jsonify({"error": "esp_id missing"}), 400
 
+    #Vind de gebruiker die bij deze ESP_id hoort
     user = User.query.filter_by(esp_id=esp_id).first()
     if not user:
         return jsonify({"error": "esp_id not linked"}), 404
