@@ -20,6 +20,9 @@ class RegisterForm(FF):
     password = PassF('Wachtwoord',
                      validators=[DataRequired(),
                                  Length(min=8)])
+    confirm_password = PassF('Bevestig Wachtwoord',
+                             validators=[DataRequired(),
+                                         Length(min=8)])
     role = SelF('Role',
                 choices=[('patient', 'Patient'), ('arts', 'Arts')],
                 validators=[DataRequired()])
