@@ -94,55 +94,34 @@ def tvoc_fig():
 @api.route('/arts/pacient_data/<int:patient_id>')
 @login_required
 def arts_pacient_data(patient_id):
-    # 1. Haal de patiënt op
     patient = User.query.get_or_404(patient_id)
+    profiel = patient.waardes.niveau if patient.waardes else "Laag"
 
-    # Veiligheidscheck
-    if not patient.waardes:
-        profiel = "Laag"
-    else:
-        profiel = patient.waardes.niveau
-
-    # 3. Haal de werkelijke metingen op
+    # Metingen ophalen (zoals je al had)
     metingen = Metingen.query.filter_by(user_id=patient_id)\
                              .order_by(Metingen.timestamp.desc())\
                              .limit(20)\
                              .all()
-    
-    # Draai de lijst om zodat de oudste eerst komt (voor grafiek weergave)
     metingen.reverse()
 
-    # 4. Data klaarmaken
     labels = [m.timestamp.strftime("%H:%M") for m in metingen] if metingen else []
     
-    pm25_data = [m.pm25 for m in metingen]
-    pm10_data = [m.pm10 for m in metingen]
-    no2_data = [m.no2 for m in metingen] # Aanname: je hebt no2 in je model (zoals in doctor.html gebruikt)
-    co2_data = [m.co2 for m in metingen]
-    tvoc_data = [m.tvoc for m in metingen]
-    aqi_data = [m.aqi for m in metingen]
-
-    # Status berekenen voor de meest recente meting
-    status_info = {}
-    if metingen:
-        latest_m = metingen[-1] # De meest recente na reverse()
-        status_data = volledige_status(latest_m, profiel)
-        status_info = status_data.get('status', {})
-
+    # Let op: zorg dat 'no2' in je Metingen model staat!
     return jsonify({
         "labels": labels,
         "values": {
-            "pm25": pm25_data,
-            "pm10": pm10_data,
-            "no2": no2_data,
-            "co2": co2_data,
-            "tvoc": tvoc_data,
-            "aqi": aqi_data
+            "pm25": [m.pm25 for m in metingen],
+            "pm10": [m.pm10 for m in metingen],
+            "no2": [getattr(m, 'no2', 0) for m in metingen], 
+            "co2": [m.co2 for m in metingen],
+            "tvoc": [m.tvoc for m in metingen],
+            "aqi": [m.aqi for m in metingen]
         },
-        "status": status_info,
+        # HIER IS DE FIX:
+        "status": volledige_status(metingen[-1], profiel).get('status', {}) if metingen else {},
+        "groups": volledige_status(metingen[-1], profiel).get('groups', {}) if metingen else {},
         "profiel": profiel
     })
-
 
 @api.route("/average")
 @login_required
