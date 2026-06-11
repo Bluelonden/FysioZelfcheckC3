@@ -12,6 +12,31 @@
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            list-style-type: none;
+            margin: 0;
+            padding: 10px 20px;
+            gap: 20px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Deze class houdt de A-knoppen mooi bij elkaar */
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Ruimte tussen de A-knoppen onderling */
+            margin-left: auto; /* Duwt ze naar de rechterkant */
+        }
+    </style>
+
     {% block script %}
     {% endblock %}
     {% block style %}
@@ -25,67 +50,58 @@
             <li><a href="/">Home</a></li>
             
             {% if current_user.is_authenticated %}
-                {# ALS DE INGELOGDE GEBRUIKER EEN ARTS IS #}
                 {% if current_user.role == 'arts' %}
                     <li><a href="{{ url_for('doctor') }}">Artsenportaal</a></li>
-                
-                {# ALS DE INGELOGDE GEBRUIKER EEN PATIENT IS #}
                 {% else %}
                     <li><a href="{{ url_for('profiel') }}">Mijn Profiel</a></li>
                     <li><a href="{{ url_for('user_ui') }}">Metingen</a></li>
                 {% endif %}
 
-                {# ZICHTBAAR VOOR IEDEREEN DIE IS INGELOGD #}
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 
             {% else %}
-                {# ZICHTBAAR ALS ER NIEMAND IS INGELOGD #}
                 <li><a href="{{ url_for('login') }}">Inloggen</a></li>
                 <li><a href="{{ url_for('register') }}">Registreren</a></li>
             {% endif %}
 
-            {# HIER STAAN DE INZOOMKNOPPEN NU NETJES BINNEN DE NAV-MENU LUS #}
             <li class="font-size-controls">
-                <button type="button" onclick="changeFontSize('decrease')" title="Tekst verkleinen">A-</button>
-                <button type="button" onclick="changeFontSize('reset')" title="Standaard tekstgrootte">A</button>
-                <button type="button" onclick="changeFontSize('increase')" title="Tekst vergroten">A+</button>
+                <a onclick="changeFontSize('decrease')" title="Tekst verkleinen" style="cursor: pointer; font-weight: bold;">A-</a>
+                <a onclick="changeFontSize('reset')" title="Standaard tekstgrootte" style="cursor: pointer; font-weight: bold;">A</a>
+                <a onclick="changeFontSize('increase')" title="Tekst vergroten" style="cursor: pointer; font-weight: bold;">A+</a>
             </li>
         </ul>
     </nav>
 
-    {# DE GEFLASHED MELDINGEN STAAN NU OP HUN EIGEN PLEK #}
     {% for cat, msg in get_flashed_messages(with_categories=true) %}
-    <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+    <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert" style="margin: 15px;">
         {{ msg }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %}
 
-    {# DIT IS DE WEBSITE CONTENT #}
-    {% block content %}
-    {% endblock %}
+    <div class="content-wrapper">
+        {% block content %}
+        {% endblock %}
+    </div>
 
-    {# HET INTERACTIEVE SCRIPT STAAT VEILIG ONDERAAN DE GEHELE PAGINA #}
     <script>
-        // Startwaarde is 100% (de standaard lettergrootte van de browser)
         let currentZoom = 100;
 
         function changeFontSize(action) {
             const htmlElement = document.documentElement;
 
             if (action === 'increase') {
-                if (currentZoom < 140) { // Maximaal 140% vergroten zodat het design niet breekt
+                if (currentZoom < 140) { 
                     currentZoom += 10;
                 }
             } else if (action === 'decrease') {
-                if (currentZoom > 80) { // Maximaal verkleinen tot 80%
+                if (currentZoom > 80) { 
                     currentZoom -= 10;
                 }
             } else if (action === 'reset') {
-                currentZoom = 100; // Terug naar standaard
+                currentZoom = 100; 
             }
 
-            // Pas de font-size toe op het allerhoogste niveau (<html>)
             htmlElement.style.fontSize = currentZoom + '%';
         }
     </script>
