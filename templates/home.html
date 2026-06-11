@@ -2,85 +2,199 @@
 
 <!-- TITLE -->
 {% block title %}
-Home
+Home | Luchtkwaliteit & Fysiozelfcheck
 {% endblock %}
 
 {% block content %}
-<h1> Luchtkwaliteit en Fysiozelfcheck</h1>
+<style>
+    /* Tip: Je kunt deze CSS later verplaatsen naar je eigen externe stylesheet (bijv. style.css) */
+    .home-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+        line-height: 1.6;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    /* Hero Sectie */
+    .hero-section {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        background-color: #f8f9fa;
+        padding: 40px;
+        border-radius: 12px;
+        margin-bottom: 40px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .hero-content {
+        flex: 1;
+    }
+    .hero-content h1 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+    }
+    .hero-content h3 {
+        color: #3498db;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    .hero-image {
+        flex: 1;
+        text-align: center;
+    }
+    .hero-image img.lung {
+        max-width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .logo-link img {
+        max-width: 150px;
+        margin-top: 20px;
+        border-radius: 6px;
+        transition: transform 0.3s ease;
+    }
+    .logo-link img:hover {
+        transform: scale(1.05);
+    }
 
-<div class="custom-containerv2">
-    <div class="box1">
-        <h3><strong>
-                Wat doet ons product
-            </strong>
-        </h3>
-        <br>
+    /* Testimonials (Quotes) */
+    .testimonials {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    .quote-card {
+        background: #ffffff;
+        border-left: 5px solid #3498db;
+        padding: 25px;
+        flex: 1;
+        border-radius: 0 8px 8px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        font-style: italic;
+        color: #555;
+    }
+    .quote-author {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #2c3e50;
+        font-style: normal;
+    }
+
+    /* Informatie Sectie */
+    .info-section {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #e9ecef;
+    }
+    .info-section h3 {
+        color: #2c3e50;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+    .info-section h3:first-child {
+        margin-top: 0;
+    }
+    
+    /* Waardes Grid Lijst */
+    .values-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+    .values-list li {
+        background: #e1f0fa;
+        color: #2980b9;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    /* Mobiele weergave */
+    @media (max-width: 768px) {
+        .hero-section, .testimonials {
+            flex-direction: column;
+        }
+        .hero-image {
+            order: -1; /* Zet de afbeelding bovenaan op mobiel */
+        }
+    }
+</style>
+
+<div class="home-container">
+    
+    <!-- Hero Sectie (Bovenste deel met de tekst en afbeelding) -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Luchtkwaliteit & Fysiozelfcheck</h1>
+            <h3>Wat doet ons product?</h3>
+            <p>
+                Wij bij Fysiozelfcheck bieden een luchtkwaliteitsmeter aan die patiënten met milde tot matige COPD- of astmaklachten helpt te ondersteunen bij hun dagelijkse activiteiten. Dit doen wij door constante metingen terug te koppelen naar onze website en hier vervolgens een persoonlijk advies aan te verbinden.
+            </p>
+            <p>
+                Het apparaat dat hierbij geleverd wordt is in staat zelfstandig advies te geven zonder gebruik van de website. Houd er wel rekening mee dat de directe terugkoppeling op het apparaat gelimiteerd is tot simpele, heldere instructies.
+            </p>
+            <p>
+                Voor onze gebruikers bieden wij een volledig aanpasbaar configuratiesysteem aan waarmee u de drempelwaardes voor adviezen en waarschuwingen zelf kunt instellen. Daarnaast hebben wij een aantal basisprofielen met door ons aanbevolen drempelwaardes om direct veilig van start te gaan.
+            </p>
+            <a href="https://fysiozelfcheck.nl/" class="logo-link" target="_blank" rel="noopener noreferrer">
+                <img class="logo" src="static/img/Logo.jpeg" alt="Logo Fysiozelfcheck">
+            </a>
+        </div>
+        <div class="hero-image">
+            <img class="lung" src="static/img/Lungs.jpg" alt="Illustratie van longen">
+        </div>
+    </section>
+
+    <!-- Testimonials / Quotes -->
+    <section class="testimonials">
+        <div class="quote-card">
+            "Luchtkwaliteit bepaalt meer dan je denkt."
+            <span class="quote-author">- John Doe</span>
+        </div>
+        <div class="quote-card">
+            "Absoluut het proberen waard, mijn klachten nemen af sinds ik deze meter ben gaan gebruiken."
+            <span class="quote-author">- John Smith</span>
+        </div>
+    </section>
+
+    <!-- Uitgebreide Informatie Sectie -->
+    <section class="info-section">
+        <h3>Voor wie zijn wij er?</h3>
         <p>
-            Wij bij Fysiozelfcheck bieden een luchtkwaliteitsmeter aan die patienten met milde tot matige COPD of Asthma
-            klachten helpt
-            te ondersteunen bij hun dagelijkste activiteiten. Dit doen wij door constante metingen terug te koppelen
-            naar onze website en hier vervolgens een advies aan te verbinden. Het apparaat dat hierbij geleverd wordt is
-            in staat
-            zelfstandig advies te geven zonder gebruik van de website, maar houdt er rekening mee dat terugkoppeling
-            hierbij gelimiteerd is
-            tot simpele instructies.
+            Hoewel iedereen kan profiteren van dit product, is het belangrijk om als patiënt bewust te zijn van wat wij wel en niet kunnen bieden. Bij ernstige klachten is het essentieel om altijd een passende behandeling te vinden met uw huisarts. Dit product is speciaal gemaakt om mensen te helpen die geen extreme beperkingen ervaren bij normale, dagelijkse inspanningen.
         </p>
-        <br>
 
+        <h3>Wat meten wij?</h3>
+        <p>De meter leest en analyseert nauwkeurig de volgende waardes:</p>
+        <ul class="values-list">
+            <li>PM 2.5</li>
+            <li>PM 10</li>
+            <li>AQI</li>
+            <li>CO₂</li>
+            <li>TVOC</li>
+        </ul>
+
+        <h3>Altijd verbonden, ook offline</h3>
         <p>
-            Voor onze gebruikers bieden wij een volledig aanpasbaar configuratiesysteem aan waarmee u de drempelwaardes
-            voor adviezen en waarschuwingen kunt aanpassen.
-            Daarnaast hebben wij een aantal basisprofielen waarmee u de door ons aanbevolen drempelwaardes kunt
-            gebruiken.
+            Deze waardes worden uitgelezen en verwerkt via onze website, zolang u verbinding heeft met het internet. Verliest u tijdelijk de verbinding? Geen probleem! De data wordt lokaal opgeslagen en de eerstvolgende keer dat u weer online bent, wordt deze automatisch en veilig toegevoegd aan uw account.
         </p>
-        <a href="https://fysiozelfcheck.nl/"> <img class="logo" src="static/img/Logo.jpeg" alt="Logo"> </a>
 
-    </div>
-    <div class="box2">
-        <img class="lung" src="static/img/Lungs.jpg">
-    </div>
+        <h3>Uw persoonlijke profiel</h3>
+        <p>
+            Standaard voorzien wij u van een basisprofiel. Omdat geen enkele patiënt hetzelfde is, is dit profiel echter niet bedoeld om voor iedereen perfect te werken. Wanneer u merkt dat ons basisprofiel niet goed op u aansluit, kunt u in uw accountinstellingen de drempelwaardes eenvoudig zelf configureren. Op die manier past u op een slimme en handige manier de feedback van het apparaat volledig aan op uw eigen situatie.
+        </p>
+    </section>
 
 </div>
-
-<blockquote class="quote">
-    "Luchtkwaliteit bepaalt meer dan je denkt. - John Doe"
-</blockquote>
-
-<blockquote class="quote">
-    "Absoluut het proberen waard mijn klachten nemen af sinds ik deze meter ben gaan gebruiken. -John Smith"
-</blockquote>
-
-<div class="custom-containerv3">
-    <h3><strong>Voor wie zijn wij?</strong></h3>
-    <p>Alhoewel iedereen kan profiteren van dit product is het belangrijk om als patient bewust te zijn van
-        wat wij wel en niet kunnen bieden. Bij ernstige klachten is het belangrijk om een passende oplossing te vinden
-        met uw huisarts.
-        Dit product is gemaakt om mensen te helpen die geen extreme beperkingen ervaren bij normale dagelijkse
-        inspanning.
-    </p>
-    <p>
-        De meter leest en analyseert de volgende waardes:
-
-    <ul>
-        <li>PM 2.5</li>
-        <li>PM 10</li>
-        <li>AQI</li>
-        <li>CO2</li>
-        <li>TVOC</li>
-    </ul>
-    </p>
-    <p>
-        Deze waardes worden uitgelezen en verwerkt via onze website zolang u verbinding heeft met het internet.
-        Als u deze verbinding tijdelijk verliest ... Geen probleem! de volgende keer dat u weer verbinding heeft wordt
-        deze data toegevoegd.
-    </p>
-    <p>
-        Standaard geven wij een basisprofiel, maar houdt er rekening mee dat dit profiel niet bedoelt is om voor
-        iedereen te werken.
-        Wanneer u toch merkt dat ons basisprofiel niet goed voor u werkt kunt u in uw accountinstellingen de
-        drempelwaardes zelfstandig configureren.
-        Op die manier kunt u slim en handig ook de feedback van het apparaat zelf aanpassen.
-    </p>
-</div>
-
 {% endblock %}

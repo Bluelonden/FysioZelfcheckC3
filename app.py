@@ -1,5 +1,8 @@
 from flask import render_template as rt, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer as Serializer
+from werkzeug.security import generate_password_hash, check_password_hash
 from main import app
 from models import db, User, Waardes, Metingen, Triggers
 from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, TimeRangeForm
@@ -10,6 +13,13 @@ from apis import api
 
 # Registreer de API blueprint
 app.register_blueprint(api, url_prefix="/api")
+app.config['MAIL_SERVER'] = 'smtp.gmail.com' # Of je provider
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'jouw-email@gmail.com'
+app.config['MAIL_PASSWORD'] = 'je-app-wachtwoord' # Let op: gebruik een app-wachtwoord!
+mail = Mail(app)
+
 
 ESP32_IP = "http://192.168.1.50"
 
@@ -143,7 +153,6 @@ def vragenlijst():
     form = WaardesForm()
 
     if form.validate_on_submit():
-        # Nieuw Waardes-object aanmaken en koppelen aan de ingelogde gebruiker
         waardes = Waardes(
             leeftijd=form.leeftijd.data,
             diagnose=form.diagnose.data,
@@ -159,15 +168,11 @@ def vragenlijst():
             user_id=current_user.id
         )
 
-        # ESP-ID los opslaan op de user (zoals in update_vragen)
         current_user.esp_id = form.esp_id.data
 
         try:
             db.session.add(waardes)
-
-            # Score/niveau berekenen op basis van de ingevulde waardes
             waardes.score_niveau()
-
             db.session.commit()
 
             flash("Vragenlijst succesvol opgeslagen!", "success")
@@ -183,7 +188,7 @@ def vragenlijst():
 
     elif request.method == 'POST':
         print("--- FORMULIER VALIDATIE FOUTEN ---")
-        print(form.errors)  # Print de specifieke reden naar je terminal
+        print(form.errors)
         flash("Formulier validatie mislukt. Check de terminal.", "danger")
 
     return rt('vragenlijst.html', form=form)
@@ -229,7 +234,6 @@ def handmatig():
     return rt('handmatig.html', form=form)
 
 ## UPDATE VRAGENLIJST ## 
-## Heb deze 10/06 herschreven zodat hij oude formulierwaardes behoudt ##
 @app.route('/update/vragen', methods=['GET', 'POST'])
 @login_required
 def update_vragen():
@@ -245,8 +249,6 @@ def update_vragen():
         current_user.esp_id = form.esp_id.data
         waardes.score_niveau()
         
-
-        #Failsave for ESP constraitns
         try:
             db.session.commit()
 
@@ -380,7 +382,7 @@ def sensordata():
     return jsonify({"status": "ok"})
 
 
-#Paired een user aan esp_id (voor nu nog niet nodig meer voor de toekomst als we een gebruiker het laten aanpassen)
+#Paired een user aan esp_id
 @app.route("/user_esp_pairing", methods=['GET', 'POST']) 
 @login_required
 def user_esp_pairing():
@@ -420,9 +422,6 @@ def user_ui():
               niveau=niveau,
               score=score,
               drempels=drempels)
-
-
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
