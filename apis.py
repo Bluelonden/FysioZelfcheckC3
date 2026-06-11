@@ -88,35 +88,52 @@ def tvoc_fig():
 
 @api.route('/arts/pacient_data/<int:patient_id>')
 @login_required
-
 def arts_pacient_data(patient_id):
+    # 1. Haal de patiënt op
     patient = User.query.get_or_404(patient_id)
 
+    # 2. Bepaal profiel
     profiel = "Laag"
     if patient.waardes and patient.waardes.niveau:
         profiel = patient.waardes.niveau
 
-    drempels = DREMPELWAARDES.get(profiel, DREMPELWAARDES["Laag"])
+    # 3. Haal de werkelijke metingen op
+    metingen = Metingen.query.filter_by(user_id=patient_id)\
+                             .order_by(Metingen.timestamp.desc())\
+                             .limit(20)\
+                             .all()
+    
+    # Draai de lijst om zodat de oudste eerst komt (voor grafiek weergave)
+    metingen.reverse()
 
-    pm25_rood_grens = drempels["PM25"]["oranje_max"]
-    pm10_rood_grens = drempels["PM10"]["oranje_max"]
+    # 4. Data klaarmaken
+    labels = [m.timestamp.strftime("%H:%M") for m in metingen] if metingen else []
+    
+    pm25_data = [m.pm25 for m in metingen]
+    pm10_data = [m.pm10 for m in metingen]
+    no2_data = [m.no2 for m in metingen] # Aanname: je hebt no2 in je model (zoals in doctor.html gebruikt)
+    co2_data = [m.co2 for m in metingen]
+    tvoc_data = [m.tvoc for m in metingen]
+    aqi_data = [m.aqi for m in metingen]
 
-    pm25_data = [round(random.uniform(2, pm25_rood_grens + 8), 1) for _ in range(7)]
-    pm10_data = [round(random.uniform(5, pm10_rood_grens + 15), 1) for _ in range(7)]
-    no2_data = [round(random.uniform(10.0, 45.0), 1) for _ in range(7)]
-
-    labels = []
-    nu = datetime.now()
-    for i in range(6, -1, -1):
-        labels.append((nu - timedelta(hours=i)).strftime("%H:%M"))
+    # Status berekenen voor de meest recente meting
+    status_info = {}
+    if metingen:
+        latest_m = metingen[-1] # De meest recente na reverse()
+        status_data = volledige_status(latest_m, profiel)
+        status_info = status_data.get('status', {})
 
     return jsonify({
         "labels": labels,
         "values": {
             "pm25": pm25_data,
             "pm10": pm10_data,
-            "no2": no2_data
+            "no2": no2_data,
+            "co2": co2_data,
+            "tvoc": tvoc_data,
+            "aqi": aqi_data
         },
+        "status": status_info,
         "profiel": profiel
     })
 
@@ -177,5 +194,3 @@ def esp_get_thresholds():
     drempels = DREMPELWAARDES[profiel]
 
     return jsonify(drempels)
-
-

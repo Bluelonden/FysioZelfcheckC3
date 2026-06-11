@@ -142,67 +142,51 @@ def profiel():
 def vragenlijst():
     form = WaardesForm()
 
-    if request.method == 'GET':
-        if current_user.waardes:
-            flash('Formulier is al eerder ingevuld!', 'danger')
-            return redirect(url_for('profiel'))
-        else:
-            return rt('vragenlijst.html', form=form)
+    if form.validate_on_submit():
+        # Nieuw Waardes-object aanmaken en koppelen aan de ingelogde gebruiker
+        waardes = Waardes(
+            leeftijd=form.leeftijd.data,
+            diagnose=form.diagnose.data,
+            level=form.level.data,
+            rookt=form.rookt.data,
+            dag=form.dag.data,
+            nacht=form.nacht.data,
+            saba=form.saba.data,
+            beperking=form.beperking.data,
+            hospital=form.hospital.data,
+            prednison=form.prednison.data,
+            exacerbaties=form.exacerbaties.data,
+            user_id=current_user.id
+        )
 
-    if request.method == 'POST' and form.validate_on_submit():
+        # ESP-ID los opslaan op de user (zoals in update_vragen)
+        current_user.esp_id = form.esp_id.data
+
         try:
-            leeftijd = form.leeftijd.data
-            diagnose = form.diagnose.data
-            level = getattr(form, 'level', None).data if hasattr(form, 'level') else None
-            rookt = form.rookt.data
-            dag = form.dag.data
-            nacht = form.nacht.data
-            saba = form.saba.data
-            beperking = form.beperking.data
-            hospital = form.hospital.data
-            prednison = form.prednison.data
-            esp_id = form.esp_id.data
-            exacerbaties = int(form.exacerbaties.data)
+            db.session.add(waardes)
 
-            # ESP-ID opslaan bij de user
-            current_user.esp_id = esp_id
+            # Score/niveau berekenen op basis van de ingevulde waardes
+            waardes.score_niveau()
 
-            # Waardes opslaan
-            data = Waardes(
-                leeftijd=leeftijd,
-                diagnose=diagnose,
-                level=level,
-                rookt=rookt,
-                dag=dag,
-                nacht=nacht,
-                saba=saba,
-                beperking=beperking,
-                hospital=hospital,
-                prednison=prednison,
-                exacerbaties=exacerbaties,
-                user_id=current_user.id
-            )
+            db.session.commit()
 
-            data.score_niveau()
-
-            db.session.add(data)
-            db.session.commit()  
-
-            flash("Data succesvol opgeslagen!", "success")
+            flash("Vragenlijst succesvol opgeslagen!", "success")
             return redirect(url_for('user_ui'))
 
         except IntegrityError:
             db.session.rollback()
-            flash("Deze ESP is al gekoppeld aan een andere gebruiker.", "danger")
-            return redirect(url_for('vragenlijst'))
+            flash("Deze ESP-ID is al gekoppeld aan een andere gebruiker.", "danger")
 
         except Exception as e:
             db.session.rollback()
-            flash("Er is een onverwachte fout opgetreden.", "danger")
-            return redirect(url_for('vragenlijst'))
+            flash(f"Er is een fout opgetreden: {str(e)}", "danger")
 
-    return rt("vragenlijst.html", form=form)
+    elif request.method == 'POST':
+        print("--- FORMULIER VALIDATIE FOUTEN ---")
+        print(form.errors)  # Print de specifieke reden naar je terminal
+        flash("Formulier validatie mislukt. Check de terminal.", "danger")
 
+    return rt('vragenlijst.html', form=form)
 
 ## HANDMATIGE TRIGGERS INVOER ##
 @app.route('/handmatig', methods=['POST', 'GET'])
@@ -442,4 +426,3 @@ def user_ui():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-

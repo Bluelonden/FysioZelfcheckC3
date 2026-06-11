@@ -38,28 +38,42 @@ class RegisterForm(FF):
             raise ValidationError('Deze username is al in gebruik')
 
 class WaardesForm(FF):
-    leeftijd = IntF("Wat is uw leeftijd?",
-                    validators=[DataRequired(), 
-                                NumberRange(min=0, max=120)])
-    diagnose = SelF("Wat is uw Diagnose?",
-                    choices=[("astma","Astma"),("copd","COPD")]
-                    )
+    leeftijd = IntF("Wat is uw leeftijd?", 
+                    validators=[DataRequired(), NumberRange(min=0, max=120)])
+    
+    # Gebruik hier de lowercase keys: 'astma' of 'copd'
+    diagnose = SelF("Wat is uw Diagnose?", 
+                    choices=[("astma", "Astma"), ("copd", "COPD")],
+                    validators=[DataRequired()])
+    
+    # Gebruik hier de exacte keys: 'intermittent', 'mild', 'matig', 'ernstig', 'g1', 'g2', 'g3', 'g4'
     level = SelF("Wat is de ernst van uw diagnose?",
-                 choices=[('intermittent', "Astma - intermittent"),
-                          ("mild", "Astma - mild"), ("matig","Astma - matig"),
-                          ("ernstig", "Astma - ernstig"), ("g1","GOLD 1"),
-                          ("g2", "GOLD 2"), ("g3", "GOLD 3"), ("g4", "GOLD 4")])
+                 choices=[
+                     ('intermittent', "Astma - intermittent"),
+                     ('mild', "Astma - mild"), 
+                     ('matig', "Astma - matig"),
+                     ('ernstig', "Astma - ernstig"), 
+                     ('g1', "GOLD 1"),
+                     ('g2', "GOLD 2"), 
+                     ('g3', "GOLD 3"), 
+                     ('g4', "GOLD 4")
+                 ],
+                 validators=[DataRequired()])
+    
     rookt = BoolF("Rookt u?")
     dag = BoolF("Ik heb vaker dan 2x per week dagelijkse klachten")
-    nacht = BoolF("Ik word regelmatig s'nachts wakker met ademhalingsproblemen")
-    saba = BoolF("Ik gebruik mijn SABA(nood-inhaler) meer dan 2x per week")
-    beperking = BoolF("Ik beperk mijn dagelijkse activeit vanwege mijn ademhaling")
-    hospital = BoolF("Ik ben in de afgelopen 12 maanden vanwegen mijn ziekte/symptomen in het ziekenhuis opgenomen geweest")
+    nacht = BoolF("Ik word regelmatig 's nachts wakker met ademhalingsproblemen")
+    saba = BoolF("Ik gebruik mijn SABA (nood-inhaler) meer dan 2x per week")
+    beperking = BoolF("Ik beperk mijn dagelijkse activiteit vanwege mijn ademhaling")
+    hospital = BoolF("Ik ben in de afgelopen 12 maanden vanwege mijn ziekte/symptomen in het ziekenhuis opgenomen geweest")
     prednison = BoolF("Ik heb in de afgelopen 12 maanden prednison gebruikt")
+    
+    # Belangrijk: hier gebruik je integers als keys
     exacerbaties = RadF("Aantal exacerbaties afgelopen 12 maanden", 
-                        choices=[(0, "0"), (1, "1"), (2, "≥2")],
+                        choices=[(0, "0"), (1, "1"), (2, "2 of meer")],
                         coerce=int,
                         default=0)
+    
     esp_id = StrF("ESP-ID", validators=[DataRequired()])
     submit = SubF("Opslaan en berekenen")
 

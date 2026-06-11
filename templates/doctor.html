@@ -74,6 +74,14 @@
                 </div>
                 <p class="subtitle">Gebaseerd op de laatste vragenlijst</p>
             </div>
+            <div class="metric-card card">
+                <h3>Luchtkwaliteit Status</h3>
+                <div id="gas-status-container" style="text-align: left; font-size: 0.9rem; margin-top: 10px;">
+                    <p><strong>CO2:</strong> <span id="co2-status">-</span></p>
+                    <p><strong>TVOC:</strong> <span id="tvoc-status">-</span></p>
+                    <p><strong>AQI:</strong> <span id="aqi-status">-</span></p>
+                </div>
+            </div>
         </div>
 
         <div class="chart-section card" style="margin-bottom: 25px;">
@@ -115,27 +123,27 @@
         fetch(`/api/arts/pacient_data/${patientId}`)
             .then(response => response.json())
             .then(data => {
-                console.log("Ontvangen testdata voor Chart.js:", data);
+                console.log("Ontvangen data:", data);
 
-                // Gedeelde configuratie voor een strakke weergave in Chart.js
+                // --- Nieuwe Status Update ---
+                if (data.status) {
+                    document.getElementById('co2-status').innerText = data.status.co2.status || '-';
+                    document.getElementById('tvoc-status').innerText = data.status.tvoc.status || '-';
+                    document.getElementById('aqi-status').innerText = data.status.aqi.status || '-';
+                }
+
+                // Gedeelde configuratie voor grafieken
                 const commonOptions = {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false } // Verbergt legenda net als in de oude opzet
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'µg/m³' }
-                        },
-                        x: {
-                            title: { display: true, text: 'Tijdstip van meting' }
-                        }
+                        y: { beginAtZero: true, title: { display: true, text: 'µg/m³' } },
+                        x: { title: { display: true, text: 'Tijdstip van meting' } }
                     }
                 };
 
-                // 1. PM2.5 Grafiek bouwen met data.labels en data.values.pm25
+                // 1. PM2.5 Grafiek
                 new Chart(document.getElementById('pm25Chart'), {
                     type: 'line',
                     data: {
@@ -153,7 +161,7 @@
                     options: commonOptions
                 });
 
-                // 2. PM10 Grafiek bouwen met data.labels en data.values.pm10
+                // 2. PM10 Grafiek
                 new Chart(document.getElementById('pm10Chart'), {
                     type: 'line',
                     data: {
@@ -171,7 +179,7 @@
                     options: commonOptions
                 });
 
-                // 3. NO2 Grafiek bouwen met data.labels en data.values.no2
+                // 3. NO2 Grafiek
                 new Chart(document.getElementById('no2Chart'), {
                     type: 'line',
                     data: {
