@@ -32,6 +32,10 @@ def livedata_grafiek(column):
 @api.route("/latest")
 @login_required
 def api_latest():
+    # Veiligheidscheck
+    if not current_user.waardes:
+        return jsonify({"error": "User has no waardes profile"}), 400
+
     m = Metingen.query.order_by(Metingen.id.desc()).first()
 
     if m is None:
@@ -61,6 +65,7 @@ def api_latest():
 
     return jsonify(data)
 
+
 @api.route("/pm25_fig")
 def pm25_fig():
     return livedata_grafiek("pm25")
@@ -88,12 +93,13 @@ def tvoc_fig():
 
 @api.route('/arts/pacient_data/<int:patient_id>')
 @login_required
-
 def arts_pacient_data(patient_id):
     patient = User.query.get_or_404(patient_id)
 
-    profiel = "Laag"
-    if patient.waardes and patient.waardes.niveau:
+    # Veiligheidscheck
+    if not patient.waardes:
+        profiel = "Laag"
+    else:
         profiel = patient.waardes.niveau
 
     drempels = DREMPELWAARDES.get(profiel, DREMPELWAARDES["Laag"])
@@ -125,6 +131,10 @@ def arts_pacient_data(patient_id):
 @login_required
 def api_average():
 
+    # Veiligheidscheck
+    if not current_user.waardes:
+        return jsonify({"error": "User has no waardes profile"}), 400
+
     metingen = (
         Metingen.query
         .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=3))
@@ -133,11 +143,9 @@ def api_average():
 
     profiel = current_user.waardes.niveau
 
-    #De fallback heb ik nu in de volledige status functie gebouwt.
     if not metingen:
         return jsonify(volledige_status(None, profiel))
 
-    # gemiddelde berekenen
     avg = {
         "pm1": sum(m.pm1 for m in metingen) / len(metingen),
         "pm25": sum(m.pm25 for m in metingen) / len(metingen),
@@ -177,5 +185,3 @@ def esp_get_thresholds():
     drempels = DREMPELWAARDES[profiel]
 
     return jsonify(drempels)
-
-
