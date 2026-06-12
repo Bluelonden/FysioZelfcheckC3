@@ -8,12 +8,14 @@ Homepagina Fysiozelfcheck
 
 {% block content %}
 <h1>Welkom bij Fysiozelfcheck</h1>
-<h2>Volg deze stappen om uw apparaat te verbinden:</p>
+<h2>Volg deze stappen om uw apparaat te verbinden:</h2>
 <div class ="stap">
     <h2>Stap 1 — Maak een account</h2> 
     <div class="inloggen">
+        <div class="button-wrapper">
         <a href="{{ url_for('login') }}" class="btn-home">Inloggen</a>
         <a href="{{ url_for('register') }}" class="btn-home-secondary">Registreren</a>
+        </div>
     </div>
 </div>
 
@@ -24,7 +26,16 @@ Homepagina Fysiozelfcheck
     <h2>Stap 3 — Verbind ESP met uw Wifi</h2>
 </div>
 <div class ="stap">
-    <h2>Stap 4 — Koppel ESP aan uw account</h2>
+    <h2>Stap 4 — Vul hier uw ESP ID in</h2>
+    <form method="POST" action="{{ url_for('user_esp_pairing') }}">
+    <div class="form-group">
+        <input type="text" name="esp_id" id="esp_id" class="form-control esp-input" placeholder="ESP_ID">
+    </div>
+    <div class="button-wrapper">
+    <button type="submit" class="btn-home">Koppelen</button>
+    </div>
+</form>
+
 </div>
 
 {% endblock %}

@@ -77,7 +77,6 @@ class WaardesForm(FF):
                         coerce=int,
                         default=0)
     
-    esp_id = StrF("ESP-ID", validators=[DataRequired()])
     submit = SubF("Opslaan en berekenen")
 
 
@@ -123,3 +122,12 @@ class TimeRangeForm(FF):
         validators=[NumberRange(min=1, max=1440)]
     )
     submit = SubF("Update grafiek")
+
+class EspIDForm(FF):
+    esp_id = IntF(
+        "ESP-ID",
+        validators=[DataRequired()],
+        render_kw={"class": "small_intfield"}
+    )
+    submit = SubF("Opslaan")
+

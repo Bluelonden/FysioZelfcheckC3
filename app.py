@@ -5,7 +5,7 @@ from itsdangerous import URLSafeTimedSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from main import app
 from models import db, User, Waardes, Metingen, Triggers
-from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, TimeRangeForm
+from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, EspIDForm
 from config import DREMPELWAARDES
 import requests
 from sqlalchemy.exc import IntegrityError
@@ -22,9 +22,20 @@ mail = Mail(app)
 
 
 ESP32_IP = "http://192.168.1.50"
-@app.route("/") 
+@app.route("/", methods=["GET", "POST"])
 def home():
-    return rt ('home.html')
+    form = EspIDForm()
+
+    if form.validate_on_submit():
+        if current_user.is_authenticated:
+            current_user.esp_id = form.esp_id.data
+            db.session.commit()
+            flash("ESP-ID succesvol gekoppeld!", "success")
+        else:
+            flash("Log in om uw ESP-ID te koppelen.", "warning")
+
+    return rt("home.html", form=form)
+
 
 ## HOMEPAGE ##
 @app.route("/over_ons") 
@@ -170,9 +181,6 @@ def vragenlijst():
             exacerbaties=form.exacerbaties.data,
             user_id=current_user.id
         )
-
-        current_user.esp_id = form.esp_id.data
-
         try:
             db.session.add(waardes)
             waardes.score_niveau()
@@ -244,12 +252,8 @@ def update_vragen():
     waardes = current_user.waardes
     form = WaardesForm(obj=waardes)
 
-    if request.method == "GET":
-        form.esp_id.data = current_user.esp_id
-
     if form.validate_on_submit():
         form.populate_obj(waardes)
-        current_user.esp_id = form.esp_id.data
         waardes.score_niveau()
         
         try:
@@ -386,24 +390,28 @@ def sensordata():
 
 
 #Paired een user aan esp_id
-@app.route("/user_esp_pairing", methods=['GET', 'POST']) 
+@app.route("/user_esp_pairing", methods=['POST'])
 @login_required
 def user_esp_pairing():
-    if request.method == 'POST':
-        esp_id = request.form.get("esp_id")
+    esp_id = request.form.get("esp_id")
 
-        if not esp_id:
-            flash("Voer een geldig ESP-ID in.", "danger")
-            return redirect(url_for("user_esp_pairing"))
+    if not esp_id:
+        flash("Voer een geldig ESP-ID in.", "danger")
+        return redirect(url_for("home"))
 
-        # Sla ESP-ID op bij de user
-        current_user.esp_id = esp_id
-        db.session.commit()
+    # Check of ESP_ID al bestaat bij een andere  gebruiker
+    existing = User.query.filter_by(esp_id=esp_id).first()
 
-        flash("ESP-ID succesvol gekoppeld!", "success")
-        return redirect(url_for("profiel"))
+    if existing and existing.id != current_user.id:
+        flash("Deze ESP-ID is al gekoppeld aan een andere gebruiker.", "danger")
+        return redirect(url_for("home"))
 
-    return rt("user_ui.html", esp_id=current_user.esp_id)
+    # Sla ESP_ID op
+    current_user.esp_id = esp_id
+    db.session.commit()
+
+    flash("ESP-ID succesvol gekoppeld!", "success")
+    return redirect(url_for("home"))
 
 
 @app.route("/user_ui", methods=['GET', 'POST'])
@@ -425,6 +433,8 @@ def user_ui():
               niveau=niveau,
               score=score,
               drempels=drempels)
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
