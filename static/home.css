@@ -1,0 +1,86 @@
+.center {
+    text-align: center;
+}
+
+.intro {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.stap {
+    background: #f7f7f7;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    max-width: 700px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.stap h2 {
+    margin-top: 0;
+}
+
+/* UI_verse button https://uiverse.io/TCdesign-dev/witty-baboon-62*/
+
+.btn-home,
+.btn-home-secondary {
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: .25rem;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: rgba(0, 0, 0, 0.85);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.25;
+    min-height: 3rem;
+    padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+    text-decoration: none;
+    transition: all 250ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    width: auto;
+    margin: 10px;
+}
+
+/* Hover & focus */
+.btn-home:hover,
+.btn-home:focus,
+.btn-home-secondary:hover,
+.btn-home-secondary:focus {
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    color: rgba(0, 0, 0, 0.65);
+    transform: translateY(-1px);
+}
+
+/* Active */
+.btn-home:active,
+.btn-home-secondary:active {
+    background-color: #F0F0F1;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
+    color: rgba(0, 0, 0, 0.65);
+    transform: translateY(0);
+}
+
+/* Primaire knop (groen) */
+.btn-home {
+    background-color: #2196F3;
+    color: white;
+    border-color: #4CAF50;
+}
+
+/* Secundaire knop (blauw) */
+.btn-home-secondary {
+    background-color: #2196F3;
+    color: white;
+    border-color: #2196F3;
+}

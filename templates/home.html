@@ -1,3 +1,30 @@
 {% extends "base.html" %}
+{% block title %}
+Homepagina Fysiozelfcheck
+{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
+
 {% block content %}
+<h1>Welkom bij Fysiozelfcheck</h1>
+<h2>Volg deze stappen om uw apparaat te verbinden:</p>
+<div class ="stap">
+    <h2>Stap 1 — Maak een account</h2> 
+    <div class="inloggen">
+        <a href="{{ url_for('login') }}" class="btn-home">Inloggen</a>
+        <a href="{{ url_for('register') }}" class="btn-home-secondary">Registreren</a>
+    </div>
+</div>
+
+<div class ="stap">
+    <h2>Stap 2 — Open de Captive Portal</h2>
+</div>
+<div class ="stap">
+    <h2>Stap 3 — Verbind ESP met uw Wifi</h2>
+</div>
+<div class ="stap">
+    <h2>Stap 4 — Koppel ESP aan uw account</h2>
+</div>
+
 {% endblock %}
