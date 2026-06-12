@@ -14,11 +14,13 @@ def livedata_grafiek(column):
     
     laatste_uur = datetime.now() - timedelta(minutes=minutes)
     metingen = (
-        Metingen.query
-        .filter(Metingen.timestamp >= laatste_uur)
-        .order_by(Metingen.timestamp.asc())
-        .all()
+    Metingen.query
+    .filter_by(user_id=current_user.id)
+    .filter(Metingen.timestamp >= laatste_uur)
+    .order_by(Metingen.timestamp.asc())
+    .all()
     )
+
 
     labels = [m.timestamp.strftime("%H:%M") for m in metingen]
     values = [getattr(m, column) for m in metingen]
@@ -32,38 +34,28 @@ def livedata_grafiek(column):
 @api.route("/latest")
 @login_required
 def api_latest():
-    # Veiligheidscheck
+
+    #Veiligheidscheck
     if not current_user.waardes:
         return jsonify({"error": "User has no waardes profile"}), 400
 
-    m = Metingen.query.order_by(Metingen.id.desc()).first()
-
-    if m is None:
-        return jsonify({
-            "values": {
-                "pm25": 0,
-                "pm10": 0,
-                "pm1": 0,
-                "aqi": 0,
-                "co2": 0,
-                "tvoc": 0
-            },
-            "status": {},
-            "groups": {
-                "fijnstof": "grey",
-                "gassen": "grey"
-            },
-            "eind": "grey",
-            "advies": {
-                "binnenbuiten": {"text": "Onbekend", "icon": "house.png", "color": "advies-orange"},
-                "sport": {"text": "Onbekend", "icon": "rest.png", "color": "advies-orange"}
-            }
-        })
+    # Pak de laatste meting van deze gebruiker
+    m = (
+        Metingen.query
+        .filter_by(user_id=current_user.id)
+        .order_by(Metingen.timestamp.desc())
+        .first()
+    )
 
     profiel = current_user.waardes.niveau
-    data = volledige_status(m, profiel)
 
-    return jsonify(data)
+    # Geen metingen?
+    if m is None:
+        return jsonify(volledige_status(None, profiel))
+
+    return jsonify(volledige_status(m, profiel))
+
+
 
 
 @api.route("/pm25_fig")

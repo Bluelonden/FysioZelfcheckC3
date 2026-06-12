@@ -22,11 +22,14 @@ mail = Mail(app)
 
 
 ESP32_IP = "http://192.168.1.50"
-
-## HOMEPAGE ##
 @app.route("/") 
 def home():
-    return rt('home.html')
+    return rt ('home.html')
+
+## HOMEPAGE ##
+@app.route("/over_ons") 
+def over_ons():
+    return rt('over_ons.html')
 
 ## LOGIN ##
 @app.route("/login", methods=['GET', 'POST'])

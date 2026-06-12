@@ -48,7 +48,7 @@
     <nav class="custom-nav">
         <ul class="nav-menu">
             <li><a href="/">Home</a></li>
-            
+            <li><a href="/over_ons">Over ons</a></li>
             {% if current_user.is_authenticated %}
                 {% if current_user.role == 'arts' %}
                     <li><a href="{{ url_for('doctor') }}">Artsenportaal</a></li>
