@@ -124,8 +124,10 @@ def api_average():
     if not current_user.waardes:
         return jsonify({"error": "User has no waardes profile"}), 400
 
+    #Added user filtering
     metingen = (
         Metingen.query
+        .filter_by(user_id=current_user.id)
         .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=3))
         .all()
     )
@@ -156,8 +158,6 @@ def api_average():
     data = volledige_status(f, profiel)
 
     return jsonify(data)
-
-
 @api.route("/esp/get_thresholds")
 def esp_get_thresholds():
     esp_id = request.args.get("esp_id")

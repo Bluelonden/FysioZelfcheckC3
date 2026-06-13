@@ -205,6 +205,7 @@ def exists():
     inspector = inspect(engine)
     table = inspector.get_table_names()
     return len(table) > 0
+
 class Metingen(db.Model):
     __tablename__ = "measurement"
 
