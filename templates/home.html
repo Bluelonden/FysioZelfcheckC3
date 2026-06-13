@@ -7,39 +7,56 @@ Homepagina Fysiozelfcheck
 {% endblock %}
 
 {% block content %}
-<h1>Welkom bij Fysiozelfcheck</h1>
-<div class ="stap">
+
+<h1 id="font">Welkom bij Fysiozelfcheck</h1>
+
+<div class = "stappen-container">
+<div class="stap">
     <h2>Stap 1 — Maak een account </h2>
-    <img class= "pictogram" src= "static/img/login.png"> 
+    <img class="pictogram" src="static/img/login.png">
+    {% if not current_user.is_authenticated %}
     <div class="inloggen">
         <div class="button-wrapper">
-        <a href="{{ url_for('login') }}" class="btn-home">Inloggen</a>
-        <a href="{{ url_for('register') }}" class="btn-home">Registreren</a>
+            <a href="{{ url_for('login') }}" class="btn-home">Inloggen</a>
+            <a href="{{ url_for('register') }}" class="btn-home">Registreren</a>
         </div>
     </div>
-</div>
+    {% else %}
+    <div class="inloggen">
+        <div class = "succes">
+        <h2>U bent succesvol ingelogd.</h2>
+        </div>
+    </div>
+    {% endif %}
 
-<div class ="stap">
+</div>
+<div class="arrow"><img src="static/img/arrow.png"></div>
+
+<div class="stap">
     <h2>Stap 2 — Open de Captive Portal</h2>
 </div>
-<div class ="stap">
+
+<div class="stap">
     <h2>Stap 3 — Verbind ESP met uw Wifi</h2>
 </div>
-<div class ="stap">
+<div class="arrow"><img src="static/img/arrow.png"></div>
+<div class="stap">
     <h2>Stap 4 — Vul hier uw ESP ID in </h2>
-    <img class="pictogram" src= "static/img/connection.png">
+    <img class="pictogram" src="static/img/connection.png">
     <form method="POST" action="{{ url_for('user_esp_pairing') }}">
-    {{ form.hidden_tag() }}
+        {{ form.hidden_tag() }}
 
-    <div class="button-wrapper">
-        {{ form.esp_id(class="form-control esp-input small_intfield") }}
+        <div class="button-wrapper">
+            {{ form.esp_id(class="form-control esp-input small_intfield") }}
 
-    </div>
+        </div>
 
-    <div class="button-wrapper" id ="submit">
-        {{ form.submit(class="btn-home") }}
-    </div>
-</form>
+        <div class="button-wrapper" id="submit">
+            {{ form.submit(class="btn-home") }}
+        </div>
+    </form>
+</div>
+
 </div>
 
 {% endblock %}

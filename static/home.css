@@ -129,3 +129,65 @@ display: block;
 .small_intfield{width:200px;}
 
 #submit{margin-top:15px;}
+
+.succes {
+  background-color: #d4f8d4;
+  border-left: 5px solid #2e8b57;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-top: 15px;
+  text-align: center;
+  font-weight: 500;
+  color: #1a3d1a;
+}
+
+.stappen-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px; 
+    max-width: 1000px; 
+    margin: 0 auto; 
+}
+
+
+.stap h2 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+.stap p {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: #555;
+}
+
+
+.stappen-container {
+    display: grid;
+    grid-template-columns: 1fr 50px 1fr; /* card – arrow – card */
+    grid-auto-rows: auto;
+    gap: 20px 10px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.stap {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.arrow img {
+    width: 90px;
+    opacity: 0.7;
+}
+
