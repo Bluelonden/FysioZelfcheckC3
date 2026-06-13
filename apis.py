@@ -59,6 +59,7 @@ def api_latest():
     return jsonify(volledige_status(m, profiel))
 
 
+
 @api.route("/pm25_fig")
 def pm25_fig():
     return livedata_grafiek("pm25")
@@ -158,6 +159,8 @@ def api_average():
     data = volledige_status(f, profiel)
 
     return jsonify(data)
+
+
 @api.route("/esp/get_thresholds")
 def esp_get_thresholds():
     esp_id = request.args.get("esp_id")

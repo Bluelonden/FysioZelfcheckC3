@@ -389,7 +389,6 @@ def sensordata():
     return jsonify({"status": "ok"})
 
 
-#Paired een user aan esp_id
 @app.route("/user_esp_pairing", methods=['POST'])
 @login_required
 def user_esp_pairing():
@@ -399,7 +398,7 @@ def user_esp_pairing():
         flash("Voer een geldig ESP-ID in.", "danger")
         return redirect(url_for("home"))
 
-    # Check of ESP_ID al bestaat bij een andere  gebruiker
+    # Check of ESP_ID al bestaat bij een andere gebruiker
     existing = User.query.filter_by(esp_id=esp_id).first()
 
     if existing and existing.id != current_user.id:
@@ -410,8 +409,13 @@ def user_esp_pairing():
     current_user.esp_id = esp_id
     db.session.commit()
 
+    #Verwijder oude metingen nadat je van ESP_ID switched
+    Metingen.query.filter_by(user_id=current_user.id).delete()
+    db.session.commit()
+
     flash("ESP-ID succesvol gekoppeld!", "success")
     return redirect(url_for("home"))
+
 
 
 @app.route("/user_ui", methods=['GET', 'POST'])
