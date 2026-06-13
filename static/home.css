@@ -114,11 +114,18 @@
     text-align: left; /* of center / right */
 }
 
-.small_intfield {width:80px}
 
 .button-wrapper {
-    margin-top:10px;
+    margin-top:0px;
     display: flex;
     justify-content: center;
     gap: 10px; 
 }
+
+.pictogram {width:250px;
+display: block;
+  margin: 0 auto;}
+
+.small_intfield{width:200px;}
+
+#submit{margin-top:15px;}

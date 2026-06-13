@@ -127,7 +127,6 @@ class EspIDForm(FF):
     esp_id = IntF(
         "ESP-ID",
         validators=[DataRequired()],
-        render_kw={"class": "small_intfield"}
+        render_kw={"placeholder": "ESP_ID"}
     )
     submit = SubF("Opslaan")
-
