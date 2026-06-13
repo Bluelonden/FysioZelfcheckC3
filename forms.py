@@ -128,7 +128,7 @@ class EspIDForm(FF):
         "ESP-ID",
         validators=[
             DataRequired(),
-            NumberRange(min=0, message="Negatieve getallen zijn niet toegestaan")
+            NumberRange(min=1, message="Negatieve getallen zijn niet toegestaan")
         ],
         render_kw={"placeholder": "ESP_ID"}
     )
