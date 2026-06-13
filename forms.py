@@ -126,7 +126,10 @@ class TimeRangeForm(FF):
 class EspIDForm(FF):
     esp_id = IntF(
         "ESP-ID",
-        validators=[DataRequired()],
+        validators=[
+            DataRequired(),
+            NumberRange(min=0, message="Negatieve getallen zijn niet toegestaan")
+        ],
         render_kw={"placeholder": "ESP_ID"}
     )
     submit = SubF("Opslaan")
