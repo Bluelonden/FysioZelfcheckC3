@@ -1,3 +1,6 @@
+/* =========================================
+   ALGEMEEN / TEKST
+========================================= */
 .center {
     text-align: center;
 }
@@ -7,50 +10,22 @@
     margin-bottom: 30px;
 }
 
-.stap {
-    background: #f7f7f7;
-    padding: 20px;
-    margin: 20px auto;
-    border-radius: 10px;
-    max-width: 700px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.stap h2 {
-    margin-top: 0;
-}
-
-/* UI_verse button https://uiverse.io/TCdesign-dev/witty-baboon-62*/
-
-.btn-home,
-.btn-home-secondary {
-    align-items: center;
-    background-color: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: .25rem;
-    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+#info {
     box-sizing: border-box;
-    color: rgba(0, 0, 0, 0.85);
-    cursor: pointer;
-    display: inline-flex;
-    font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    justify-content: center;
-    line-height: 1.25;
-    min-height: 3rem;
-    padding: calc(.875rem - 1px) calc(1.5rem - 1px);
-    text-decoration: none;
-    transition: all 250ms;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: baseline;
-    width: auto;
-    margin: 10px;
+    color: rgb(52, 152, 219);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 33.6px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: left;
 }
 
-/* Basisstijl voor beide knoppen */
+
+/* =========================================
+   KNOPPEN
+========================================= */
 .btn-home,
 .btn-home-secondary {
     display: inline-flex;
@@ -60,14 +35,22 @@
     color: white;
     border: 1px solid #2196F3;
     border-radius: .25rem;
-    font-size: 14px;        /* kleiner */
+    font-size: 14px;
     font-weight: 600;
-    padding: 6px 12px;      /* kleiner */
-    margin: 0;              /* GEEN margin */
+    padding: 6px 12px;
+    margin: 0;
     text-decoration: none;
     cursor: pointer;
     transition: 200ms;
-    min-height: 2.2rem;     /* kleiner */
+    min-height: 2.2rem;
+    font-family: system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 1.25;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    width: auto;
 }
 
 /* Hover & focus */
@@ -95,99 +78,205 @@
     border-color: #2196F3;
 }
 
-
 .btn-home-secondary {
     background-color: #1565C0;
     border-color: #1565C0;
 }
 
-
-#info {
-    box-sizing: border-box;
-    color: rgb(52, 152, 219);
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 21px;
-    font-weight: 500;
-    line-height: 33.6px;
-    margin-top: 0;
-    margin-bottom: 20px;
-    text-align: left; /* of center / right */
-}
-
-
 .button-wrapper {
-    margin-top:0px;
+    margin-top: 0;
     display: flex;
     justify-content: center;
-    gap: 10px; 
-}
-
-.pictogram {width:250px;
-display: block;
-  margin: 0 auto;}
-
-.small_intfield{width:200px;}
-
-#submit{margin-top:15px;}
-
-.succes {
-  background-color: #d4f8d4;
-  border-left: 5px solid #2e8b57;
-  border-radius: 8px;
-  padding: 10px 15px;
-  margin-top: 15px;
-  text-align: center;
-  font-weight: 500;
-  color: #1a3d1a;
-}
-
-.stappen-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px; 
-    max-width: 1000px; 
-    margin: 0 auto; 
+    gap: 10px;
 }
 
 
-.stap h2 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #444;
-    margin-bottom: 10px;
-}
-
-.stap p {
-    font-size: 0.95rem;
-    font-weight: 400;
-    color: #555;
-}
-
-
-.stappen-container {
-    display: grid;
-    grid-template-columns: 1fr 50px 1fr; /* card – arrow – card */
-    grid-auto-rows: auto;
-    gap: 20px 10px;
-    max-width: 1000px;
+/* =========================================
+   STAP 4 FORMULIER (ESP-ID)
+========================================= */
+.pictogram {
+    width: 250px;
+    display: block;
     margin: 0 auto;
+}
+
+.small_intfield {
+    width: 200px;
+}
+
+#submit {
+    margin-top: 15px;
+}
+
+
+/* =========================================
+   SUCCES-MELDING (na inloggen)
+========================================= */
+.succes {
+    background-color: #d4f8d4;
+    border-left: 5px solid #2e8b57;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-top: 15px;
+    text-align: center;
+    font-weight: 500;
+    color: #1a3d1a;
+}
+
+/* Reset: dit is een h2 binnen .stap, maar moet er als gewone tekst uitzien */
+.succes h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: inherit;
+}
+
+
+/* =========================================
+   ONBOARDING / STAPPEN-LAYOUT
+========================================= */
+.stappen-container {
+    display: grid;
+    /* Kolom 1 (kaart) – Kolom 2 (vaste pijl-brug van 80px) – Kolom 3 (kaart) */
+    grid-template-columns: minmax(0, 1fr) 80px minmax(0, 1fr);
+    gap: 30px 0;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+    align-items: stretch;
 }
 
 .stap {
     background: #fff;
-    padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
-.arrow {
+/* Alleen de stap-titel (directe child van .stap), NIET de h2 in .succes */
+.stap > h2 {
+    margin: 0 0 15px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #005941;
+    min-height: 3rem;       /* zorgt dat alle titels evenveel ruimte innemen */
     display: flex;
-    justify-content: center;
     align-items: center;
 }
 
-.arrow img {
-    width: 90px;
-    opacity: 0.7;
+.stap-subtext {
+    font-size: 0.95rem;
+    color: #555555;
+    line-height: 1.5;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
+/* Duwt formulieren / inlogknoppen / infoboxen naar de onderkant van de kaart,
+   ongeacht hoeveel tekst erboven staat */
+.info-box-portal,
+.inloggen,
+form {
+    margin-top: auto;
+}
+
+.info-box-portal {
+    background-color: #f0f7f4;
+    border-left: 4px solid #005941;
+    border-radius: 6px;
+    padding: 15px;
+    text-align: left;
+}
+
+.info-box-portal p {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    line-height: 1.4;
+}
+
+.info-badge {
+    display: inline-block;
+    background-color: #005941;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.fallback-text {
+    display: block;
+    font-size: 0.8rem;
+    color: #6c757d;
+    border-top: 1px solid #e2ece8;
+    padding-top: 8px;
+}
+
+/* --- Variant: "Wat is dit?"-box in een andere kleur (Stap 3) --- */
+.info-box-wifi {
+    background-color: #eaf2fb;
+    border-left: 4px solid #1565C0;
+    border-radius: 6px;
+    padding: 15px;
+    text-align: left;
+}
+
+.info-box-wifi p {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    line-height: 1.4;
+}
+
+.info-badge-blue {
+    display: inline-block;
+    background-color: #1565C0;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+/* --- Pijl tussen de kaarten --- */
+.arrow {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* lijnt de pijl uit met de (vaste) hoogte van de titel-zone */
+    padding-top: calc(25px + 3rem); /* 25px = padding van .stap, 3rem = min-height van .stap > h2 */
+    width: 100%;
+    height: 100%;
+}
+
+.arrow img {
+    width: 40px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* --- Responsive: mobiel --- */
+@media (max-width: 992px) {
+    .stappen-container {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 15px;
+    }
+
+    .arrow {
+        height: 60px;
+        padding-top: 0;
+        align-items: center;
+        transform: rotate(90deg);
+    }
+}
