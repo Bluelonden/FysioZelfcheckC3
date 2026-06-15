@@ -152,8 +152,6 @@ def profiel():
         context["triggers"] = {
             "allergenen": triggers.allergens,
             "irriterende stoffen": triggers.irritants,
-            "luchtweginfecties": triggers.infection,
-            "sporten": triggers.exercise,
             "weer": triggers.weather,
             "luchtvervuiling": triggers.pollution,
         }
@@ -222,13 +220,10 @@ def handmatig():
         try:
             allergens = form.allergens.data
             irritants = form.irritants.data
-            infection = form.infection.data
-            exercise = form.exercise.data
             weather = form.weather.data
             pollution = form.pollution.data
 
             triggers = Triggers(allergens=allergens, irritants=irritants,
-                                infection=infection, exercise=exercise,
                                 weather=weather, pollution=pollution,
                                 user_id=user.id)
             
@@ -290,8 +285,6 @@ def update_triggers():
     if request.method == 'POST' and form.validate_on_submit():
         triggers.allergens = form.allergens.data
         triggers.irritants = form.irritants.data
-        triggers.infection = form.infection.data
-        triggers.exercise = form.exercise.data
         triggers.weather = form.weather.data
         triggers.pollution = form.pollution.data
 

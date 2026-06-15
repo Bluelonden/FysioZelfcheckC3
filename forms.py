@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm as FF
 from wtforms import (StringField as StrF, PasswordField as PassF, SubmitField as SubF,
                      EmailField as MailF, SelectField as SelF, IntegerField as IntF,
-                     RadioField as RadF, BooleanField as BoolF)
+                     RadioField as RadF, BooleanField as BoolF, HiddenField as HF)
 from wtforms.validators import DataRequired, Length, NumberRange, ValidationError
 from models import db, User
 
@@ -81,37 +81,11 @@ class WaardesForm(FF):
 
 
 class HandmatigForm(FF):
-    allergens = SelF('Allergenen',
-                      validators=[DataRequired()],
-                      choices=[('niet', 'Niet'),
-                               ('matig', 'Matig'), ('veel', 'Veel')
-                            ]
-                    )
-    irritants = SelF('Irriterende stoffen',
-            validators=[DataRequired()],
-            choices=[('niet', 'Niet'),
-                     ('matig', 'Matig'), ('veel', 'Veel')
-                    ]
-                )
-    infection = SelF('Luchtweginfecties',
-            validators=[DataRequired()],
-            choices=[('niet', 'Niet'),
-                     ('matig', 'Matig'), ('veel', 'Veel')])
     
-    exercise = SelF('Sporten',
-            validators=[DataRequired()],
-            choices=[('niet', 'Niet'),
-                     ('matig', 'Matig'), ('veel', 'Veel')])
-    
-    weather = SelF('Weer',
-            validators=[DataRequired()],
-            choices=[('niet', 'Niet'),
-                     ('matig', 'Matig'), ('veel', 'Veel')])
-
-    pollution = SelF('Luchtvervuiling',
-            validators=[DataRequired()],
-            choices=[('niet', 'Niet'),
-                     ('matig', 'Matig'), ('veel', 'Veel')])
+    allergens = HF()
+    irritants = HF()
+    weather   = HF()
+    pollution = HF()
     
     submit = SubF('Opslaan')
 
@@ -128,7 +102,7 @@ class EspIDForm(FF):
         "ESP-ID",
         validators=[
             DataRequired(),
-            NumberRange(min=1, message="Negatieve getallen zijn niet toegestaan")
+            NumberRange(min=1, message="Negatieve getallen zijn geen toeGeenaan")
         ],
         render_kw={"placeholder": "ESP_ID"}
     )

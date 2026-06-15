@@ -180,20 +180,16 @@ class Triggers(db.Model):
     id: Map[int] = mc(primary_key=True)
     allergens: Map[str] = mc(String(10), nullable=False)
     irritants: Map[str] = mc(String(10), nullable=False)
-    infection: Map[str] = mc(String(10), nullable=False)
-    exercise: Map[str] = mc(String(10), nullable=False)
     weather: Map[str] = mc(String(10), nullable=False)
     pollution: Map[str] = mc(String(10), nullable=False)
     user_id: Map[int] = mc(FK('user.id'), unique=True, nullable=False)
 
     user: Map['User'] = rel(back_populates='triggers')
 
-    def __init__(self, allergens: str, irritants: str, infection: str, 
-                 exercise: str, weather: str, pollution: str, user_id: int):
+    def __init__(self, allergens: str, irritants: str,
+                 weather: str, pollution: str, user_id: int):
         self.allergens = allergens
         self.irritants = irritants
-        self.infection = infection
-        self.exercise = exercise
         self.weather = weather
         self.pollution = pollution
         self.user_id = user_id
