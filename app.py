@@ -5,7 +5,7 @@ from itsdangerous import URLSafeTimedSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from main import app
 from models import db, User, Waardes, Metingen, Triggers, EspDevice
-from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, EspIDForm
+from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, EspIDForm, UnpairForm
 from config import DREMPELWAARDES
 import requests
 from sqlalchemy.exc import IntegrityError
@@ -25,6 +25,7 @@ ESP32_IP = "http://192.168.1.50"
 @app.route("/", methods=["GET", "POST"])
 def home():
     form = EspIDForm()
+    unpair_form = UnpairForm() 
 
     if form.validate_on_submit():
         if current_user.is_authenticated:
@@ -34,7 +35,8 @@ def home():
         else:
             flash("Log in om uw ESP-ID te koppelen.", "warning")
 
-    return rt("home.html", form=form)
+    return rt("home.html", form=form, unpair_form=unpair_form)
+
 
 
 ## HOMEPAGE ##

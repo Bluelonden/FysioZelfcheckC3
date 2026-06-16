@@ -112,3 +112,7 @@ class EspIDForm(FF):
     )
 
     submit = SubF("Opslaan")
+
+
+class UnpairForm(FF):
+    submit = SubF("Ontkoppel")

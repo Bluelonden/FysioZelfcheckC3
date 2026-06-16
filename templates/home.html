@@ -72,10 +72,12 @@ Homepagina Fysiozelfcheck
             </div>
         </div>
         <form method="POST" action="{{ url_for('user_esp_unpair') }}">
+            {{ unpair_form.hidden_tag() }}
             <div class="button-wrapper">
-                <button type="submit" class="btn-home danger">Ontkoppel</button>
+                {{ unpair_form.submit(class="btn-home danger") }}
             </div>
         </form>
+
 
         {% else %}
         <form method="POST" action="{{ url_for('user_esp_pairing') }}">
@@ -87,7 +89,7 @@ Homepagina Fysiozelfcheck
             </div>
 
             <div class="button-wrapper" id="submit">
-                
+
                 {{ form.submit(class="btn-home") }}
             </div>
         </form>
@@ -98,11 +100,11 @@ Homepagina Fysiozelfcheck
 
 
 
-<div class="stap">
-    {% if current_user.is_authenticated and current_user.waardes %}
-    <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
-    <p class="stap-subtext">Klik op de knop om de vragenlijst opnieuw in te vullen.</p>
-    <img class="pictogram" src="static/img/checklist.png">
+    <div class="stap">
+        {% if current_user.is_authenticated and current_user.waardes %}
+        <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
+        <p class="stap-subtext">Klik op de knop om de vragenlijst opnieuw in te vullen.</p>
+        <img class="pictogram" src="static/img/checklist.png">
         <div class="inloggen">
             <div class="succes">
                 <h2>Uw profiel is gegenereerd.</h2>
@@ -111,30 +113,31 @@ Homepagina Fysiozelfcheck
                 <a href="/update/vragen" class="btn-home">Vragenlijst updaten</a>
             </div>
         </div>
-    {% else %}
-    <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
-    <p class="stap-subtext">Klik op de knop om de vragenlijst in te vullen. Wij maken aan de hand
-        hiervan een profiel voor u aan.
-    </p>
-    <img class="pictogram" src="static/img/checklist.png">
+        {% else %}
+        <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
+        <p class="stap-subtext">Klik op de knop om de vragenlijst in te vullen. Wij maken aan de hand
+            hiervan een profiel voor u aan.
+        </p>
+        <img class="pictogram" src="static/img/checklist.png">
         <div class="button-wrapper">
-            <a href="/vragenlijst" class="btn-home" id = "margintopextra">Vragenlijst invullen</a>
+            <a href="/vragenlijst" class="btn-home" id="margintopextra">Vragenlijst invullen</a>
         </div>
-    {% endif %}
-</div>
-<div class="arrow"><img src="{{ url_for('static', filename='img/arrow.png') }}"></div>
+        {% endif %}
+    </div>
+    <div class="arrow"><img src="{{ url_for('static', filename='img/arrow.png') }}"></div>
 
 
-<div class="stap">
-<h2>Stap 6 — U bent er helemaal klaar voor</h2>
-<p class="stap-subtext">Ga naar de Metingen pagina en bekijk uw live adviezen!
-    Wilt u meer weten over wie wij zijn en wat wij precies doen, klik dan <a href="/over_ons"> <strong> hier </strong> </a>
-</p>
-<img class = "pictogram" id="margintop" src="static/img/finish.png">
-<div class="button-wrapper">
-<a href="/user_ui" class="btn-home" id="margintopextra">Kom maar op!</a>
-</div>
-</div>
+    <div class="stap">
+        <h2>Stap 6 — U bent er helemaal klaar voor</h2>
+        <p class="stap-subtext">Ga naar de Metingen pagina en bekijk uw live adviezen!
+            Wilt u meer weten over wie wij zijn en wat wij precies doen, klik dan <a href="/over_ons"> <strong> hier
+                </strong> </a>
+        </p>
+        <img class="pictogram" id="margintop" src="static/img/finish.png">
+        <div class="button-wrapper">
+            <a href="/user_ui" class="btn-home" id="margintopextra">Kom maar op!</a>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
