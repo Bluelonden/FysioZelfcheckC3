@@ -19,24 +19,35 @@
 </div>
 
 <script>
+function kleurNaarTekst(kleur) {
+    if (kleur === "green") return "goed";
+    if (kleur === "orange") return "matig";
+    if (kleur === "red") return "slecht";
+    return "onbekend";
+}
+
 function updateMetingen(raw) {
 
-    const fijn = raw.groups.fijnstof;
-    const gas = raw.groups.gassen;
+    const fijn = raw.groups.fijnstof;   
+    const gas  = raw.groups.gassen;
+
+    const fijnText = kleurNaarTekst(fijn);
+    const gasText  = kleurNaarTekst(gas);
 
     document.querySelector("#fijnstof-card").innerHTML = `
         <div class="simple-card ${fijn}" data-tooltip="Fijnstof: PM1, PM2.5 en PM10">
             <img src="/static/img/factory.png" class="card-icon">
             <h3>Fijnstof</h3>
-            <div class="advies">${raw.status.pm25.status}</div>
+            <div class="advies">${fijnText}</div>
             <p class="sub">Laatste meting</p>
         </div>
     `;
+
     document.querySelector("#gassen-card").innerHTML = `
         <div class="simple-card ${gas}" data-tooltip="Gassen: CO2, TVOC en AQI">
             <img src="/static/img/gasicon.png" class="card-icon">
             <h3>Gassen</h3>
-            <div class="advies">${raw.status.co2.status}</div>
+            <div class="advies">${gasText}</div>
             <p class="sub">Laatste meting</p>
         </div>
     `;
@@ -75,12 +86,12 @@ function fetchAverage() {
         .catch(err => console.error("Average error:", err));
 }
 
-
 fetchLatest();
 fetchAverage();
 
 setInterval(fetchLatest, 10000);
 setInterval(fetchAverage, 30000);
 </script>
+
 
 {% endblock %}
