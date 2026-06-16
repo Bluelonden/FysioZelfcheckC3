@@ -78,7 +78,6 @@ Homepagina Fysiozelfcheck
         </form>
 
         {% else %}
-
         <form method="POST" action="{{ url_for('user_esp_pairing') }}">
             {{ form.hidden_tag() }}
 
@@ -97,14 +96,40 @@ Homepagina Fysiozelfcheck
 
     </div>
 
+
+
 <div class="stap">
     <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
-    <p class="stap-subtext"> Klik op de knop om onze vragenlijst in te vullen
-        en uw profiel te genereren. </p>
-    <img class="pictogram" src = "static/img/checklist.png">
-    <div class ="button-wrapper">
-     <a href="/update/vragen" class="btn-home">Klik hier</a>
-    </div>
+    <p class="stap-subtext">Klik op de knop om de vragenlijst in te vullen of te updaten.</p>
+    <img class="pictogram" src="static/img/checklist.png">
+
+    {% if current_user.is_authenticated and current_user.waardes %}
+        <div class="inloggen">
+            <div class="succes">
+                <h2>Uw profiel is gegenereerd.</h2>
+            </div>
+            <div class="button-wrapper">
+                <a href="/update/vragen" class="btn-home">Vragenlijst updaten</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="button-wrapper">
+            <a href="/vragenlijst" class="btn-home" id = "margintopextra">Vragenlijst invullen</a>
+        </div>
+    {% endif %}
+</div>
+<div class="arrow"><img src="{{ url_for('static', filename='img/arrow.png') }}"></div>
+
+
+<div class="stap">
+<h2>Stap 6 — U bent er helemaal klaar voor</h2>
+<p class="stap-subtext">Ga naar de Metingen pagina en bekijk uw live adviezen!
+    Wilt u meer weten over wie wij zijn en wat wij precies doen, bekijk dan <a href="/over_ons"> <strong>Deze pagina</strong> </a>
+</p>
+<img class = "pictogram" id="margintop" src="static/img/finish.png">
+<div class="button-wrapper">
+<a href="/user_ui" class="btn-home" id="margintopextra">Kom maar op!</a>
+</div>
 </div>
 </div>
 
