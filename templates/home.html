@@ -65,7 +65,7 @@ Homepagina Fysiozelfcheck
     <div class="stap">
         <h2>Stap 4 — Vul hier uw FysioMeter ID en Wachtwoord in</h2>
         <img class="pictogram" src="{{ url_for('static', filename='img/connection.png') }}">
-        {% if current_user.has_esp() %}
+        {% if current_user.is_authenticated and current_user.has_esp() %}
         <div class="inloggen">
             <div class="succes">
                 <h2>Uw Fysiometer is succesvol gekoppeld.</h2>
@@ -97,6 +97,15 @@ Homepagina Fysiozelfcheck
 
     </div>
 
+<div class="stap">
+    <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
+    <p class="stap-subtext"> Klik op de knop om onze vragenlijst in te vullen
+        en uw profiel te genereren. </p>
+    <img class="pictogram" src = "static/img/checklist.png">
+    <div class ="button-wrapper">
+     <a href="/update/vragen" class="btn-home">Klik hier</a>
+    </div>
+</div>
 </div>
 
 {% endblock %}
