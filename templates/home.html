@@ -99,11 +99,10 @@ Homepagina Fysiozelfcheck
 
 
 <div class="stap">
-    <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
-    <p class="stap-subtext">Klik op de knop om de vragenlijst in te vullen of te updaten.</p>
-    <img class="pictogram" src="static/img/checklist.png">
-
     {% if current_user.is_authenticated and current_user.waardes %}
+    <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
+    <p class="stap-subtext">Klik op de knop om de vragenlijst opnieuw in te vullen.</p>
+    <img class="pictogram" src="static/img/checklist.png">
         <div class="inloggen">
             <div class="succes">
                 <h2>Uw profiel is gegenereerd.</h2>
@@ -113,6 +112,11 @@ Homepagina Fysiozelfcheck
             </div>
         </div>
     {% else %}
+    <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
+    <p class="stap-subtext">Klik op de knop om de vragenlijst in te vullen. Wij maken aan de hand
+        hiervan een profiel voor u aan.
+    </p>
+    <img class="pictogram" src="static/img/checklist.png">
         <div class="button-wrapper">
             <a href="/vragenlijst" class="btn-home" id = "margintopextra">Vragenlijst invullen</a>
         </div>
@@ -124,7 +128,7 @@ Homepagina Fysiozelfcheck
 <div class="stap">
 <h2>Stap 6 — U bent er helemaal klaar voor</h2>
 <p class="stap-subtext">Ga naar de Metingen pagina en bekijk uw live adviezen!
-    Wilt u meer weten over wie wij zijn en wat wij precies doen, bekijk dan <a href="/over_ons"> <strong>Deze pagina</strong> </a>
+    Wilt u meer weten over wie wij zijn en wat wij precies doen, klik dan <a href="/over_ons"> <strong> hier </strong> </a>
 </p>
 <img class = "pictogram" id="margintop" src="static/img/finish.png">
 <div class="button-wrapper">
