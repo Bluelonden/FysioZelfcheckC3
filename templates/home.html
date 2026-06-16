@@ -11,7 +11,7 @@ Homepagina Fysiozelfcheck
 <h1 id="font">Welkom bij Fysiozelfcheck</h1>
 
 <div class="stappen-container">
-    
+
     <div class="stap">
         <h2>Stap 1 — Maak een account</h2>
         <img class="pictogram" src="{{ url_for('static', filename='img/login.png') }}">
@@ -35,42 +35,66 @@ Homepagina Fysiozelfcheck
 
     <div class="stap">
         <h2>Stap 2 — Open de Captive Portal</h2>
-        <p class="stap-subtext">Verbind eerst uw telefoon of computer met het Wi-Fi-netwerk van het Fysio-apparaat.</p>
-        
+        <p class="stap-subtext">Start de FysioMeter en op uw beeldscherm verschijnt een adres. Neem dit adres over en
+            typ het in uw browser.</p>
+
         <div class="info-box-portal">
             <span class="info-badge">Wat is dit?</span>
-            <p>Zodra u met het apparaat verbindt, verschijnt er <strong>automatisch een inlogscherm</strong> op uw scherm. Dit noemen we de 'Captive Portal'.</p>
+            <p>Zodra u het apparaat opstart, verschijnt er <strong>automatisch een adres</strong> op uw scherm. Dit
+                noemen we de 'Captive Portal'.</p>
             <small class="fallback-text">Opent er niets? Open uw browser en typ: <strong>192.168.4.1</strong></small>
         </div>
     </div>
 
     <div class="stap">
-        <h2>Stap 3 — Verbind ESP met uw Wifi</h2>
-        <p class="stap-subtext">In het pop-up scherm dat zojuist is geopend, selecteert u uw eigen Wi-Fi netwerk en voert u uw wachtwoord in. Het apparaat is nu verbonden met internet!</p>
+        <h2>Stap 3 — Verbind FysioMeter met uw Wifi</h2>
+        <p class="stap-subtext">In het pop-up scherm dat zojuist is geopend, selecteert u uw eigen Wi-Fi netwerk en
+            voert u uw wachtwoord in. Het apparaat is nu verbonden met internet!</p>
 
         <div class="info-box-wifi">
             <span class="info-badge-blue">Wat is dit?</span>
-            <p>Na het invoeren van uw Wi-Fi gegevens <strong>herstart het apparaat</strong> en maakt het automatisch verbinding met uw netwerk. Het pop-up scherm sluit dan vanzelf — dit is normaal.</p>
-            <small class="fallback-text">Verschijnt het pop-up scherm niet meer? Ga dan gewoon door naar <strong>Stap 4</strong>.</small>
+            <p>Na het invoeren van uw Wi-Fi gegevens <strong>herstart het apparaat</strong> en maakt het automatisch
+                verbinding met uw netwerk. Het pop-up scherm sluit dan vanzelf — dit is normaal.</p>
+            <small class="fallback-text">Verschijnt het pop-up scherm niet meer? Ga dan gewoon door naar <strong>Stap
+                    4</strong>.</small>
         </div>
     </div>
 
     <div class="arrow"><img src="{{ url_for('static', filename='img/arrow.png') }}"></div>
 
     <div class="stap">
-        <h2>Stap 4 — Vul hier uw ESP ID in </h2>
+        <h2>Stap 4 — Vul hier uw FysioMeter ID en Wachtwoord in</h2>
         <img class="pictogram" src="{{ url_for('static', filename='img/connection.png') }}">
+        {% if current_user.has_esp() %}
+        <div class="inloggen">
+            <div class="succes">
+                <h2>Uw Fysiometer is succesvol gekoppeld.</h2>
+            </div>
+        </div>
+        <form method="POST" action="{{ url_for('user_esp_unpair') }}">
+            <div class="button-wrapper">
+                <button type="submit" class="btn-home danger">Ontkoppel</button>
+            </div>
+        </form>
+
+        {% else %}
+
         <form method="POST" action="{{ url_for('user_esp_pairing') }}">
             {{ form.hidden_tag() }}
 
             <div class="button-wrapper">
                 {{ form.esp_id(class="form-control esp-input small_intfield") }}
+                {{ form.esp_password(class="form-control esp-input small_intfield") }}
             </div>
 
             <div class="button-wrapper" id="submit">
+                
                 {{ form.submit(class="btn-home") }}
             </div>
         </form>
+
+        {% endif %}
+
     </div>
 
 </div>

@@ -280,3 +280,6 @@ form {
         transform: rotate(90deg);
     }
 }
+
+.small_image{max-width:150px;}
+.succes{margin-bottom:25px;}

@@ -24,10 +24,17 @@ class User(db.Model, UserMixin):
     status: Map[str] = mc(String(20), nullable=False, default='pending')
     coupling_token: Map[Optional[str]] = mc(String(64), unique=True, nullable=True)
     esp_id: Map[Optional[int]]= mc(unique= True, nullable= True)
+    
 
     # relationship setup (uselist=False zorgt voor een 1-op-1 relatie)
     waardes: Map[Optional['Waardes']] = rel(back_populates='user', uselist=False)
     triggers: Map[Optional['Triggers']] = rel(back_populates='user', uselist=False)
+
+    #Checkt of de gebruiker een esp gekoppeld heeft
+    def has_esp(self):
+     if EspDevice.query.filter_by(owner_user_id=self.id).first() != None:
+         return EspDevice.query.filter_by(owner_user_id=self.id).first()
+
 
     def __init__(self, username: str, email: str, password: str, role: str):
         """Maak nieuwe user aan met gehasht password."""
@@ -217,6 +224,24 @@ class Metingen(db.Model):
     user_id: Map[int] = mc(FK("user.id"), nullable=True)
     user: Map["User"] = rel(backref="measurements")
 
+#ESP gekoppelt aan wachtwoord.
+class EspDevice(db.Model):
+    __tablename__ = "esp_device"
+
+    id = db.Column(db.Integer, primary_key=True)
+    esp_id = db.Column(db.String(64), unique=True, nullable=False)
+    esp_secret_hash = db.Column(db.String(256), nullable=False)
+
+    owner_user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    owner = db.relationship("User")
+
+    def set_secret(self, secret: str):
+        self.esp_secret_hash = gen_hash(secret)
+
+    def check_secret(self, secret: str) -> bool:
+        return check_hash(self.esp_secret_hash, secret)
+
+    
 
 @login_manager.user_loader
 def load_user(user_id):

@@ -4,7 +4,7 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from main import app
-from models import db, User, Waardes, Metingen, Triggers
+from models import db, User, Waardes, Metingen, Triggers, EspDevice
 from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, EspIDForm
 from config import DREMPELWAARDES
 import requests
@@ -356,16 +356,35 @@ def get_pacient_json(pacient_id):
 def sensordata():
     data = request.get_json()
 
-    #Is de ESP_ID aanwezig
+    # ESP-ID aanwezig?
     esp_id = data.get("esp_id")
     if not esp_id:
         return jsonify({"error": "esp_id missing"}), 400
 
-    #Vind de gebruiker die bij deze ESP_id hoort
-    user = User.query.filter_by(esp_id=esp_id).first()
-    if not user:
-        return jsonify({"error": "esp_id not linked"}), 404
+    #Zoek ESP
+    esp = EspDevice.query.filter_by(esp_id=esp_id).first()
 
+    # Als ESP niet bestaat voeg dit dan toe aan de EspDevice tabel
+    if not esp:
+        esp = EspDevice(
+        esp_id=esp_id,
+        esp_secret_hash=generate_password_hash(data.get("esp_password")),
+        owner_user_id=None
+    )
+    db.session.add(esp)
+    db.session.commit()
+
+
+    # Wachtwoordcontrole dit is tegen potentiele spoofing
+    esp_pw = data.get("esp_password")
+    if not esp_pw or not esp.check_secret(esp_pw):
+        return jsonify({"error": "invalid credentials"}), 403
+
+    # Check of ESP gekoppeld is
+    if not esp.owner_user_id:
+        return jsonify({"error": "esp not claimed"}), 403
+
+    # Meting opslaan
     m = Metingen(
         pm25=data["pm25"],
         pm10=data["pm10"],
@@ -373,7 +392,7 @@ def sensordata():
         aqi=data["aqi"],
         co2=data["co2"],
         tvoc=data["tvoc"],
-        user_id=user.id
+        user_id=esp.owner_user_id
     )
 
     db.session.add(m)
@@ -381,34 +400,42 @@ def sensordata():
 
     return jsonify({"status": "ok"})
 
-
 @app.route("/user_esp_pairing", methods=['POST'])
 @login_required
 def user_esp_pairing():
     esp_id = request.form.get("esp_id")
+    esp_pw = request.form.get("esp_password")
 
-    if not esp_id:
-        flash("Voer een geldig ESP-ID in.", "danger")
+    if not esp_id or not esp_pw:
+        flash("Voer een geldig ESP-ID en wachtwoord in.", "danger")
         return redirect(url_for("home"))
 
     # Check of ESP_ID al bestaat bij een andere gebruiker
-    existing = User.query.filter_by(esp_id=esp_id).first()
+    esp = EspDevice.query.filter_by(esp_id=esp_id).first()
 
-    if existing and existing.id != current_user.id:
-        flash("Deze ESP-ID is al gekoppeld aan een andere gebruiker.", "danger")
+    if not esp:
+        flash("Onbekende ESP-ID.", "danger")
+        return redirect(url_for("home"))
+
+    if esp.owner_user_id and esp.owner_user_id != current_user.id:
+        flash("Deze ESP is al gekoppeld aan een andere gebruiker.", "danger")
+        return redirect(url_for("home"))
+
+    # Wachtwoordcontrole
+    if not esp.check_secret(esp_pw):
+        flash("Wachtwoord onjuist.", "danger")
         return redirect(url_for("home"))
 
     # Sla ESP_ID op
-    current_user.esp_id = esp_id
+    esp.owner_user_id = current_user.id
     db.session.commit()
 
     #Verwijder oude metingen nadat je van ESP_ID switched
     Metingen.query.filter_by(user_id=current_user.id).delete()
     db.session.commit()
 
-    flash("ESP-ID succesvol gekoppeld!", "success")
+    flash("ESP succesvol gekoppeld!", "success")
     return redirect(url_for("home"))
-
 
 
 @app.route("/user_ui", methods=['GET', 'POST'])
@@ -430,6 +457,25 @@ def user_ui():
               niveau=niveau,
               score=score,
               drempels=drempels)
+
+#Dit is de nieuwe unpair route
+@app.route("/user_esp_unpair", methods=["POST"])
+@login_required
+def user_esp_unpair():
+    esp = EspDevice.query.filter_by(owner_user_id=current_user.id).first()
+
+    #Unpair de ESP
+    if esp:
+        esp.owner_user_id = None
+        db.session.commit()
+
+        # Verwijder metingen van deze user
+        Metingen.query.filter_by(user_id=current_user.id).delete()
+        db.session.commit()
+
+        flash("ESP succesvol ontkoppeld!", "success")
+
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":

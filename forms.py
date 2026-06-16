@@ -97,13 +97,18 @@ class TimeRangeForm(FF):
     )
     submit = SubF("Update grafiek")
 
+#Geupdate voor het esp wachtwoord
 class EspIDForm(FF):
     esp_id = IntF(
         "ESP-ID",
-        validators=[
-            DataRequired(),
-            NumberRange(min=1, message="Negatieve getallen zijn geen toeGeenaan")
-        ],
+        validators=[DataRequired()],
         render_kw={"placeholder": "ESP_ID"}
     )
+
+    esp_password = PassF(
+        "ESP Wachtwoord",
+        validators=[DataRequired()],
+        render_kw={"placeholder": "ESP wachtwoord"}
+    )
+
     submit = SubF("Opslaan")
