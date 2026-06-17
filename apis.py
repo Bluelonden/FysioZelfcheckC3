@@ -58,8 +58,6 @@ def api_latest():
 
     return jsonify(volledige_status(m, profiel))
 
-
-
 @api.route("/pm25_fig")
 def pm25_fig():
     return livedata_grafiek("pm25")

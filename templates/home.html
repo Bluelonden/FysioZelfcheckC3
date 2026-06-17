@@ -13,7 +13,7 @@ Homepagina Fysiozelfcheck
 <div class="stappen-container">
 
     <div class="stap">
-        <h2>Stap 1 — Maak een account</h2>
+        <h2>Stap 1 - Maak een account</h2>
         <img class="pictogram" src="{{ url_for('static', filename='img/login.png') }}">
         {% if not current_user.is_authenticated %}
         <div class="inloggen">
@@ -34,37 +34,26 @@ Homepagina Fysiozelfcheck
     <div class="arrow"><img src="{{ url_for('static', filename='img/arrow.png') }}"></div>
 
     <div class="stap">
-        <h2>Stap 2 — Open de Captive Portal</h2>
-        <p class="stap-subtext">Start de FysioMeter en op uw beeldscherm verschijnt een adres. Neem dit adres over en
-            typ het in uw browser.</p>
-
-        <div class="info-box-portal">
-            <span class="info-badge">Wat is dit?</span>
-            <p>Zodra u het apparaat opstart, verschijnt er <strong>automatisch een adres</strong> op uw scherm. Dit
-                noemen we de 'Captive Portal'.</p>
-            <small class="fallback-text">Opent er niets? Open uw browser en typ: <strong>192.168.4.1</strong></small>
-        </div>
+        <h2>Stap 2 - Verbind met de ESP Setup</h2>
+        <p class="stap-subtext">Start de FysioMeter Ga vervolgens naar je internet instellingen op laptop/mobiel
+            en verbind met de ESP Setup. 
+        </p>
+        <img class ="pictogram" id= "border-radius" src ="static/img/esp_setup.png">
     </div>
 
     <div class="stap">
-        <h2>Stap 3 — Verbind FysioMeter met uw Wifi</h2>
-        <p class="stap-subtext">In het pop-up scherm dat zojuist is geopend, selecteert u uw eigen Wi-Fi netwerk en
-            voert u uw wachtwoord in. Het apparaat is nu verbonden met internet!</p>
+        <h2>Stap 3 - Open de captive Portal</h2>
+        <p class="stap-subtext">Kijk op het beeldscherm van de FysioMeter en voer het adres in op je browser.</p>
 
-        <div class="info-box-wifi">
-            <span class="info-badge-blue">Wat is dit?</span>
-            <p>Na het invoeren van uw Wi-Fi gegevens <strong>herstart het apparaat</strong> en maakt het automatisch
-                verbinding met uw netwerk. Het pop-up scherm sluit dan vanzelf — dit is normaal.</p>
-            <small class="fallback-text">Verschijnt het pop-up scherm niet meer? Ga dan gewoon door naar <strong>Stap
-                    4</strong>.</small>
-        </div>
+        <p>1.<img id = "border radius margin-bottom" class = "pictogram" src ="static/img/urlicon.png"></p>
+        <p>2.<img id = "border-radius" class = "pictogram" src ="static/img/captiveportal.png"></p>
     </div>
 
     <div class="arrow"><img src="{{ url_for('static', filename='img/arrow.png') }}"></div>
 
     <div class="stap">
-        <h2>Stap 4 — Vul hier uw FysioMeter ID en Wachtwoord in</h2>
-        <img class="pictogram" src="{{ url_for('static', filename='img/connection.png') }}">
+        <h2>Stap 4 - Vul hier uw FysioMeter ID en Wachtwoord in</h2>
+        <img class="big-pictogram" src="{{ url_for('static', filename='img/connection.png') }}">
         {% if current_user.is_authenticated and current_user.has_esp() %}
         <div class="inloggen">
             <div class="succes">
@@ -80,7 +69,7 @@ Homepagina Fysiozelfcheck
 
 
         {% else %}
-        <form method="POST" action="{{ url_for('user_esp_pairing') }}">
+        <form id="margin-top" method="POST" action="{{ url_for('user_esp_pairing') }}">
             {{ form.hidden_tag() }}
 
             <div class="button-wrapper">
@@ -98,11 +87,9 @@ Homepagina Fysiozelfcheck
 
     </div>
 
-
-
     <div class="stap">
         {% if current_user.is_authenticated and current_user.waardes %}
-        <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
+        <h2>Stap 5 - Vul onze vragenlijst in voor uw profielgeneratie</h2>
         <p class="stap-subtext">Klik op de knop om de vragenlijst opnieuw in te vullen.</p>
         <img class="pictogram" src="static/img/checklist.png">
         <div class="inloggen">
@@ -114,7 +101,7 @@ Homepagina Fysiozelfcheck
             </div>
         </div>
         {% else %}
-        <h2>Stap 5 — Vul onze vragenlijst in voor uw profielgeneratie</h2>
+        <h2>Stap 5 - Vul onze vragenlijst in voor uw profielgeneratie</h2>
         <p class="stap-subtext">Klik op de knop om de vragenlijst in te vullen. Wij maken aan de hand
             hiervan een profiel voor u aan.
         </p>
@@ -128,7 +115,7 @@ Homepagina Fysiozelfcheck
 
 
     <div class="stap">
-        <h2>Stap 6 — U bent er helemaal klaar voor</h2>
+        <h2>Stap 6 - U bent er helemaal klaar voor</h2>
         <p class="stap-subtext">Ga naar de Metingen pagina en bekijk uw live adviezen!
             Wilt u meer weten over wie wij zijn en wat wij precies doen, klik dan <a href="/over_ons"> <strong> hier
                 </strong> </a>
