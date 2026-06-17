@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
-from models import Metingen, User
+from models import Metingen, User, EspDevice
 from statuscalc import bereken_status, volledige_status
 from datetime import datetime, timedelta
 import random
@@ -163,19 +163,23 @@ def api_average():
 
 @api.route("/esp/get_thresholds")
 def esp_get_thresholds():
-    esp_id = request.args.get("esp_id")
+    esp_id = request.args.get("esp_id", type=int)
 
     if not esp_id:
         return jsonify({"error": "esp_id missing"}), 400
 
-    user = User.query.filter_by(esp_id=esp_id).first()
+    esp = EspDevice.query.filter_by(esp_id=esp_id).first()
+    if not esp or not esp.owner_user_id:
+        return jsonify({"error": "device not linked to a user"}), 404
 
+    user = User.query.get(esp.owner_user_id)
     if not user or not user.waardes:
-        return jsonify({"error": "not linked"}), 404
+        return jsonify({"error": "user profile missing"}), 404
 
     profiel = user.waardes.niveau
-    drempels = DREMPELWAARDES[profiel]
+    drempels = DREMPELWAARDES.get(profiel)
+    if not drempels:
+        return jsonify({"error": "configured profile name invalid"}), 500
 
     return jsonify(drempels)
-
 

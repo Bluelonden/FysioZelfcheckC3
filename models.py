@@ -23,12 +23,13 @@ class User(db.Model, UserMixin):
     role: Map[str] = mc(String(20), nullable=False)
     status: Map[str] = mc(String(20), nullable=False, default='pending')
     coupling_token: Map[Optional[str]] = mc(String(64), unique=True, nullable=True)
-    esp_id: Map[Optional[int]]= mc(unique= True, nullable= True)
-    
+    esp_id: Map[Optional[int]] = mc(unique=True, nullable=True)
 
-    # relationship setup (uselist=False zorgt voor een 1-op-1 relatie)
+    # ✔ ENKEL deze relatie houden
     waardes: Map[Optional['Waardes']] = rel(back_populates='user', uselist=False)
+
     triggers: Map[Optional['Triggers']] = rel(back_populates='user', uselist=False)
+
 
     #Checkt of de gebruiker een esp gekoppeld heeft
     def has_esp(self):
