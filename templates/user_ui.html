@@ -28,7 +28,7 @@ function kleurNaarTekst(kleur) {
 
 function updateMetingen(raw) {
 
-    const fijn = raw.groups.fijnstof;   
+    const fijn = raw.groups.fijnstof;
     const gas  = raw.groups.gassen;
 
     const fijnText = kleurNaarTekst(fijn);
@@ -39,7 +39,7 @@ function updateMetingen(raw) {
             <img src="/static/img/factory.png" class="card-icon">
             <h3>Fijnstof</h3>
             <div class="advies">${fijnText}</div>
-            <p class="sub">Laatste meting</p>
+            <p class="sub">Laatste meting: ${raw.measurement_age}</p>
         </div>
     `;
 
@@ -48,7 +48,7 @@ function updateMetingen(raw) {
             <img src="/static/img/gasicon.png" class="card-icon">
             <h3>Gassen</h3>
             <div class="advies">${gasText}</div>
-            <p class="sub">Laatste meting</p>
+            <p class="sub">Laatste meting: ${raw.measurement_age}</p>
         </div>
     `;
 }
@@ -92,6 +92,5 @@ fetchAverage();
 setInterval(fetchLatest, 10000);
 setInterval(fetchAverage, 30000);
 </script>
-
 
 {% endblock %}

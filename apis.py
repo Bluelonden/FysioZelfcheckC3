@@ -34,29 +34,32 @@ def livedata_grafiek(column):
 @api.route("/latest")
 @login_required
 def api_latest():
-    #Veiligheidscheck
     if not current_user.waardes:
         return jsonify({"error": "User has no waardes profile"}), 400
 
-    #Huidige waardes
     profiel = current_user.waardes.niveau
 
-    # Haal alle metingen op van deze gebruiker
-    metingen = (
+    # Laatste meting ophalen
+    m = (
         Metingen.query
         .filter_by(user_id=current_user.id)
         .order_by(Metingen.timestamp.desc())
-        .all()
+        .first()
     )
 
-    #Als er geen metingen zijn stuur dan een lege status terug
-    if not metingen:
-        return jsonify(volledige_status(None, profiel))
+    #Als er geen meting is ook geen nieuwe timestamp
+    if not m:
+        data = volledige_status(None, profiel)
+        data["measurement_timestamp"] = None
+        return jsonify(data)
 
-    # Laatste meting
-    m = metingen[0]
+    data = volledige_status(m, profiel)
 
-    return jsonify(volledige_status(m, profiel))
+    # Voeg server-timestamp van de meting toe
+    data["measurement_timestamp"] = m.timestamp.isoformat()
+
+    return jsonify(data)
+
 
 @api.route("/pm25_fig")
 def pm25_fig():
@@ -153,9 +156,9 @@ def api_average():
     f.co2 = avg["co2"]
     f.tvoc = avg["tvoc"]
     f.aqi = avg["aqi"]
-
+    f.timestamp = None
     data = volledige_status(f, profiel)
-
+ 
     return jsonify(data)
 
 
