@@ -1,392 +1,481 @@
-/* --- Basis Layout --- */
+/* =========================================
+   1. BASIS LAYOUT & DASHBOARD
+========================================= */
+
 .dashboard-container {
-  display: flex;
-  gap: 30px;
-  max-width: 1400px;
-  margin: 40px auto;
-  padding: 0 20px;
-  align-items: flex-start;
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    align-items: flex-start;
 }
 
 .main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
 }
 
 /* --- Header Card --- */
 .header.card {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  background: white;
-  border-radius: var(--border-radius-s);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: var(--border-radius-s, 8px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .header h1 {
-  padding: 0;
-  margin: 0;
-  font-size: var(--font-size-xl);
-  text-align: center;
-  color: var(--text-main-color);
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-size-xl, 2rem);
+    text-align: center;
+    color: var(--text-main-color, #333);
 }
 
 /* --- Status Row & Icons --- */
 .status-row {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 
 .status-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
 }
 
 .status-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: grey;
-  margin-top: 5px;
-  border: 2px solid #222;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: grey;
+    margin-top: 5px;
+    border: 2px solid #222;
 }
 
 /* --- Statuskaarten Layout (Links) --- */
 .statuscards-wrapper {
-  display: flex;
-  gap: 25px;
-  align-items: stretch;
-  width: 100%;
+    display: flex;
+    gap: 25px;
+    align-items: stretch;
+    width: 100%;
 }
 
 .statuscards-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: white;
-  border-radius: var(--border-radius-s);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  padding: 15px !important;
-  width: 100%;
-  max-width: 400px;
-  flex-shrink: 0;
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: white;
+    border-radius: var(--border-radius-s, 8px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    padding: 15px !important;
+    width: 100%;
+    max-width: 400px;
+    flex-shrink: 0;
+    box-sizing: border-box;
 }
 
 .status-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 15px;
-  border-radius: 6px;
-  background: #fff;
-  border: 2px solid #005941;
-  box-sizing: border-box;
-  width: 100%;
-  transition: transform 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 6px;
+    background: #fff;
+    border: 2px solid #005941;
+    box-sizing: border-box;
+    width: 100%;
+    transition: transform 0.2s ease;
 }
 
 .status-card h3 {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #005941;
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #005941;
 }
 
 .status-card .score-value {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 4px;
-  min-width: 65px;
-  text-align: center;
-  background: #005941;
-  color: white;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 4px;
+    min-width: 65px;
+    text-align: center;
+    background: #005941;
+    color: white;
 }
 
 /* --- Dynamische Statussen --- */
-.status-card[data-status="goed"] {
-  border-color: #2e6f40;
-}
+.status-card[data-status="goed"] { border-color: #2e6f40; }
+.status-card[data-status="goed"] h3 { color: #2e6f40; }
+.status-card[data-status="goed"] .score-value { background: #2e6f40; }
 
-.status-card[data-status="goed"] h3 {
-  color: #2e6f40;
-}
+.status-card[data-status="matig"] { border-color: #d97706; }
+.status-card[data-status="matig"] h3 { color: #d97706; }
+.status-card[data-status="matig"] .score-value { background: #d97706; }
 
-.status-card[data-status="goed"] .score-value {
-  background: #2e6f40;
-}
-
-.status-card[data-status="matig"] {
-  border-color: #d97706;
-}
-
-.status-card[data-status="matig"] h3 {
-  color: #d97706;
-}
-
-.status-card[data-status="matig"] .score-value {
-  background: #d97706;
-}
-
-.status-card[data-status="slecht"] {
-  border-color: #c53030;
-}
-
-.status-card[data-status="slecht"] h3 {
-  color: #c53030;
-}
-
-.status-card[data-status="slecht"] .score-value {
-  background: #c53030;
-}
+.status-card[data-status="slecht"] { border-color: #c53030; }
+.status-card[data-status="slecht"] h3 { color: #c53030; }
+.status-card[data-status="slecht"] .score-value { background: #c53030; }
 
 /* --- Adviesblok & Grafieken (Rechts) --- */
 .advice {
-  flex: 1;
-  background: #fff;
-  border-radius: var(--border-radius-s);
-  padding: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 2px solid #005941;
-  box-sizing: border-box;
+    flex: 1;
+    background: #fff;
+    border-radius: var(--border-radius-s, 8px);
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 2px solid #005941;
+    box-sizing: border-box;
 }
 
 .metrics-grid {
-  padding: 45px 70px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+    padding: 45px 70px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
 }
 
 .metric-card {
-  background: white;
-  padding: 20px;
-  border-radius: var(--border-radius-s);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 2px solid #005941;
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius-s, 8px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 2px solid #005941;
 }
 
 .metric-card h3 {
-  margin: 0 0 10px 0;
-  font-size: var(--font-size-m);
-  color: #005941;
-  font-weight: var(--font-weight-m);
+    margin: 0 0 10px 0;
+    font-size: var(--font-size-m, 1.2rem);
+    color: #005941;
+    font-weight: var(--font-weight-m, 600);
 }
 
-
-
-/* Hier beginnen de tweaks van Tycho */
-
-/* Zorg dat grafiek-elementen (canvas/svg/iframe) de kaart vullen */
+/* Tweaks van Tycho */
 .metric-card canvas,
 .metric-card svg,
 .metric-card iframe {
-  width: 100% !important;
-  height: auto !important;
-  display: block;
+    width: 100% !important;
+    height: auto !important;
+    display: block;
 }
 
-/* --- Formulier kaart --- */
+/* --- Formulieren & Grids --- */
 .form-card {
-  width: 100%;
-  max-width: 400px;
-  padding: 10px 15px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  background: #fff;
-  border: 2px solid #005941;
-  border-radius: 8px;
-  box-sizing: border-box;
-  margin-top: 15px;
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #005941;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-top: 15px;
 }
-
-/* Responsive */
-@media (max-width: 992px) {
-  .metrics-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-}
-
 
 .status-grid {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  background: #fff;
-  border: 2px solid #005941;
-  border-radius: 8px;
-  box-sizing: border-box;
-  margin-top: 15px;
-}
-
-/* --- Responsive & 3K laptop --- */
-@media (max-width: 992px) {
-  .metrics-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .statuscards-wrapper {
-    flex-direction: column;
-  }
-
-  .statuscards-container {
-    max-width: 100%;
-  }
-}
-
-@media screen and (min-width: 1920px) {
-  html {
-    font-size: 18px;
-  }
-
-  .dashboard-container {
-    max-width: 1800px;
-  }
-
-  .statuscards-container {
-    max-width: 500px;
-  }
-}
-
-/* Styling voor de vragenlijst-card */
-.card {
-  border: none;
-  border-radius: 12px;
-}
-
-.bg-light {
-  background-color: #f8f9fa !important;
-  border: 1px solid #e9ecef;
-}
-
-/* Zorgt dat de switches opvallen */
-.form-check-input:checked {
-  background-color: #005941;
-  border-color: #005941;
-}
-
-/* De knop consistent maken met je dashboard */
-.btn-primary {
-  background-color: #005941;
-  border: none;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #005941;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-top: 15px;
 }
 
 .item1 {
-  grid-row: 1 / span 8;
+    grid-row: 1 / span 8;
+}
 
-  .statuscards-wrapper {
+.item1 .statuscards-wrapper {
     flex-direction: column;
-  }
+}
 
-  .statuscards-container {
+.item1 .statuscards-container {
     max-width: 100%;
-  }
 }
 
-@media screen and (min-width: 1920px) {
-  html {
-    font-size: 18px;
-  }
 
-  .dashboard-container {
-    max-width: 1800px;
-  }
+/* =========================================
+   2. ALGEMENE COMPONENTEN & OVERRIDES
+========================================= */
 
-  .statuscards-container {
-    max-width: 500px;
-  }
-}
-
-/* Styling voor de vragenlijst-card */
 .card {
-  border: none;
-  border-radius: 12px;
+    border: none;
+    border-radius: 12px;
 }
 
 .bg-light {
-  background-color: #f8f9fa !important;
-  border: 1px solid #e9ecef;
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef;
 }
 
-/* Zorgt dat de switches opvallen */
 .form-check-input:checked {
-  background-color: #005941;
-  border-color: #005941;
+    background-color: #005941;
+    border-color: #005941;
 }
 
-/* De knop consistent maken met je dashboard */
 .btn-primary {
-  background-color: #005941;
-  border: none;
+    background-color: #005941;
+    border: none;
 }
 
 .btn-primary:hover {
-  background-color: #004d38;
+    background-color: #004d38;
 }
 
-/* ICONS TRIGGER PAGE*/
-.icon-btn {
-  border-radius: 50%;
-  border: none;
-  padding: 5px;
-  text-align: center;
-  text-decoration: none;
-}
 
-.icon-btn img {
-  min-height: 40px;
-}
-
-#niet {
-  background-color: #16a816;
-}
-
-#matig {
-  background-color: #ffa500;
-}
-
-#veel {
-  background-color: #da3d3d;
-}
+/* =========================================
+   3. TRIGGERS / VRAGENLIJST UI
+========================================= */
 
 #uitleg-box {
-  min-width: 1fr;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 5px;
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .uitleg-item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 5px;
-  align-items: center;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+    gap: 20px;
+}
+
+.uitleg-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .uitleg-txt {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  /* make it fill the grid row */
+    flex-grow: 1;
+    font-weight: 500;
+    color: #495057;
 }
 
 .uitleg-txt p {
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+    margin: 0;
+}
+
+.icon-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #ced4da;
+    background-color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 0;
+}
+
+.icon-btn img {
+    width: 35px;
+    height: 35px;
+    pointer-events: none;
+}
+
+/* Specifieke styling voor de info/vraagteken-knop container */
+.popup .icon-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: #e1f0fa;
+}
+
+.popup .icon-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+.popup .icon-btn:hover {
+    background-color: #cce5ff;
+    transform: scale(1.05);
+}
+
+/* Gekleurde statussen voor de legenda-knoppen */
+.icon-btn.geen { background-color: #16a816; }
+.icon-btn.matig { background-color: #ffa500; }
+.icon-btn.veel { background-color: #da3d3d; }
+
+.icon-btn:not([disabled]):hover {
+    transform: scale(1.1);
+    border-color: #adb5bd;
+}
+
+.icon-btn.geen.active {
+    background-color: #d4edda;
+    border-color: #28a745;
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.4);
+}
+
+.icon-btn.matig.active {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+}
+
+.icon-btn.veel.active {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.4);
+}
+
+.question-box {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    transition: box-shadow 0.3s ease;
+}
+
+.question-box:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+.question-box .form-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.symp-lvl {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+
+/* =========================================
+   4. TOOLTIP / POPUP STYLING (FIXED)
+========================================= */
+
+.popup {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Hardhandig alle oude overervingen en 'nowrap' fouten breken */
+.popup .popuptext, .popuptext {
+    visibility: hidden;
+    display: block !important;
+    width: 260px !important;        /* Vaste breedte zodat tekst binnen het vak blijft */
+    height: auto !important;       /* Achtergrond groeit nu ALTIJD mee met de tekst */
+    white-space: normal !important;  /* Zorgt ervoor dat de zinnen netjes afbreken */
+    background-color: #2c3e50 !important; 
+    color: #ffffff !important;      /* Volledig witte tekst voor maximaal contrast */
+    text-align: left;
+    border-radius: 8px;
+    padding: 15px !important;
+    position: absolute;
+    z-index: 9999 !important;       /* Zweeft overal bovenop */
+    
+    /* Positionering: Boven de knop, uitgelijnd naar links zodat hij binnen de kaart blijft */
+    bottom: 130% !important;
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+    
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25) !important; 
+    font-size: 0.9rem !important;
+    box-sizing: border-box !important;
+}
+
+/* Pijltje onderaan de tooltip (netjes rechts uitgelijnd boven het ronde blauwe icoon) */
+.popup .popuptext::after, .popuptext::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 100% !important;
+    right: 12px !important;         /* Precies in het midden van de 40px brede knop */
+    left: auto !important;
+    transform: none !important;
+    margin-left: 0 !important;
+    border-width: 8px !important;
+    border-style: solid !important;
+    border-color: #2c3e50 transparent transparent transparent !important; 
+}
+
+/* Actieve status bij klikken */
+.popup .popuptext.show, .popuptext.show {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.popuptext ul {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style-type: none !important;
+}
+
+.popuptext li {
+    margin-bottom: 6px !important;
+    line-height: 1.4 !important;
+    color: #ffffff !important;
+}
+
+.popuptext li:last-child {
+    margin-bottom: 0 !important;
+}
+
+
+/* =========================================
+   5. RESPONSIVE DESIGN (MEDIA QUERIES)
+========================================= */
+
+@media (max-width: 992px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .statuscards-wrapper {
+        flex-direction: column;
+    }
+
+    .statuscards-container {
+        max-width: 100%;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    html {
+        font-size: 18px;
+    }
+
+    .dashboard-container {
+        max-width: 1800px;
+    }
+
+    .statuscards-container {
+        max-width: 500px;
+    }
 }

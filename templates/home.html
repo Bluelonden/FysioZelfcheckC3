@@ -1,86 +1,130 @@
 {% extends "base.html" %}
-
-<!-- TITLE -->
 {% block title %}
-Home
+Homepagina Fysiozelfcheck
+{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 {% endblock %}
 
 {% block content %}
-<h1> Luchtkwaliteit en Fysiozelfcheck</h1>
 
-<div class="custom-containerv2">
-    <div class="box1">
-        <h3><strong>
-                Wat doet ons product
-            </strong>
-        </h3>
-        <br>
-        <p>
-            Wij bij Fysiozelfcheck bieden een luchtkwaliteitsmeter aan die patienten met milde tot matige COPD of Asthma
-            klachten helpt
-            te ondersteunen bij hun dagelijkste activiteiten. Dit doen wij door constante metingen terug te koppelen
-            naar onze website en hier vervolgens een advies aan te verbinden. Het apparaat dat hierbij geleverd wordt is
-            in staat
-            zelfstandig advies te geven zonder gebruik van de website, maar houdt er rekening mee dat terugkoppeling
-            hierbij gelimiteerd is
-            tot simpele instructies.
-        </p>
-        <br>
+<h1 id="font">Welkom bij Fysiozelfcheck</h1>
 
-        <p>
-            Voor onze gebruikers bieden wij een volledig aanpasbaar configuratiesysteem aan waarmee u de drempelwaardes
-            voor adviezen en waarschuwingen kunt aanpassen.
-            Daarnaast hebben wij een aantal basisprofielen waarmee u de door ons aanbevolen drempelwaardes kunt
-            gebruiken.
-        </p>
-        <a href="https://fysiozelfcheck.nl/"> <img class="logo" src="static/img/Logo.jpeg" alt="Logo"> </a>
+<div class="stappen-container">
 
-    </div>
-    <div class="box2">
-        <img class="lung" src="static/img/Lungs.jpg">
+    <div class="stap">
+        <h2>Stap 1 - Maak een account</h2>
+        <img class="pictogram" src="{{ url_for('static', filename='img/login.png') }}">
+        {% if not current_user.is_authenticated %}
+        <div class="inloggen">
+            <div class="button-wrapper">
+                <a href="{{ url_for('login') }}" class="btn-home">Inloggen</a>
+                <a href="{{ url_for('register') }}" class="btn-home">Registreren</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="inloggen">
+            <div class="succes">
+                <h2>U bent succesvol ingelogd.</h2>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
-</div>
+    <div class="arrow"><img src="{{ url_for('static', filename='img/arrow.png') }}"></div>
 
-<blockquote class="quote">
-    "Luchtkwaliteit bepaalt meer dan je denkt. - John Doe"
-</blockquote>
+    <div class="stap">
+        <h2>Stap 2 - Verbind met de ESP Setup</h2>
+        <p class="stap-subtext">Start de FysioMeter. Ga vervolgens naar je internet instellingen op laptop/mobiel
+            en verbind met de ESP Setup. 
+        </p>
+        <img class ="pictogram" id= "border-radius" src ="static/img/esp_setup.png">
+    </div>
 
-<blockquote class="quote">
-    "Absoluut het proberen waard mijn klachten nemen af sinds ik deze meter ben gaan gebruiken. -John Smith"
-</blockquote>
+    <div class="stap">
+        <h2>Stap 3 - Open de Captive Portal</h2>
+        <p class="stap-subtext">Kijk op het beeldscherm van de FysioMeter en typ het weergegeven adres in de adresbalk van je browser.</p>
 
-<div class="custom-containerv3">
-    <h3><strong>Voor wie zijn wij?</strong></h3>
-    <p>Alhoewel iedereen kan profiteren van dit product is het belangrijk om als patient bewust te zijn van
-        wat wij wel en niet kunnen bieden. Bij ernstige klachten is het belangrijk om een passende oplossing te vinden
-        met uw huisarts.
-        Dit product is gemaakt om mensen te helpen die geen extreme beperkingen ervaren bij normale dagelijkse
-        inspanning.
-    </p>
-    <p>
-        De meter leest en analyseert de volgende waardes:
+        <p>1.<img id = "border radius margin-bottom" class = "pictogram" src ="static/img/urlicon.png"></p>
+        <p>2.<img id = "border-radius" class = "pictogram" src ="static/img/captiveportal.png"></p>
+    </div>
 
-    <ul>
-        <li>PM 2.5</li>
-        <li>PM 10</li>
-        <li>AQI</li>
-        <li>CO2</li>
-        <li>TVOC</li>
-    </ul>
-    </p>
-    <p>
-        Deze waardes worden uitgelezen en verwerkt via onze website zolang u verbinding heeft met het internet.
-        Als u deze verbinding tijdelijk verliest ... Geen probleem! de volgende keer dat u weer verbinding heeft wordt
-        deze data toegevoegd.
-    </p>
-    <p>
-        Standaard geven wij een basisprofiel, maar houdt er rekening mee dat dit profiel niet bedoelt is om voor
-        iedereen te werken.
-        Wanneer u toch merkt dat ons basisprofiel niet goed voor u werkt kunt u in uw accountinstellingen de
-        drempelwaardes zelfstandig configureren.
-        Op die manier kunt u slim en handig ook de feedback van het apparaat zelf aanpassen.
-    </p>
+    <div class="arrow"><img src="{{ url_for('static', filename='img/arrow.png') }}"></div>
+
+    <div class="stap">
+        <h2>Stap 4 - Vul hier uw FysioMeter ID en Wachtwoord in</h2>
+        <img class="big-pictogram" src="{{ url_for('static', filename='img/connection.png') }}">
+        {% if current_user.is_authenticated and current_user.has_esp() %}
+        <div class="inloggen">
+            <div class="succes">
+                <h2>Uw Fysiometer is succesvol gekoppeld.</h2>
+            </div>
+        </div>
+        <form method="POST" action="{{ url_for('user_esp_unpair') }}">
+            {{ unpair_form.hidden_tag() }}
+            <div class="button-wrapper">
+                {{ unpair_form.submit(class="btn-home danger") }}
+            </div>
+        </form>
+
+
+        {% else %}
+        <form id="margin-top" method="POST" action="{{ url_for('user_esp_pairing') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="button-wrapper">
+                {{ form.esp_id(class="form-control esp-input small_intfield") }}
+                {{ form.esp_password(class="form-control esp-input small_intfield") }}
+            </div>
+
+            <div class="button-wrapper" id="submit">
+
+                {{ form.submit(class="btn-home") }}
+            </div>
+        </form>
+
+        {% endif %}
+
+    </div>
+
+    <div class="stap">
+        {% if current_user.is_authenticated and current_user.waardes %}
+        <h2>Stap 5 - Vul onze vragenlijst in voor uw profielgeneratie</h2>
+        <p class="stap-subtext">Klik op de knop om de vragenlijst opnieuw in te vullen.</p>
+        <img class="pictogram" src="static/img/checklist.png">
+        <div class="inloggen">
+            <div class="succes">
+                <h2>Uw profiel is gegenereerd.</h2>
+            </div>
+            <div class="button-wrapper">
+                <a href="/update/vragen" class="btn-home">Vragenlijst updaten</a>
+            </div>
+        </div>
+        {% else %}
+        <h2>Stap 5 - Vul onze vragenlijst in voor uw profielgeneratie</h2>
+        <p class="stap-subtext">Klik op de knop om de vragenlijst in te vullen. Wij maken aan de hand
+            hiervan een profiel voor u aan.
+        </p>
+        <img class="pictogram" src="static/img/checklist.png">
+        <div class="button-wrapper">
+            <a href="/vragenlijst" class="btn-home" id="margintopextra">Vragenlijst invullen</a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="arrow"><img src="{{ url_for('static', filename='img/arrow.png') }}"></div>
+
+
+    <div class="stap">
+        <h2>Stap 6 - U bent er helemaal klaar voor</h2>
+        <p class="stap-subtext">Ga naar de Metingen pagina en bekijk uw live adviezen!
+            Wilt u meer weten over wie wij zijn en wat wij precies doen, klik dan <a href="/over_ons"> <strong> hier
+                </strong> </a>
+        </p>
+        <img class="pictogram" id="margintop" src="static/img/finish.png">
+        <div class="button-wrapper">
+            <a href="/user_ui" class="btn-home" id="margintopextra">Kom maar op!</a>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

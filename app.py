@@ -1,22 +1,48 @@
 from flask import render_template as rt, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer as Serializer
+from werkzeug.security import generate_password_hash, check_password_hash
 from main import app
-from models import db, User, Waardes, Metingen, Triggers
-# CRUCIAL: TimeRangeForm is hier toegevoegd aan de imports
-from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, TimeRangeForm
+from models import db, User, Waardes, Metingen, Triggers, EspDevice
+from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, EspIDForm, UnpairForm
 from config import DREMPELWAARDES
 import requests
+from sqlalchemy.exc import IntegrityError
 from apis import api
 
 # Registreer de API blueprint
 app.register_blueprint(api, url_prefix="/api")
+app.config['MAIL_SERVER'] = 'smtp.gmail.com' # Of je provider
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'jouw-email@gmail.com'
+app.config['MAIL_PASSWORD'] = 'je-app-wachtwoord' # Let op: gebruik een app-wachtwoord!
+mail = Mail(app)
+
 
 ESP32_IP = "http://192.168.1.50"
+@app.route("/", methods=["GET", "POST"])
+def home():
+    form = EspIDForm()
+    unpair_form = UnpairForm() 
+
+    if form.validate_on_submit():
+        if current_user.is_authenticated:
+            current_user.esp_id = form.esp_id.data
+            db.session.commit()
+            flash("ESP-ID succesvol gekoppeld!", "success")
+        else:
+            flash("Log in om uw ESP-ID te koppelen.", "warning")
+
+    return rt("home.html", form=form, unpair_form=unpair_form)
+
+
 
 ## HOMEPAGE ##
-@app.route("/") 
-def home():
-    return rt('home.html')
+@app.route("/over_ons") 
+def over_ons():
+    return rt('over_ons.html')
 
 ## LOGIN ##
 @app.route("/login", methods=['GET', 'POST'])
@@ -128,29 +154,11 @@ def profiel():
         context["triggers"] = {
             "allergenen": triggers.allergens,
             "irriterende stoffen": triggers.irritants,
-            "luchtweginfecties": triggers.infection,
-            "sporten": triggers.exercise,
             "weer": triggers.weather,
             "luchtvervuiling": triggers.pollution,
         }
 
     return rt("profiel.html", **context)
-
-## DREMPELWAARDES NAAR ESP POSTEN ##
-@app.route("/save_thresholds", methods=["POST"])
-def save_thresholds():
-    thresholds = request.get_json()
-
-    try:
-        r = requests.post(f"{ESP32_IP}/update_thresholds", json=thresholds, timeout=3)
-        if r.status_code == 200:
-            flash("Drempelwaardes succesvol verzonden naar ESP32!", "success")
-        else:
-            flash("ESP32 gaf een foutmelding.", "danger")
-    except requests.exceptions.RequestException:
-        flash("Kon geen verbinding maken met de ESP32.", "danger")
-
-    return redirect(url_for("user_ui"))
 
 ## SYMPTOMEN VRAGENLIJST ##
 @app.route("/vragenlijst", methods=["GET", "POST"])
@@ -158,46 +166,43 @@ def save_thresholds():
 def vragenlijst():
     form = WaardesForm()
 
-    if request.method == 'GET':
-        if current_user.waardes:
-            flash('Formulier is al eerder ingevuld!', 'danger')
-            return redirect(url_for('profiel'))
-        else:
-            return rt('vragenlijst.html', form=form)
-
-    if request.method == 'POST' and form.validate_on_submit():
+    if form.validate_on_submit():
+        waardes = Waardes(
+            leeftijd=form.leeftijd.data,
+            diagnose=form.diagnose.data,
+            level=form.level.data,
+            rookt=form.rookt.data,
+            dag=form.dag.data,
+            nacht=form.nacht.data,
+            saba=form.saba.data,
+            beperking=form.beperking.data,
+            hospital=form.hospital.data,
+            prednison=form.prednison.data,
+            exacerbaties=form.exacerbaties.data,
+            user_id=current_user.id
+        )
         try:
-            leeftijd = form.leeftijd.data
-            diagnose = form.diagnose.data
-            level = getattr(form, 'level', None).data if hasattr(form, 'level') else None
-            rookt = form.rookt.data
-            dag = form.dag.data
-            nacht = form.nacht.data
-            saba = form.saba.data
-            beperking = form.beperking.data
-            hospital = form.hospital.data
-            prednison = form.prednison.data
-            exacerbaties = int(form.exacerbaties.data)
-
-            data = Waardes(leeftijd=leeftijd, diagnose=diagnose, level=level,
-                           rookt=rookt, dag=dag, nacht=nacht, saba=saba,
-                           beperking=beperking, hospital=hospital,
-                           prednison=prednison, exacerbaties=exacerbaties,
-                           user_id=current_user.id)
-
-            data.score_niveau()
-
-            db.session.add(data)
+            db.session.add(waardes)
+            waardes.score_niveau()
             db.session.commit()
 
-            flash("Data succesvol opgeslagen!", "success")
+            flash("Vragenlijst succesvol opgeslagen!", "success")
             return redirect(url_for('user_ui'))
+
+        except IntegrityError:
+            db.session.rollback()
+            flash("Deze ESP-ID is al gekoppeld aan een andere gebruiker.", "danger")
 
         except Exception as e:
             db.session.rollback()
             flash(f"Er is een fout opgetreden: {str(e)}", "danger")
 
-    return rt("vragenlijst.html", form=form)
+    elif request.method == 'POST':
+        print("--- FORMULIER VALIDATIE FOUTEN ---")
+        print(form.errors)
+        flash("Formulier validatie mislukt. Check de terminal.", "danger")
+
+    return rt('vragenlijst.html', form=form)
 
 ## HANDMATIGE TRIGGERS INVOER ##
 @app.route('/handmatig', methods=['POST', 'GET'])
@@ -217,13 +222,10 @@ def handmatig():
         try:
             allergens = form.allergens.data
             irritants = form.irritants.data
-            infection = form.infection.data
-            exercise = form.exercise.data
             weather = form.weather.data
             pollution = form.pollution.data
 
             triggers = Triggers(allergens=allergens, irritants=irritants,
-                                infection=infection, exercise=exercise,
                                 weather=weather, pollution=pollution,
                                 user_id=user.id)
             
@@ -239,37 +241,39 @@ def handmatig():
             
     return rt('handmatig.html', form=form)
 
-## UPDATE VRAGENLIJST ##
-@app.route('/update/vragen', methods=['POST', 'GET'])
+## UPDATE VRAGENLIJST ## 
+@app.route('/update/vragen', methods=['GET', 'POST'])
 @login_required
 def update_vragen():
-    form = WaardesForm(obj=current_user)
+
     waardes = current_user.waardes
+    form = WaardesForm(obj=waardes)
 
-    if request.method == 'POST' and form.validate_on_submit():
-        waardes.leeftijd = form.leeftijd.data
-        waardes.diagnose = form.diagnose.data
-        if hasattr(form, 'level') and hasattr(waardes, 'level'):
-            waardes.level = form.level.data
-        waardes.rookt = form.rookt.data
-        waardes.dag = form.dag.data
-        waardes.nacht = form.nacht.data
-        waardes.saba = form.saba.data
-        waardes.beperking = form.beperking.data
-        waardes.hospital = form.hospital.data
-        waardes.prednison = form.prednison.data
-        waardes.exacerbaties = form.exacerbaties.data
-
+    if form.validate_on_submit():
+        form.populate_obj(waardes)
         waardes.score_niveau()
-
+        
         try:
             db.session.commit()
-            flash("Data succesvol geupdate!", "success")
+
+            flash("Data succesvol geüpdatet!", "success")
             return redirect(url_for('profiel'))
+
+        except IntegrityError:
+            db.session.rollback()
+
+            flash(
+                "Deze ESP-ID is al gekoppeld aan een andere gebruiker.",
+                "danger"
+            )
+
         except Exception as e:
             db.session.rollback()
-            flash(f"Er is een fout opgetreden: {str(e)}", "danger")
-            return rt('update_vragen.html', form=form)
+
+            flash(
+                f"Er is een fout opgetreden: {e}",
+                "danger"
+            )
 
     return rt("update_vragen.html", form=form)
 
@@ -283,8 +287,6 @@ def update_triggers():
     if request.method == 'POST' and form.validate_on_submit():
         triggers.allergens = form.allergens.data
         triggers.irritants = form.irritants.data
-        triggers.infection = form.infection.data
-        triggers.exercise = form.exercise.data
         triggers.weather = form.weather.data
         triggers.pollution = form.pollution.data
 
@@ -356,6 +358,35 @@ def get_pacient_json(pacient_id):
 def sensordata():
     data = request.get_json()
 
+    # ESP-ID aanwezig?
+    esp_id = data.get("esp_id")
+    if not esp_id:
+        return jsonify({"error": "esp_id missing"}), 400
+
+    #Zoek ESP
+    esp = EspDevice.query.filter_by(esp_id=esp_id).first()
+
+    # Als ESP niet bestaat voeg dit dan toe aan de EspDevice tabel
+    if not esp:
+        esp = EspDevice(
+        esp_id=esp_id,
+        esp_secret_hash=generate_password_hash(data.get("esp_password")),
+        owner_user_id=None
+    )
+    db.session.add(esp)
+    db.session.commit()
+
+
+    # Wachtwoordcontrole dit is tegen potentiele spoofing
+    esp_pw = data.get("esp_password")
+    if not esp_pw or not esp.check_secret(esp_pw):
+        return jsonify({"error": "invalid credentials"}), 403
+
+    # Check of ESP gekoppeld is
+    if not esp.owner_user_id:
+        return jsonify({"error": "esp not claimed"}), 403
+
+    # Meting opslaan
     m = Metingen(
         pm25=data["pm25"],
         pm10=data["pm10"],
@@ -363,7 +394,7 @@ def sensordata():
         aqi=data["aqi"],
         co2=data["co2"],
         tvoc=data["tvoc"],
-        user_id=data.get("user_id", 1)  # test: stuur user_id mee
+        user_id=esp.owner_user_id
     )
 
     db.session.add(m)
@@ -371,33 +402,83 @@ def sensordata():
 
     return jsonify({"status": "ok"})
 
+@app.route("/user_esp_pairing", methods=['POST'])
+@login_required
+def user_esp_pairing():
+    esp_id = request.form.get("esp_id")
+    esp_pw = request.form.get("esp_password")
 
-@app.route("/user_ui",methods=['GET', 'POST'])
+    if not esp_id or not esp_pw:
+        flash("Voer een geldig ESP-ID en wachtwoord in.", "danger")
+        return redirect(url_for("home"))
+
+    # Check of ESP_ID al bestaat bij een andere gebruiker
+    esp = EspDevice.query.filter_by(esp_id=esp_id).first()
+
+    if not esp:
+        flash("Onbekende ESP-ID.", "danger")
+        return redirect(url_for("home"))
+
+    if esp.owner_user_id and esp.owner_user_id != current_user.id:
+        flash("Deze ESP is al gekoppeld aan een andere gebruiker.", "danger")
+        return redirect(url_for("home"))
+
+    # Wachtwoordcontrole
+    if not esp.check_secret(esp_pw):
+        flash("Wachtwoord onjuist.", "danger")
+        return redirect(url_for("home"))
+
+    # Sla ESP_ID op
+    esp.owner_user_id = current_user.id
+    db.session.commit()
+
+    #Verwijder oude metingen nadat je van ESP_ID switched
+    Metingen.query.filter_by(user_id=current_user.id).delete()
+    db.session.commit()
+
+    flash("ESP succesvol gekoppeld!", "success")
+    return redirect(url_for("home"))
+
+
+@app.route("/user_ui", methods=['GET', 'POST'])
+@login_required
 def user_ui():
     user = current_user
 
+    # 1. User moet eerst de vragenlijst invullen
     if not user.waardes:
         flash("Vul eerst de vragenlijst in om je resultaten en drempelwaardes te bekijken.", "warning")
         return redirect(url_for('vragenlijst'))
-
+    
+    #Toon de UI
     niveau = user.waardes.niveau
     score = user.waardes.score
     drempels = DREMPELWAARDES[niveau]
 
-    try:
-        requests.post(f"{ESP32_IP}/update_thresholds", json=drempels, timeout=3)
-        flash("Drempelwaardes automatisch verzonden naar ESP32!", "success")
-    except requests.exceptions.RequestException:
-        flash("Kon geen verbinding maken met de ESP32.", "danger")
-   
     return rt('user_ui.html',
               niveau=niveau,
               score=score,
-              drempels=drempels,)
+              drempels=drempels)
 
-    
+#Dit is de nieuwe unpair route
+@app.route("/user_esp_unpair", methods=["POST"])
+@login_required
+def user_esp_unpair():
+    esp = EspDevice.query.filter_by(owner_user_id=current_user.id).first()
 
-    
+    #Unpair de ESP
+    if esp:
+        esp.owner_user_id = None
+        db.session.commit()
+
+        # Verwijder metingen van deze user
+        Metingen.query.filter_by(user_id=current_user.id).delete()
+        db.session.commit()
+
+        flash("ESP succesvol ontkoppeld!", "success")
+
+    return redirect(url_for("home"))
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-

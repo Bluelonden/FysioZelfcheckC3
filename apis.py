@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
-from models import Metingen, User
+from models import Metingen, User, EspDevice
 from statuscalc import bereken_status, volledige_status
 from datetime import datetime, timedelta
 import random
@@ -14,11 +14,13 @@ def livedata_grafiek(column):
     
     laatste_uur = datetime.now() - timedelta(minutes=minutes)
     metingen = (
-        Metingen.query
-        .filter(Metingen.timestamp >= laatste_uur)
-        .order_by(Metingen.timestamp.asc())
-        .all()
+    Metingen.query
+    .filter_by(user_id=current_user.id)
+    .filter(Metingen.timestamp >= laatste_uur)
+    .order_by(Metingen.timestamp.asc())
+    .all()
     )
+
 
     labels = [m.timestamp.strftime("%H:%M") for m in metingen]
     values = [getattr(m, column) for m in metingen]
@@ -32,34 +34,32 @@ def livedata_grafiek(column):
 @api.route("/latest")
 @login_required
 def api_latest():
-    m = Metingen.query.order_by(Metingen.id.desc()).first()
-
-    if m is None:
-        return jsonify({
-            "values": {
-                "pm25": 0,
-                "pm10": 0,
-                "pm1": 0,
-                "aqi": 0,
-                "co2": 0,
-                "tvoc": 0
-            },
-            "status": {},
-            "groups": {
-                "fijnstof": "grey",
-                "gassen": "grey"
-            },
-            "eind": "grey",
-            "advies": {
-                "binnenbuiten": {"text": "Onbekend", "icon": "house.png", "color": "advies-orange"},
-                "sport": {"text": "Onbekend", "icon": "rest.png", "color": "advies-orange"}
-            }
-        })
+    if not current_user.waardes:
+        return jsonify({"error": "User has no waardes profile"}), 400
 
     profiel = current_user.waardes.niveau
+
+    # Laatste meting ophalen
+    m = (
+        Metingen.query
+        .filter_by(user_id=current_user.id)
+        .order_by(Metingen.timestamp.desc())
+        .first()
+    )
+
+    #Als er geen meting is ook geen nieuwe timestamp
+    if not m:
+        data = volledige_status(None, profiel)
+        data["measurement_timestamp"] = None
+        return jsonify(data)
+
     data = volledige_status(m, profiel)
 
+    # Voeg server-timestamp van de meting toe
+    data["measurement_timestamp"] = m.timestamp.isoformat()
+
     return jsonify(data)
+
 
 @api.route("/pm25_fig")
 def pm25_fig():
@@ -89,40 +89,32 @@ def tvoc_fig():
 @api.route('/arts/pacient_data/<int:patient_id>')
 @login_required
 def arts_pacient_data(patient_id):
-    # Zoekt de geselecteerde patiënt op in de database
     patient = User.query.get_or_404(patient_id)
+    profiel = patient.waardes.niveau if patient.waardes else "Laag"
+
+    # Metingen ophalen (zoals je al had)
+    metingen = Metingen.query.filter_by(user_id=patient_id)\
+                             .order_by(Metingen.timestamp.desc())\
+                             .limit(20)\
+                             .all()
+    metingen.reverse()
+
+    labels = [m.timestamp.strftime("%H:%M") for m in metingen] if metingen else []
     
-    # Bepaalt het risicoprofiel van deze patiënt
-    profiel = "Laag"
-    if patient.waardes and patient.waardes.niveau:
-        profiel = patient.waardes.niveau
-
-    # Haalt de specifieke drempelwaardes op uit config.py
-    drempels = DREMPELWAARDES.get(profiel, DREMPELWAARDES["Laag"])
-
-    # Genereert timestamps (labels) voor de afgelopen 7 metingen
-    labels = []
-    nu = datetime.now()
-    for i in range(6, -1, -1):
-        tijdstip = nu - timedelta(hours=i)
-        labels.append(tijdstip.strftime("%H:%M")) # Direct geformatteerd als UU:MM voor Chart.js
-
-    # Genereert dynamische testdata op basis van de drempels uit config.py
-    pm25_rood_grens = drempels["PM2.5"]["oranje"][1]
-    pm10_rood_grens = drempels["PM10"]["oranje"][1]
-    
-    pm25_data = [round(random.uniform(2, pm25_rood_grens + 8), 1) for _ in range(7)]
-    pm10_data = [round(random.uniform(5, pm10_rood_grens + 15), 1) for _ in range(7)]
-    no2_data = [round(random.uniform(10.0, 45.0), 1) for _ in range(7)]
-
-    # Geeft de data terug in exact dezelfde Chart.js structuur ("labels" en "values")
+    # Let op: zorg dat 'no2' in je Metingen model staat!
     return jsonify({
         "labels": labels,
         "values": {
-            "pm25": pm25_data,
-            "pm10": pm10_data,
-            "no2": no2_data
+            "pm25": [m.pm25 for m in metingen],
+            "pm10": [m.pm10 for m in metingen],
+            "no2": [getattr(m, 'no2', 0) for m in metingen], 
+            "co2": [m.co2 for m in metingen],
+            "tvoc": [m.tvoc for m in metingen],
+            "aqi": [m.aqi for m in metingen]
         },
+        # HIER IS DE FIX:
+        "status": volledige_status(metingen[-1], profiel).get('status', {}) if metingen else {},
+        "groups": volledige_status(metingen[-1], profiel).get('groups', {}) if metingen else {},
         "profiel": profiel
     })
 
@@ -130,16 +122,23 @@ def arts_pacient_data(patient_id):
 @login_required
 def api_average():
 
+    # Veiligheidscheck
+    if not current_user.waardes:
+        return jsonify({"error": "User has no waardes profile"}), 400
+
+    #Added user filtering
     metingen = (
         Metingen.query
-        .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=5)) #Je wilt het gemiddelde van de afgelopen 5 minuten
+        .filter_by(user_id=current_user.id)
+        .filter(Metingen.timestamp >= datetime.now() - timedelta(minutes=3))
         .all()
     )
 
-    if not metingen:
-        return jsonify({})  # of een fallback
+    profiel = current_user.waardes.niveau
 
-    # gemiddelde berekenen
+    if not metingen:
+        return jsonify(volledige_status(None, profiel))
+
     avg = {
         "pm1": sum(m.pm1 for m in metingen) / len(metingen),
         "pm25": sum(m.pm25 for m in metingen) / len(metingen),
@@ -157,8 +156,31 @@ def api_average():
     f.co2 = avg["co2"]
     f.tvoc = avg["tvoc"]
     f.aqi = avg["aqi"]
-
-    profiel = current_user.waardes.niveau
+    f.timestamp = None
     data = volledige_status(f, profiel)
-
+ 
     return jsonify(data)
+
+
+@api.route("/esp/get_thresholds")
+def esp_get_thresholds():
+    esp_id = request.args.get("esp_id", type=int)
+
+    if not esp_id:
+        return jsonify({"error": "esp_id missing"}), 400
+
+    esp = EspDevice.query.filter_by(esp_id=esp_id).first()
+    if not esp or not esp.owner_user_id:
+        return jsonify({"error": "device not linked to a user"}), 404
+
+    user = User.query.get(esp.owner_user_id)
+    if not user or not user.waardes:
+        return jsonify({"error": "user profile missing"}), 404
+
+    profiel = user.waardes.niveau
+    drempels = DREMPELWAARDES.get(profiel)
+    if not drempels:
+        return jsonify({"error": "configured profile name invalid"}), 500
+
+    return jsonify(drempels)
+

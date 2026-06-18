@@ -5,24 +5,34 @@
 
 :root {
     /* colors */
-    --text-main-color: #1e293b;     /* Donkergrijs voor de gewone teksten op de pagina */
-    --text-second-color: #ffffff;   /* Wit voor op knoppen */
+    --text-main-color: #1e293b;
+    /* Donkergrijs voor de gewone teksten op de pagina */
+    --text-second-color: #ffffff;
+    /* Wit voor op knoppen */
 
     /* NAV MENU KLEUREN: Prachtig medisch groen/teal met witte letters */
-    --bg-nav-color: #0f766e;        /* Diep, rustgevend teal-groen */
-    --text-nav-color: #ffffff;      /* Puur wit, zodat het perfect leesbaar is op het groen */
-    --nav-hover-color: #115e59;     /* Iets donkerder groen voor hover-effecten */
+    --bg-nav-color: #0f766e;
+    /* Diep, rustgevend teal-groen */
+    --text-nav-color: #ffffff;
+    /* Puur wit, zodat het perfect leesbaar is op het groen */
+    --nav-hover-color: #115e59;
+    /* Iets donkerder groen voor hover-effecten */
 
     /* NIEUW: Licht medisch groen voor de login/registratie box */
-    --bg-form-lightgreen: #e6f4f1;  /* Zacht, licht medisch groen */
+    --bg-form-lightgreen: #e6f4f1;
+    /* Zacht, licht medisch groen */
 
     /* Pagina achtergronden */
-    --bg-main-color: #f8fafc;       /* Zachte lichtgrijze algehele pagina-achtergrond */
-    --bg-second-color: #0284c7;     /* Helderblauw voor de primaire actie-knoppen */
-    --bg-third-color: #ffffff;      /* Wit voor de dashboards/cards */
-    --bg-accent-hover: #0369a1;     /* Hover-kleur voor de blauwe knoppen */
+    --bg-main-color: #f8fafc;
+    /* Zachte lichtgrijze algehele pagina-achtergrond */
+    --bg-second-color: #0284c7;
+    /* Helderblauw voor de primaire actie-knoppen */
+    --bg-third-color: #ffffff;
+    /* Wit voor de dashboards/cards */
+    --bg-accent-hover: #0369a1;
+    /* Hover-kleur voor de blauwe knoppen */
     --moerasgroen: #008b66;
-    
+
 
     /* font size */
     --font-size-s: 0.9rem;
@@ -46,7 +56,8 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background-color: var(--bg-main-color); /* Rustig, zacht lichtgrijs in plaats van felle gradient */
+    background-color: var(--bg-main-color);
+    /* Rustig, zacht lichtgrijs in plaats van felle gradient */
     color: var(--text-main-color);
 }
 
@@ -65,14 +76,16 @@ h2 {
 .custom-nav {
     padding-left: 20px;
     padding-right: 20px;
-    padding-top: 15px;    /* Verhoogd van 5px naar 15px voor extra hoogte */
-    padding-bottom: 15px; /* Verhoogd van 5px naar 15px voor extra hoogte */
+    padding-top: 15px;
+    /* Verhoogd van 5px naar 15px voor extra hoogte */
+    padding-bottom: 15px;
+    /* Verhoogd van 5px naar 15px voor extra hoogte */
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--bg-nav-color);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .custom-nav ul {
@@ -83,7 +96,8 @@ h2 {
 
 .custom-nav a {
     text-decoration: none;
-    color: var(--text-nav-color); /* Verplicht witte tekst */
+    color: var(--text-nav-color);
+    /* Verplicht witte tekst */
 }
 
 .custom-nav .nav-menu {
@@ -92,22 +106,32 @@ h2 {
 }
 
 .custom-nav .nav-menu a {
-    padding: 10px 20px;          /* Ruimte binnen de knop (hoogte en breedte) */
-    margin: 0 5px;               /* Ruimte tussen de knoppen onderling */
-    border-radius: var(--border-radius-s); /* Mooie afgeronde hoeken (8px) */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtiele, half-transparante witte omlijning */
-    background-color: rgba(255, 255, 255, 0.05); /* Hele lichte witte gloed als basis */
-    transition: all 0.2s ease;   /* Zorgt voor een vloeiende overgang bij hover */
+    padding: 10px 20px;
+    /* Ruimte binnen de knop (hoogte en breedte) */
+    margin: 0 5px;
+    /* Ruimte tussen de knoppen onderling */
+    border-radius: var(--border-radius-s);
+    /* Mooie afgeronde hoeken (8px) */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Subtiele, half-transparante witte omlijning */
+    background-color: rgba(255, 255, 255, 0.05);
+    /* Hele lichte witte gloed als basis */
+    transition: all 0.2s ease;
+    /* Zorgt voor een vloeiende overgang bij hover */
 }
 
 .custom-nav .nav-menu a:hover {
-    background-color: var(--nav-hover-color); /* Het donkerdere medische groen */
-    border-color: var(--text-nav-color);       /* De omlijning wordt feller wit */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Geeft een kleine diepte-schaduw */
+    background-color: var(--nav-hover-color);
+    /* Het donkerdere medische groen */
+    border-color: var(--text-nav-color);
+    /* De omlijning wordt feller wit */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    /* Geeft een kleine diepte-schaduw */
 }
 
 .custom-nav .nav-menu .nav-link {
-    color: var(--text-nav-color); /* Zorgt dat alle linkjes wit worden */
+    color: var(--text-nav-color);
+    /* Zorgt dat alle linkjes wit worden */
     font-size: var(--font-size-m);
     font-weight: var(--font-weight-m);
 }
@@ -130,7 +154,7 @@ h2 {
     border-radius: var(--border-radius-s);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     text-align: center;
-    margin: 0 auto; 
+    margin: 0 auto;
 }
 
 .form-box.active {
@@ -146,7 +170,8 @@ h2 {
 .form-select {
     width: 100%;
     padding: 12px;
-    background: #ffffff; /* Wit in plaats van grijs, staat super strak op het lichtgroen! */
+    background: #ffffff;
+    /* Wit in plaats van grijs, staat super strak op het lichtgroen! */
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     outline: none;
@@ -158,7 +183,8 @@ h2 {
 
 .form-input:focus,
 .form-select:focus {
-    border-color: var(--bg-second-color); /* Blauwe rand bij selectie */
+    border-color: var(--bg-second-color);
+    /* Blauwe rand bij selectie */
 }
 
 .form-button {
@@ -168,7 +194,8 @@ h2 {
     border: none;
     cursor: pointer;
     font-size: 16px;
-    background: var(--bg-second-color); /* Helderblauw zodat de knop popt */
+    background: var(--bg-second-color);
+    /* Helderblauw zodat de knop popt */
     color: var(--text-second-color);
     font-weight: var(--font-weight-m);
     margin-bottom: 20px;
@@ -176,7 +203,8 @@ h2 {
 }
 
 .form-button:hover {
-    background: var(--bg-accent-hover); /* Donkerblauw bij hover */
+    background: var(--bg-accent-hover);
+    /* Donkerblauw bij hover */
 }
 
 .form-box p {
@@ -236,7 +264,8 @@ li {
 
 /* HOMEPAGE */
 .box1 {
-    background: #e0f2fe; /* Zacht blauwe infobox */
+    background: #e0f2fe;
+    /* Zacht blauwe infobox */
     padding: 20px;
     border-radius: var(--border-radius-s);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -335,8 +364,8 @@ li {
     background: var(--bg-third-color);
     border-radius: var(--border-radius-s);
     padding: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .patient-list-header h3 {
@@ -357,12 +386,13 @@ li {
 .patient-navigation .list-group-item {
     border-radius: var(--border-radius-s) !important;
     margin-bottom: 5px;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
     transition: background-color 0.2s;
 }
 
 .patient-navigation .list-group-item.active {
-    background-color: var(--bg-second-color) !important; /* Gecorrigeerd naar actieve knopkleur */
+    background-color: var(--bg-second-color) !important;
+    /* Gecorrigeerd naar actieve knopkleur */
     border-color: var(--bg-second-color) !important;
     color: var(--text-second-color) !important;
 }
@@ -401,7 +431,7 @@ li {
     padding: 20px;
     background: var(--bg-third-color);
     border-radius: var(--border-radius-s);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .header h1 {
@@ -423,7 +453,7 @@ li {
     background: var(--bg-third-color);
     padding: 20px;
     border-radius: var(--border-radius-s);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     border: 1px solid #e2e8f0;
 }
 
@@ -454,7 +484,8 @@ li {
 
 /* Specifieke randen voor waarschuwingen */
 .border-danger {
-    border-left: 5px solid #ef4444 !important; /* Moderne kleur rood */
+    border-left: 5px solid #ef4444 !important;
+    /* Moderne kleur rood */
 }
 
 /* Grafiek sectie */
@@ -462,7 +493,7 @@ li {
     background: var(--bg-third-color);
     padding: 25px;
     border-radius: var(--border-radius-s);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     border: 1px solid #e2e8f0;
 }
 
@@ -478,10 +509,12 @@ li {
     .dashboard-container {
         flex-direction: column;
     }
+
     .sidebar {
         width: 100%;
         flex: none;
     }
+
     .metrics-grid {
         grid-template-columns: 1fr;
     }
@@ -489,7 +522,10 @@ li {
 
 /* PRINT STYLES */
 @media print {
-    .sidebar, .btn-primary, .form-button {
+
+    .sidebar,
+    .btn-primary,
+    .form-button {
         display: none !important;
     }
 
@@ -512,7 +548,7 @@ li {
         margin-bottom: 20px !important;
     }
 
-    .apexcharts-canvas, 
+    .apexcharts-canvas,
     .apexcharts-canvas svg {
         width: 100% !important;
         max-width: 100% !important;
@@ -524,7 +560,8 @@ li {
     display: flex;
     align-items: center;
     gap: 5px;
-    margin-left: 15px; /* Geeft wat afstand tot je normale menu-links */
+    margin-left: 15px;
+    /* Geeft wat afstand tot je normale menu-links */
 }
 
 /* De knoppen zelf */
@@ -543,9 +580,10 @@ li {
 /* Hover effect voor de font knoppen */
 .font-size-controls button:hover {
     background-color: var(--text-nav-color);
-    color: var(--bg-nav-color); /* Kleuren draaien om bij hover! */
+    color: var(--bg-nav-color);
+    /* Kleuren draaien om bij hover! */
     border-color: var(--text-nav-color);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .emoji-icon {

@@ -23,10 +23,19 @@ class User(db.Model, UserMixin):
     role: Map[str] = mc(String(20), nullable=False)
     status: Map[str] = mc(String(20), nullable=False, default='pending')
     coupling_token: Map[Optional[str]] = mc(String(64), unique=True, nullable=True)
+    esp_id: Map[Optional[int]] = mc(unique=True, nullable=True)
 
-    # relationship setup (uselist=False zorgt voor een 1-op-1 relatie)
+    # ✔ ENKEL deze relatie houden
     waardes: Map[Optional['Waardes']] = rel(back_populates='user', uselist=False)
+
     triggers: Map[Optional['Triggers']] = rel(back_populates='user', uselist=False)
+
+
+    #Checkt of de gebruiker een esp gekoppeld heeft
+    def has_esp(self):
+     if EspDevice.query.filter_by(owner_user_id=self.id).first() != None:
+         return EspDevice.query.filter_by(owner_user_id=self.id).first()
+
 
     def __init__(self, username: str, email: str, password: str, role: str):
         """Maak nieuwe user aan met gehasht password."""
@@ -179,20 +188,16 @@ class Triggers(db.Model):
     id: Map[int] = mc(primary_key=True)
     allergens: Map[str] = mc(String(10), nullable=False)
     irritants: Map[str] = mc(String(10), nullable=False)
-    infection: Map[str] = mc(String(10), nullable=False)
-    exercise: Map[str] = mc(String(10), nullable=False)
     weather: Map[str] = mc(String(10), nullable=False)
     pollution: Map[str] = mc(String(10), nullable=False)
     user_id: Map[int] = mc(FK('user.id'), unique=True, nullable=False)
 
     user: Map['User'] = rel(back_populates='triggers')
 
-    def __init__(self, allergens: str, irritants: str, infection: str, 
-                 exercise: str, weather: str, pollution: str, user_id: int):
+    def __init__(self, allergens: str, irritants: str,
+                 weather: str, pollution: str, user_id: int):
         self.allergens = allergens
         self.irritants = irritants
-        self.infection = infection
-        self.exercise = exercise
         self.weather = weather
         self.pollution = pollution
         self.user_id = user_id
@@ -204,6 +209,7 @@ def exists():
     inspector = inspect(engine)
     table = inspector.get_table_names()
     return len(table) > 0
+
 class Metingen(db.Model):
     __tablename__ = "measurement"
 
@@ -219,6 +225,24 @@ class Metingen(db.Model):
     user_id: Map[int] = mc(FK("user.id"), nullable=True)
     user: Map["User"] = rel(backref="measurements")
 
+#ESP gekoppelt aan wachtwoord.
+class EspDevice(db.Model):
+    __tablename__ = "esp_device"
+
+    id = db.Column(db.Integer, primary_key=True)
+    esp_id = db.Column(db.String(64), unique=True, nullable=False)
+    esp_secret_hash = db.Column(db.String(256), nullable=False)
+
+    owner_user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    owner = db.relationship("User")
+
+    def set_secret(self, secret: str):
+        self.esp_secret_hash = gen_hash(secret)
+
+    def check_secret(self, secret: str) -> bool:
+        return check_hash(self.esp_secret_hash, secret)
+
+    
 
 @login_manager.user_loader
 def load_user(user_id):

@@ -18,6 +18,11 @@ Vragenlijst
                     <form method="POST">
                         {{ form.hidden_tag() }}
 
+                        <div class="d-none">
+                            {{ form.diagnose(id="real_diagnose") }}
+                            {{ form.level(id="real_level") }}
+                        </div>
+
                         <h5 class="mt-4 mb-3 text-primary">Algemene vragen</h5>
 
                         <div class="mb-3">
@@ -36,11 +41,11 @@ Vragenlijst
 
                             <div class="mb-3 ms-4" id="astmaLevelContainer" style="display: none;">
                                 <label for="astma_level" class="form-label small">Ernst van Astma:</label>
-                                <select class="form-select" id="astma_level" name="astma_level">
-                                    <option value="Fluctuerend">Fluctuerend</option>
-                                    <option value="Mild">Mild</option>
-                                    <option value="Matig">Matig</option>
-                                    <option value="Ernstig">Ernstig</option>
+                                <select class="form-select" id="astma_level" onchange="syncFields()">
+                                    <option value="intermittent">Fluctuerend</option>
+                                    <option value="mild">Mild</option>
+                                    <option value="matig">Matig</option>
+                                    <option value="ernstig">Ernstig</option>
                                 </select>
                             </div>
 
@@ -52,19 +57,14 @@ Vragenlijst
 
                             <div class="mb-3 ms-4" id="copdLevelContainer" style="display: none;">
                                 <label for="copd_level" class="form-label small">Ernst van COPD (GOLD status):</label>
-                                <select class="form-select" id="copd_level" name="copd_level">
-                                    <option value="GOLD 1">GOLD 1 (Licht)</option>
-                                    <option value="GOLD 2">GOLD 2 (Matig)</option>
-                                    <option value="GOLD 3">GOLD 3 (Ernstig)</option>
-                                    <option value="GOLD 4">GOLD 4 (Zeer ernstig)</option>
+                                <select class="form-select" id="copd_level" onchange="syncFields()">
+                                    <option value="g1">GOLD 1 (Licht)</option>
+                                    <option value="g2">GOLD 2 (Matig)</option>
+                                    <option value="g3">GOLD 3 (Ernstig)</option>
+                                    <option value="g4">GOLD 4 (Zeer ernstig)</option>
                                 </select>
                             </div>
                         </div>
-
-                        <p>
-                            {{ form.level.label }}<br>
-                            {{ form.level() }}
-                        </p>
 
                         <div class="mb-3">
                             {{ form.rookt.label(class="form-check-label") }}
@@ -99,36 +99,55 @@ Vragenlijst
                             {{ form.prednison.label(class="form-check-label") }}
                         </div>
 
-                        <p>
-                            {{ form.prednison() }} {{ form.prednison.label }}
-                        </p>
-
-                        <p>
-                            {{ form.exacerbaties.label }}<br>
-                            {{ form.exacerbaties() }}
-                        </p>
-
-                        <p>{{ form.submit(class="btn btn-primary") }}</p>
+                        <div class="mb-4">
+                            {{ form.exacerbaties.label(class="form-label") }}
+                            {{ form.exacerbaties(class="form-control") }}
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <script>
+    // TOEGEVOEGD: Koppeling tussen jouw menu's en Flask velden
+    function syncFields() {
+        const astmaCheck = document.getElementById("astmaSwitch");
+        const copdCheck = document.getElementById("copdSwitch");
+        const realDiag = document.getElementById("real_diagnose");
+        const realLevel = document.getElementById("real_level");
+
+        if (astmaCheck.checked) {
+            realDiag.value = "astma";
+            realLevel.value = document.getElementById("astma_level").value;
+        } else if (copdCheck.checked) {
+            realDiag.value = "copd";
+            realLevel.value = document.getElementById("copd_level").value;
+        }
+    }
+
     function toggleAstmaLevel() {
         var checkBox = document.getElementById("astmaSwitch");
         var container = document.getElementById("astmaLevelContainer");
         container.style.display = checkBox.checked ? "block" : "none";
+        syncFields();
     }
 
     function toggleCopdLevel() {
         var checkBox = document.getElementById("copdSwitch");
         var container = document.getElementById("copdLevelContainer");
         container.style.display = checkBox.checked ? "block" : "none";
+        syncFields();
     }
 
     window.onload = function () {
         toggleAstmaLevel();
         toggleCopdLevel();
+        syncFields(); // Initialiseer bij laden
     };
 </script>
 

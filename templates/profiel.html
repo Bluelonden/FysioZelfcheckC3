@@ -8,9 +8,22 @@ Profiel - Mijn Dashboard
 <link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
 <style>
     /* Kleine toevoeging voor de drempelwaarde lijstjes */
-    .threshold-list { list-style: none; padding-left: 0; }
-    .threshold-list li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-    .inner-list { list-style: none; padding-left: 15px; font-size: 0.9em; }
+    .threshold-list {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .threshold-list li {
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+    }
+
+    .inner-list {
+        list-style: none;
+        padding-left: 15px;
+        font-size: 0.9em;
+    }
 </style>
 {% endblock %}
 
@@ -26,17 +39,18 @@ Profiel - Mijn Dashboard
         </header>
 
         <div class="content-wrapper">
-            
+
             {% if score is not none and niveau %}
             <div class="card p-3 item1">
                 <h2>Mijn Gegevens</h2>
                 <p><strong>Totaalscore:</strong> {{ score }} / 8</p>
-                <p><strong>Berekend Niveau:</strong> 
-                    <span class="badge {% if niveau == 'Hoog' %}bg-danger{% elif niveau == 'Midden' %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                <p><strong>Berekend Niveau:</strong>
+                    <span
+                        class="badge {% if niveau == 'Hoog' %}bg-danger{% elif niveau == 'Midden' %}bg-warning text-dark{% else %}bg-success{% endif %}">
                         {{ niveau }}
                     </span>
                 </p>
-                
+
                 {% if waardes %}
                 <hr>
                 <h5>Ingevulde Kenmerken:</h5>
@@ -48,43 +62,47 @@ Profiel - Mijn Dashboard
                 {% endif %}
 
                 <div class="mt-3">
-                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_vragen') }}">Vragenlijst opnieuw invullen</a>
+                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_vragen') }}">Vragenlijst opnieuw
+                        invullen</a>
                 </div>
             </div>
 
             <div class="card p-3">
                 <h2>Mijn Triggers</h2>
                 {% if triggers %}
-                    <ul class="threshold-list">
-                        {% for name, value in triggers.items() %}
-                        <li><strong>{{ name|capitalize }}:</strong> {{ value|capitalize }}</li>
-                        {% endfor %}
-                    </ul>
-                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_triggers') }}">Triggers aanpassen</a>
+                <ul class="threshold-list">
+                    {% for name, value in triggers.items() %}
+                    <li><strong>{{ name|capitalize }}:</strong> {{ value|capitalize }}</li>
+                    {% endfor %}
+                </ul>
+                <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_triggers') }}">Triggers aanpassen</a>
                 {% else %}
-                    <p class="text-muted">Nog geen handmatige triggers ingesteld.</p>
-                    <a class="btn btn-primary btn-sm" href="{{ url_for('handmatig') }}">Triggers instellen</a>
+                <p class="text-muted">Nog geen handmatige triggers ingesteld.</p>
+                <a class="btn btn-primary btn-sm" href="{{ url_for('handmatig') }}">Triggers instellen</a>
                 {% endif %}
             </div>
 
             <div class="card p-3" style="grid-column: span 2;">
                 <h2>Actieve Grenswaarden</h2>
                 <p>Op basis van uw profiel <strong>({{ niveau }})</strong> hanteren wij de volgende drempels:</p>
-                
+
                 <div class="row" style="display: flex; flex-wrap: wrap; gap: 20px;">
                     {% if drempels %}
-                        {% for column, ranges in drempels.items() %}
-                        <div style="flex: 1; min-width: 200px; border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
-                            <strong style="color: var(--primary-color);">{{ column }}</strong>
-                            <ul class="inner-list">
-                                <li style="color: #28a745;">● Groen: {{ ranges['groen'][0] }} – {{ ranges['groen'][1] }}</li>
-                                <li style="color: #ffc107;">● Oranje: {{ ranges['oranje'][0] }} – {{ ranges['oranje'][1] }}</li>
-                                <li style="color: #dc3545;">● Rood: &ge; {{ ranges['rood'][0] }}</li>
-                            </ul>
-                        </div>
-                        {% endfor %}
+                    {% for column, ranges in drempels.items() %}
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                        <strong style="color: var(--primary-color);">{{ column }}</strong>
+                        <ul class="inner-list">
+                            <li style="color: #28a745;">● Groen: {{ ranges['groen_min'] }} – {{ ranges['groen_max'] }}
+                            </li>
+                            <li style="color: #ffc107;">● Oranje: {{ ranges['oranje_min'] }} – {{ ranges['oranje_max']
+                                }}</li>
+                            <li style="color: #dc3545;">● Rood: &ge; {{ ranges['rood_min'] }}</li>
+
+                        </ul>
+                    </div>
+                    {% endfor %}
                     {% else %}
-                        <p>Drempels worden geladen zodra een profiel actief is.</p>
+                    <p>Drempels worden geladen zodra een profiel actief is.</p>
                     {% endif %}
                 </div>
             </div>

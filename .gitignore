@@ -1,2 +1,42 @@
-#Bestanden die niet geupload zullen woorden bij een push naar github
-.env 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Flask / database
+instance/
+*.db
+*.sqlite
+*.sqlite3
+website.db
+
+# Environment variables / secrets
+.env
+.flaskenv
+
+# VS Code
+.vscode/
+
+# OS-specifieke bestanden
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Distributie / build
+build/
+dist/
+*.egg-info/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
