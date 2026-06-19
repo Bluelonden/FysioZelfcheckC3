@@ -4,10 +4,11 @@ from typing import Optional, List
 from flask_login import UserMixin
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from sqlalchemy import String, Integer, Boolean, inspect, ForeignKey as FK
+from sqlalchemy import String, Integer, Boolean, inspect, ForeignKey as FK, JSON
 from sqlalchemy.orm import Mapped as Map, mapped_column as mc, relationship as rel
 from werkzeug.security import generate_password_hash as gen_hash, check_password_hash as check_hash
 import secrets
+import json
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -23,13 +24,13 @@ class User(db.Model, UserMixin):
     role: Map[str] = mc(String(20), nullable=False)
     status: Map[str] = mc(String(20), nullable=False, default='pending')
     coupling_token: Map[Optional[str]] = mc(String(64), unique=True, nullable=True)
-    esp_id: Map[Optional[int]] = mc(unique=True, nullable=True)
+    esp_id: Map[Optional[int]]= mc(unique= True, nullable= True)
+    
 
-    # ✔ ENKEL deze relatie houden
+    # relationship setup (uselist=False zorgt voor een 1-op-1 relatie)
     waardes: Map[Optional['Waardes']] = rel(back_populates='user', uselist=False)
-
     triggers: Map[Optional['Triggers']] = rel(back_populates='user', uselist=False)
-
+    diagnoses: Map[list["Diagnose"]] = rel(back_populates="user",cascade="all, delete-orphan")
 
     #Checkt of de gebruiker een esp gekoppeld heeft
     def has_esp(self):
@@ -109,8 +110,6 @@ class Waardes(db.Model):
     id: Map[int] = mc(primary_key=True)
     leeftijd: Map[int] = mc(Integer(), nullable=False)
     exacerbaties: Map[int] = mc(Integer(), nullable=False)
-    diagnose: Map[str] = mc(String(8), nullable=False)
-    level: Map[str] = mc(String(50), nullable=False)
     
     # bool waardes
     rookt: Map[bool] = mc(Boolean, nullable=False)
@@ -129,13 +128,11 @@ class Waardes(db.Model):
     # relationship setup
     user: Map['User'] = rel(back_populates='waardes')
     
-    def __init__(self, leeftijd: int, diagnose: str, level: str, rookt: bool, 
+    def __init__(self, leeftijd: int, rookt: bool,
                  dag: bool, nacht: bool, saba: bool, beperking: bool, 
                  hospital: bool, prednison: bool, exacerbaties: int, user_id: int):
             
             self.leeftijd = leeftijd
-            self.diagnose = diagnose
-            self.level = level
             self.rookt = rookt
             self.dag = dag
             self.nacht = nacht
@@ -153,17 +150,16 @@ class Waardes(db.Model):
                 score += 1
         except (TypeError, ValueError):
             pass
+
         if self.rookt:
             score += 1
-        # Symptoomvragen (elke True/Ja = +1)
-        symptooms = [self.dag, self.nacht, self.saba, self.beperking]
-        for s in symptooms:
-            if s:
-                score += 1
-        ex = self.exacerbaties
-        if ex == 1:
+            
+        symptomen = [self.dag, self.nacht, self.saba, self.beperking]
+        score += sum(1 for s in symptomen if s)
+        
+        if self.exacerbaties == 1:
             score += 1
-        elif ex == 2:
+        elif self.exacerbaties == 2:
             score += 2
         if self.hospital:
             score += 1
@@ -171,34 +167,106 @@ class Waardes(db.Model):
             score += 2
         return min(score, 8)
     
-    def score_niveau(self):
+    def score_niveau(self, veel=0, matig=0):
         self.score = self.bereken_score()
-        score = self.score
-        if score <= 2:
-            self.niveau = "Laag"
-        elif 3 <= score <= 4:
-            self.niveau = "Midden"
-        else:
-            self.niveau = "Hoog"
 
+        levels = ["Laag", "Midden", "Hoog"]
+
+        if self.score <= 2:
+            idx = 0
+        elif self.score <= 5:
+            idx = 1
+        else:
+            idx = 2
+        
+        print(f'base score {levels[idx]}')
+
+        veel = veel or 0
+        matig = matig or 0
+
+        if matig >=6:
+            idx = min(idx + 1, 2)
+
+        if veel >= 4:
+            idx = min(idx + 1, 2)
+
+        print(veel, matig)
+        
+        print(f'score after upgrade {levels[idx]}')
+
+        self.niveau = levels[idx]
+
+    # def score_niveau(self, veel=None):
+    #     self.score = self.bereken_score()
+    #     score = self.score
+    #     niveau = ""
+
+    #     # base niveau
+    #     if score <= 2:
+    #         niveau = "Laag"
+    #     elif 3 <= score <= 5:
+    #         niveau = "Midden"
+    #     else:
+    #         niveau = "Hoog"
+    #     print(f'base score {niveau}')
+
+    #     # upgrade rules (tweakable)
+    #     if veel >= 5:
+    #         if niveau == "Laag":
+    #             niveau = "Midden"
+    #         elif niveau == "Midden":
+    #             niveau = "Hoog"
+    #     print(f'score after upgrade {niveau}')
+
+    #     self.niveau = niveau
+    
+    # def score_niveau(self):
+    #     self.score = self.bereken_score()
+    #     score = self.score
+    #     if score <= 2:
+    #         self.niveau = "Laag"
+    #     elif 3 <= score <= 5:
+    #         self.niveau = "Midden"
+    #     else:
+    #         self.niveau = "Hoog"
+
+
+class Diagnose(db.Model):
+    __tablename__ = "diagnoses"
+
+    id: Map[int] = mc(Integer, primary_key=True)
+
+    # link naar user
+    user_id: Map[int] = mc(
+        FK("user.id"),
+        nullable=False,
+        index=True
+    )
+
+    # type diagnose (bv. astma, COPD)
+    ziekte: Map[str] = mc(String(50), nullable=False)
+
+    # ernst per diagnose (vrij veld, flexibel)
+    ernst: Map[str] = mc(String(50), nullable=False)
+
+    # relatie terug naar user
+    user: Map["User"] = rel(back_populates="diagnoses")
 
 class Triggers(db.Model):
     __tablename__ = 'triggers'
 
     id: Map[int] = mc(primary_key=True)
-    allergens: Map[str] = mc(String(10), nullable=False)
-    irritants: Map[str] = mc(String(10), nullable=False)
-    weather: Map[str] = mc(String(10), nullable=False)
-    pollution: Map[str] = mc(String(10), nullable=False)
+    allergens = mc(JSON(), nullable=False)
+    irritants = mc(JSON(), nullable=False)
+    pollution = mc(JSON(), nullable=False)
     user_id: Map[int] = mc(FK('user.id'), unique=True, nullable=False)
 
     user: Map['User'] = rel(back_populates='triggers')
 
-    def __init__(self, allergens: str, irritants: str,
-                 weather: str, pollution: str, user_id: int):
+    def __init__(self, allergens, irritants,
+                pollution, user_id: int):
         self.allergens = allergens
         self.irritants = irritants
-        self.weather = weather
         self.pollution = pollution
         self.user_id = user_id
 

@@ -4,12 +4,12 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from main import app
-from models import db, User, Waardes, Metingen, Triggers, EspDevice
-from forms import LoginForm, RegisterForm, WaardesForm, HandmatigForm, EspIDForm, UnpairForm
+from models import db, User, Waardes, Metingen, Triggers, EspDevice, Diagnose
+from forms import LoginForm, RegisterForm, WaardesForm, TriggersForm, EspIDForm, UnpairForm
 from config import DREMPELWAARDES
-import requests
 from sqlalchemy.exc import IntegrityError
 from apis import api
+import json
 
 # Registreer de API blueprint
 app.register_blueprint(api, url_prefix="/api")
@@ -36,8 +36,6 @@ def home():
             flash("Log in om uw ESP-ID te koppelen.", "warning")
 
     return rt("home.html", form=form, unpair_form=unpair_form)
-
-
 
 ## HOMEPAGE ##
 @app.route("/over_ons") 
@@ -128,60 +126,109 @@ def logout():
 @login_required
 def profiel():
     user = current_user
-    waardes = user.waardes
-    triggers = user.triggers
+    w = user.waardes
+    t = user.triggers
+    d = user.diagnoses
+
     context = {}
 
-    if waardes:
-        context["niveau"] = waardes.niveau
-        context["score"] = waardes.score
-        context["drempels"] = DREMPELWAARDES[waardes.niveau]
-        context["waardes"] = {
-            "leeftijd": waardes.leeftijd,
-            "diagnose": waardes.diagnose,
-            "ernst": getattr(waardes, 'level', None),
-            "rookt": waardes.rookt,
-            "symptomen overdag": waardes.dag,
-            "symptomen 's nachts": waardes.nacht,
-            "noodinhalator": waardes.saba,
-            "activiteit beperking": waardes.beperking,
-            "ziekenhuisopname afgelopen 12 maanden": waardes.hospital,
-            "prednison gebruik afgelopen 12 maanden": waardes.prednison,
-            "exacerbaties in afgelopen 12 maanden": waardes.exacerbaties,
+    if d:
+        ziektes = []
+        ernst = []
+        for item in d:
+            ziektes.append(item.ziekte)
+            ernst.append(item.ernst)
+        # print(ziektes, ernst)
+
+        combi = list(zip(ziektes, ernst))
+
+        context["ziektes"] = combi
+
+    if w:
+        context["niveau"] = w.niveau
+        context["score"] = w.score
+        context["drempels"] = DREMPELWAARDES[w.niveau]
+        temp = {
+            "leeftijd": w.leeftijd,
+            "rookt": w.rookt,
+            "symptomen overdag": w.dag,
+            "symptomen 's nachts": w.nacht,
+            "noodinhalator > 2/week": w.saba,
+            "activiteit beperking": w.beperking,
+            "ziekenhuisopname de laatste 12 maanden": w.hospital,
+            "prednison gebruik de laatste 12 maanden": w.prednison,
+            "exacerbaties in de laatste 12 maanden": w.exacerbaties,
         }
 
-    if triggers:
+        for k, v in temp.items():
+            # print(f'DEBUG D DICT K IS {k}\n'
+            #       f'DEBUG D DICT V IS {v}')
+            if v is True:
+                temp[k] = "Ja"
+            elif v is False:
+                temp[k] = "Nee"
+        
+        context["waardes"] = temp
+    
+    if t:
+        allergens = t.allergens
+        irritants = t.irritants
+        pollution = t.pollution
+
+        # print(f'DEBUG ALLERGENS IS {allergens}')
+        
         context["triggers"] = {
-            "allergenen": triggers.allergens,
-            "irriterende stoffen": triggers.irritants,
-            "weer": triggers.weather,
-            "luchtvervuiling": triggers.pollution,
+            "Allergenen": allergens,
+            "Irriterende stoffen": irritants,
+            "Luchtvervuiling": pollution
         }
+        
+        # VOOR DEBUG
+        # count = 0
+        # for label, items in context["triggers"].items():
+        #     print(f'DEBUG LABEL: {label}')
+        #     for key, value in items.items():   # <-- dict inside list
+        #         print(f'KEY: {key}')
+        #         print(f'VALUE: {value}')
 
     return rt("profiel.html", **context)
+
 
 ## SYMPTOMEN VRAGENLIJST ##
 @app.route("/vragenlijst", methods=["GET", "POST"])
 @login_required
 def vragenlijst():
     form = WaardesForm()
+    user = current_user
+    t = user.triggers
 
     if form.validate_on_submit():
         waardes = Waardes(
-            leeftijd=form.leeftijd.data,
-            diagnose=form.diagnose.data,
-            level=form.level.data,
-            rookt=form.rookt.data,
-            dag=form.dag.data,
-            nacht=form.nacht.data,
-            saba=form.saba.data,
-            beperking=form.beperking.data,
-            hospital=form.hospital.data,
-            prednison=form.prednison.data,
-            exacerbaties=form.exacerbaties.data,
-            user_id=current_user.id
+        leeftijd = form.leeftijd.data,
+        rookt = form.rookt.data,
+        dag = form.dag.data,
+        nacht = form.nacht.data,
+        saba = form.saba.data,
+        beperking = form.beperking.data,
+        hospital = form.hospital.data,
+        prednison = form.prednison.data,
+        exacerbaties = form.exacerbaties.data,
+        user_id=user.id
         )
+
         try:
+            
+            diagnoses = json.loads(request.form.get("diagnose", "[]"))
+            ernst = json.loads(request.form.get("ernst", "{}"))
+
+            for d in diagnoses:
+                print(d)
+                db.session.add(Diagnose(
+                    user_id=current_user.id,
+                    ziekte=d,
+                    ernst=ernst.get(d)
+                ))
+
             db.session.add(waardes)
             waardes.score_niveau()
             db.session.commit()
@@ -204,32 +251,59 @@ def vragenlijst():
 
     return rt('vragenlijst.html', form=form)
 
+
 ## HANDMATIGE TRIGGERS INVOER ##
 @app.route('/handmatig', methods=['POST', 'GET'])
 @login_required
 def handmatig():
-    form = HandmatigForm()
+    form = TriggersForm()
     user = current_user
-    
+    t = user.triggers
+
     if request.method == 'GET':
-        if current_user.triggers:
+        if t:
             flash('Formulier is al eerder ingevuld!', 'danger')
             return redirect(url_for('profiel'))
-        else:
-            return rt('handmatig.html', form=form)
-    
-    if form.validate_on_submit():
-        try:
-            allergens = form.allergens.data
-            irritants = form.irritants.data
-            weather = form.weather.data
-            pollution = form.pollution.data
+        return rt('handmatig.html', form=form)
 
-            triggers = Triggers(allergens=allergens, irritants=irritants,
-                                weather=weather, pollution=pollution,
-                                user_id=user.id)
-            
-            db.session.add(triggers)
+    if form.validate_on_submit():
+
+        allergens = {
+            "huisstofmijt": request.form.get("alr_0"),
+            "pollen": request.form.get("alr_1"),
+            "schimmel": request.form.get("alr_2")
+        }
+
+        irritants = {
+            "rook": request.form.get("irr_0"),
+            "sterke geuren": request.form.get("irr_1"),
+            "chemische dampen": request.form.get("irr_2"),
+            "schoonmaakmiddelen": request.form.get("irr_3")
+        }
+
+        pollution = {
+            "smog": request.form.get("pol_0"),
+            "uitlaatgassen": request.form.get("pol_1"),
+            "fijnstof": request.form.get("pol_2")
+        }
+
+        try:
+            t = user.triggers
+
+            if t is None:
+                t = Triggers(
+                    allergens={},
+                    irritants={},
+                    pollution={},
+                    user_id=user.id
+                )
+                db.session.add(t)
+                user.triggers = t
+
+            t.allergens = allergens
+            t.irritants = irritants
+            t.pollution = pollution
+
             db.session.commit()
 
             flash("Gegevens succesvol opgeslagen!", "success")
@@ -238,42 +312,70 @@ def handmatig():
         except Exception as e:
             db.session.rollback()
             flash(f"Er is een fout opgetreden: {str(e)}", "danger")
-            
+
     return rt('handmatig.html', form=form)
 
 ## UPDATE VRAGENLIJST ## 
 @app.route('/update/vragen', methods=['GET', 'POST'])
 @login_required
 def update_vragen():
-
-    waardes = current_user.waardes
-    form = WaardesForm(obj=waardes)
+    w = current_user.waardes
+    t = current_user.triggers
+    form = WaardesForm(obj=w)
 
     if form.validate_on_submit():
-        form.populate_obj(waardes)
-        waardes.score_niveau()
+
+        # update bestaande waardes
+        w.leeftijd = form.leeftijd.data
+        w.rookt = form.rookt.data
+        w.dag = form.dag.data
+        w.nacht = form.nacht.data
+        w.saba = form.saba.data
+        w.beperking = form.beperking.data
+        w.hospital = form.hospital.data
+        w.prednison = form.prednison.data
+        w.exacerbaties = form.exacerbaties.data
         
+        diagnoses = json.loads(request.form.get("diagnose", "[]"))
+        ernst = json.loads(request.form.get("ernst", "{}"))
+
+        # 1. verwijder bestaande diagnoses van user
+        Diagnose.query.filter_by(user_id=current_user.id).delete()
+        db.session.flush()
+
+        # 2. insert nieuwe set
+        for d in diagnoses:
+            print(d)
+            db.session.add(Diagnose(
+                user_id=current_user.id,
+                ziekte=d,
+                ernst=ernst.get(d)
+            ))
+
         try:
+            v_count = 0
+            m_count = 0
+            for column in [t.allergens, t.irritants, t.pollution]:
+                if column:
+                    for value in column.values():
+                        if value == "veel":
+                            v_count += 1
+                        if value == "matig":
+                            m_count += 1
+                            
+            print(f'v_count is {v_count}')
+            print(f'm_count is {m_count}')
+
+            db.session.add(w)
+            w.score_niveau(v_count, m_count)
             db.session.commit()
-
-            flash("Data succesvol geüpdatet!", "success")
-            return redirect(url_for('profiel'))
-
-        except IntegrityError:
-            db.session.rollback()
-
-            flash(
-                "Deze ESP-ID is al gekoppeld aan een andere gebruiker.",
-                "danger"
-            )
+            flash("Succesvol opgeslagen!", "success")
+            return redirect(url_for("profiel"))
 
         except Exception as e:
             db.session.rollback()
+            flash(f"Fout: {e}", "danger")
 
-            flash(
-                f"Er is een fout opgetreden: {e}",
-                "danger"
-            )
 
     return rt("update_vragen.html", form=form)
 
@@ -281,23 +383,74 @@ def update_vragen():
 @app.route('/update/triggers', methods=['POST', 'GET'])
 @login_required
 def update_triggers():
-    form = HandmatigForm(obj=current_user)
-    triggers = current_user.triggers
+    form = TriggersForm()
+    t = current_user.triggers
+    w = current_user.waardes
 
-    if request.method == 'POST' and form.validate_on_submit():
-        triggers.allergens = form.allergens.data
-        triggers.irritants = form.irritants.data
-        triggers.weather = form.weather.data
-        triggers.pollution = form.pollution.data
+    if request.method == 'GET':
+        if not t:
+            flash("Geen bestaande data gevonden.", "danger")
+            return redirect(url_for('handmatig'))
+        return rt("update_triggers.html", form=form)
+
+    if not t:
+        flash("Je hebt nog geen data om te updaten.", "danger")
+        return redirect(url_for('handmatig'))
+
+    if form.validate_on_submit():
+
+        allergens = {
+            "huisstofmijt": request.form.get("alr_0"),
+            "pollen": request.form.get("alr_1"),
+            "schimmel": request.form.get("alr_2")
+        }
+
+        irritants = {
+            "rook": request.form.get("irr_0"),
+            "sterke geuren": request.form.get("irr_1"),
+            "chemische dampen": request.form.get("irr_2"),
+            "schoonmaakmiddelen": request.form.get("irr_3")
+        }
+
+        pollution = {
+            "smog": request.form.get("pol_0"),
+            "uitlaatgassen": request.form.get("pol_1"),
+            "fijnstof": request.form.get("pol_2")
+        }
+
+        # print(f'allergens data is: {allergens}')
+        # print(f'irritants data is: {irritants}')
+        # print(f'pollution data is: {pollution}')
 
         try:
+            t.allergens = allergens
+            t.irritants = irritants
+            t.pollution = pollution
+
+            v_count = 0
+            m_count = 0
+            for column in [t.allergens, t.irritants, t.pollution]:
+                if column:
+                    for value in column.values():
+                        if value == "veel":
+                            v_count += 1
+                        if value == "matig":
+                            m_count += 1
+
+            print(f'v_count is {v_count}')
+            print(f'm_count is {m_count}')
+
+            db.session.add(w)
+            w.score_niveau(v_count, m_count)
+
             db.session.commit()
+
             flash("Data succesvol geupdate!", "success")
             return redirect(url_for('profiel'))
+
         except Exception as e:
             db.session.rollback()
             flash(f"Er is een fout opgetreden: {str(e)}", "danger")
-            return rt('update_triggers.html', form=form)
 
     return rt("update_triggers.html", form=form)
 

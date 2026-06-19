@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Dashboard</title>
+{% endblock %}
+
+{% block content %}
+
+{% if current_user.is_authenticated %}
+<!-- BASE DASHBOARD -->
+<section class="dashboard-container">
+    <div class="heading">
+        <h1>Dashboard</h1>
+        <h2>Welkom, {{ current_user.username }}! Ingelogd als {{ current_user.role }}</h2>
+    </div>
+
+    <button onclick="location.href='vragenlijst'">Naar vragenlijst</button>
+</section>
+
+<!-- DISPLAY WAARDES -->
+{% if score is not none and niveau and drempels %}
+<section class="waardes-container">
+    <h2>Resultaten</h2>
+    <br>
+    <p><strong>Totaalscore:</strong> {{ score }} / 8</p>
+    <p><strong>Niveau:</strong> {{ niveau }}</p>
+
+    <h4>Op basis van uw antwoorden hebben wij het volgende profiel gegenereerd:</h4>
+    <br>
+    <ul>
+        {% for columns, rows in drempels.items() %}
+        <li><strong>{{ columns }}</strong>
+            <ul>
+                <li>Groen: {{ rows.groen[0] }} – {{ rows.groen[1] }}</li>
+                <li>Oranje: {{ rows.oranje[0] }} – {{ rows.oranje[1] }}</li>
+                <li>Rood: ≥ {{ rows.rood[0] }}</li>
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+
+{% else %}
+
+<h1>Log eerst in!</h1>
+
+{% endif %}
+
+{% endblock %}

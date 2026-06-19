@@ -19,12 +19,15 @@ Vragenlijst
                 <div class="card-body p-4">
                     <h2 class="mb-4 text-center">Vragenlijst</h2>
 
-                    <form method="POST" onsubmit="syncFields()">
+                    <form method="POST">
                         {{ form.hidden_tag() }}
-                        <h5 class="mt-4 mb-3 text-primary">Algemene vragen</h5>
 
-                        <input type="hidden" id="real_diagnose" name="diagnose">
-                        <input type="hidden" id="real_ernst" name="ernst">
+                        <div class="d-none">
+                            <input type="hidden" name="diagnose" id="diagnose">
+                            <input type="hidden" name="ernst" id="ernst">
+                        </div>
+
+                        <h5 class="mt-4 mb-3 text-primary">Algemene vragen</h5>
 
                         <div class="mb-3">
                             {{ form.leeftijd.label(class="form-label") }}
@@ -36,13 +39,13 @@ Vragenlijst
 
                             <div class="form-check form-switch mb-3">
                                 <input class="form-check-input" type="checkbox" id="astmaSwitch" name="astma"
-                                    value="true" onchange="toggleAstmaErnst()">
+                                    value="true" onchange="toggleAstmaLevel()">
                                 <label class="form-check-label" for="astmaSwitch">Astma</label>
                             </div>
 
-                            <div class="mb-3 ms-4" id="astmaernstContainer" style="display: none;">
-                                <label for="astma_ernst" class="form-label small">Ernst van Astma:</label>
-                                <select class="form-select" id="astma_ernst" onchange="syncFields()">
+                            <div class="mb-3 ms-4" id="astmaLevelContainer" style="display: none;">
+                                <label for="astma_level" class="form-label small">Ernst van Astma:</label>
+                                <select class="form-select" id="astma_level" onchange="syncFields()">
                                     <option value="intermittent">Fluctuerend</option>
                                     <option value="mild">Mild</option>
                                     <option value="matig">Matig</option>
@@ -52,13 +55,13 @@ Vragenlijst
 
                             <div class="form-check form-switch mb-3">
                                 <input class="form-check-input" type="checkbox" id="copdSwitch" name="copd" value="true"
-                                    onchange="toggleCopdErnst()">
+                                    onchange="toggleCopdLevel()">
                                 <label class="form-check-label" for="copdSwitch">COPD</label>
                             </div>
 
-                            <div class="mb-3 ms-4" id="copdernstContainer" style="display: none;">
-                                <label for="copd_ernst" class="form-label small">Ernst van COPD (GOLD status):</label>
-                                <select class="form-select" id="copd_ernst" onchange="syncFields()">
+                            <div class="mb-3 ms-4" id="copdLevelContainer" style="display: none;">
+                                <label for="copd_level" class="form-label small">Ernst van COPD (GOLD status):</label>
+                                <select class="form-select" id="copd_level" onchange="syncFields()">
                                     <option value="g1">GOLD 1 (Licht)</option>
                                     <option value="g2">GOLD 2 (Matig)</option>
                                     <option value="g3">GOLD 3 (Ernstig)</option>
@@ -117,59 +120,42 @@ Vragenlijst
 <script>
     // TOEGEVOEGD: Koppeling tussen jouw menu's en Flask velden
     function syncFields() {
-        const astmaCheck = document.getElementById("astmaSwitch");
-        const copdCheck = document.getElementById("copdSwitch");
-
-        const diagnoses = [];
+        const diagnose = [];
         const ernst = {};
 
-        if (astmaCheck && astmaCheck.checked) {
-            diagnoses.push("astma");
-            ernst["astma"] = document.getElementById("astma_ernst").value;
+        if (document.getElementById("astmaSwitch").checked) {
+            diagnose.push("astma");
+            ernst.astma = document.getElementById("astma_level").value;
         }
 
-        if (copdCheck && copdCheck.checked) {
-            diagnoses.push("copd");
-            ernst["copd"] = document.getElementById("copd_ernst").value;
+        if (document.getElementById("copdSwitch").checked) {
+            diagnose.push("copd");
+            ernst.copd = document.getElementById("copd_level").value;
         }
 
-        const diagField = document.getElementById("real_diagnose");
-        const ernstField = document.getElementById("real_ernst");
-
-        if (diagField && ernstField) {
-            diagField.value = JSON.stringify(diagnoses);
-            ernstField.value = JSON.stringify(ernst);
-        }
-
-        console.log("DIAGNOSES:", diagnoses);
-        console.log("ERNST:", ernst);
+        document.getElementById("diagnose").value = JSON.stringify(diagnose);
+        document.getElementById("ernst").value = JSON.stringify(ernst);
     }
 
-    function toggleAstmaErnst() {
+    function toggleAstmaLevel() {
         var checkBox = document.getElementById("astmaSwitch");
-        var container = document.getElementById("astmaernstContainer");
-
+        var container = document.getElementById("astmaLevelContainer");
         container.style.display = checkBox.checked ? "block" : "none";
-        syncFields(); // KEEP
+        syncFields();
     }
 
-    function toggleCopdErnst() {
+    function toggleCopdLevel() {
         var checkBox = document.getElementById("copdSwitch");
-        var container = document.getElementById("copdernstContainer");
-
+        var container = document.getElementById("copdLevelContainer");
         container.style.display = checkBox.checked ? "block" : "none";
-        syncFields(); // KEEP
+        syncFields();
     }
 
     window.onload = function () {
-        toggleAstmaErnst();
-        toggleCopdErnst();
+        toggleAstmaLevel();
+        toggleCopdLevel();
         syncFields(); // Initialiseer bij laden
     };
-
-    document.querySelector("form").addEventListener("submit", function () {
-        syncFields();
-    });
 </script>
 
 {% else %}

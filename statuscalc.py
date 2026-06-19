@@ -1,5 +1,4 @@
 from config import DREMPELWAARDES
-from datetime import datetime
 
 #Update voor het nieuwe drempelwaardes format
 def bepaal_status(sensor, waarde, profiel):
@@ -22,7 +21,6 @@ def bepaal_status(sensor, waarde, profiel):
 
     # Fallback (zou nooit moeten gebeuren)
     return {"color": "grey", "status": "onbekend"}
-
 
 #Werkt met nieuwe drempelwaardesform
 def bereken_status(meting, profiel):
@@ -80,62 +78,45 @@ def sport_advies(kleur):
     return {"text": "Bewegen kan hier goed", "icon": "sport.png", "color": "advies-green"}
 
 
-#Helpfunctie voor volledige_status om de timedelta van de laatste meting te bepalen.
-def tijdsverschil_tekst(timestamp):
-    if not timestamp:
-        return "Geen metingen"
-
-    diff = (datetime.now() - timestamp).total_seconds()
-
-    if diff < 60:
-        return f"{int(diff)}s geleden"
-    elif diff < 3600:
-        return f"{int(diff // 60)} min geleden"
-    else:
-        return f"{int(diff // 3600)} uur geleden"
-
-
 def volledige_status(meting, profiel):
 
     #Als er geen data is voor deze gebruiker:
     if meting is None:
-        return {
-            "values": {
-                "pm1": None,
-                "pm25": None,
-                "pm10": None,
-                "co2": None,
-                "tvoc": None,
-                "aqi": None
+     return {
+        "values": {
+            "pm1": None,
+            "pm25": None,
+            "pm10": None,
+            "co2": None,
+            "tvoc": None,
+            "aqi": None
+        },
+        "status": {
+            "pm1":  {"color": "grey", "status": "geen data"},
+            "pm25": {"color": "grey", "status": "geen data"},
+            "pm10": {"color": "grey", "status": "geen data"},
+            "co2":  {"color": "grey", "status": "geen data"},
+            "tvoc": {"color": "grey", "status": "geen data"},
+            "aqi":  {"color": "grey", "status": "geen data"}
+        },
+        "groups": {
+            "fijnstof": "grey",
+            "gassen": "grey"
+        },
+        "eind": "grey",
+        "advies": {
+            "binnenbuiten": {
+                "text": "Geen data beschikbaar",
+                "icon": "house.png",      # zelfde als oranje
+                "color": "advies-grey"    # nieuwe kleurklasse
             },
-            "status": {
-                "pm1":  {"color": "grey", "status": "geen data"},
-                "pm25": {"color": "grey", "status": "geen data"},
-                "pm10": {"color": "grey", "status": "geen data"},
-                "co2":  {"color": "grey", "status": "geen data"},
-                "tvoc": {"color": "grey", "status": "geen data"},
-                "aqi":  {"color": "grey", "status": "geen data"}
-            },
-            "groups": {
-                "fijnstof": "grey",
-                "gassen": "grey"
-            },
-            "eind": "grey",
-            "advies": {
-                "binnenbuiten": {
-                    "text": "Geen data beschikbaar",
-                    "icon": "house.png",
-                    "color": "advies-grey"
-                },
-                "sport": {
-                    "text": "Geen data beschikbaar",
-                    "icon": "rest.png",
-                    "color": "advies-grey"
-                }
-            },
-            "measurement_timestamp": None,
-            "measurement_age": "Geen metingen"
+            "sport": {
+                "text": "Geen data beschikbaar",
+                "icon": "rest.png",       # zelfde als oranje
+                "color": "advies-grey"    # nieuwe kleurklasse
+            }
         }
+    }
 
     #Als er data is voor deze gebruiker...
     status = bereken_status(meting, profiel)
@@ -167,7 +148,5 @@ def volledige_status(meting, profiel):
         "advies": {
             "binnenbuiten": binnen_buiten_advies(eind),
             "sport": sport_advies(eind)
-        },
-        "measurement_timestamp": meting.timestamp.isoformat() if meting.timestamp else None,
-        "measurement_age": tijdsverschil_tekst(meting.timestamp)
+        }
     }

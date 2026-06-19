@@ -1,13 +1,10 @@
-/* =========================================
-   1. BASIS LAYOUT & DASHBOARD
-========================================= */
-
 .dashboard-container {
     display: flex;
-    gap: 30px;
-    max-width: 1400px;
-    margin: 40px auto;
-    padding: 0 20px;
+    flex-wrap: wrap;
+    gap: clamp(16px, 2vw, 30px);
+    max-width: clamp(320px, 95vw, 1400px);
+    margin: clamp(20px, 4vw, 40px) auto;
+    padding: clamp(12px, 3vw, 20px);
     align-items: flex-start;
 }
 
@@ -16,6 +13,11 @@
     display: flex;
     flex-direction: column;
     gap: 25px;
+}
+
+.advice,
+.main-content {
+    min-width: clamp(320px, 45vw, 500px);
 }
 
 /* --- Header Card --- */
@@ -28,6 +30,7 @@
     background: white;
     border-radius: var(--border-radius-s, 8px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    min-width: clamp(320px, 45vw, 500px);
 }
 
 .header h1 {
@@ -63,9 +66,28 @@
 }
 
 /* --- Statuskaarten Layout (Links) --- */
-.statuscards-wrapper {
+/* .statuscards-wrapper {
     display: flex;
     gap: 25px;
+    align-items: stretch;
+    width: 100%;
+} */
+.statuscards-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(12px, 2vw, 25px);
+    align-items: stretch;
+}
+
+.statuscards-container {
+    flex: 1 1 clamp(280px, 30vw, 400px);
+}
+
+.statuscards-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: clamp(12px, 2vw, 25px);
     align-items: stretch;
     width: 100%;
 }
@@ -78,9 +100,11 @@
     border-radius: var(--border-radius-s, 8px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     padding: 15px !important;
-    width: 100%;
-    max-width: 400px;
-    flex-shrink: 0;
+    /* width: 100%;
+    max-width: 400px; */
+    max-width: clamp(280px, 32vw, 500px);
+    flex-shrink: 1;
+    /* was 0 */
     box-sizing: border-box;
 }
 
@@ -117,17 +141,41 @@
 }
 
 /* --- Dynamische Statussen --- */
-.status-card[data-status="goed"] { border-color: #2e6f40; }
-.status-card[data-status="goed"] h3 { color: #2e6f40; }
-.status-card[data-status="goed"] .score-value { background: #2e6f40; }
+.status-card[data-status="goed"] {
+    border-color: #2e6f40;
+}
 
-.status-card[data-status="matig"] { border-color: #d97706; }
-.status-card[data-status="matig"] h3 { color: #d97706; }
-.status-card[data-status="matig"] .score-value { background: #d97706; }
+.status-card[data-status="goed"] h3 {
+    color: #2e6f40;
+}
 
-.status-card[data-status="slecht"] { border-color: #c53030; }
-.status-card[data-status="slecht"] h3 { color: #c53030; }
-.status-card[data-status="slecht"] .score-value { background: #c53030; }
+.status-card[data-status="goed"] .score-value {
+    background: #2e6f40;
+}
+
+.status-card[data-status="matig"] {
+    border-color: #d97706;
+}
+
+.status-card[data-status="matig"] h3 {
+    color: #d97706;
+}
+
+.status-card[data-status="matig"] .score-value {
+    background: #d97706;
+}
+
+.status-card[data-status="slecht"] {
+    border-color: #c53030;
+}
+
+.status-card[data-status="slecht"] h3 {
+    color: #c53030;
+}
+
+.status-card[data-status="slecht"] .score-value {
+    background: #c53030;
+}
 
 /* --- Adviesblok & Grafieken (Rechts) --- */
 .advice {
@@ -140,11 +188,18 @@
     box-sizing: border-box;
 }
 
-.metrics-grid {
+/* .metrics-grid {
     padding: 45px 70px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+} */
+
+.metrics-grid {
+    padding: clamp(20px, 3vw, 45px) clamp(20px, 5vw, 70px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 25vw, 300px), 1fr));
+    gap: clamp(12px, 2vw, 20px);
 }
 
 .metric-card {
@@ -186,7 +241,8 @@
     margin-top: 15px;
 }
 
-.status-grid {
+.status-grid,
+.profile-grid {
     display: flex;
     gap: 10px;
     align-items: center;
@@ -239,19 +295,22 @@
 }
 
 
+
 /* =========================================
    3. TRIGGERS / VRAGENLIJST UI
 ========================================= */
 
-#uitleg-box {
+#uitleg-box,
+.trigger-box {
     background-color: #e9ecef;
     padding: 20px;
     border-radius: 12px;
     margin-bottom: 40px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.uitleg-item {
+.uitleg-item,
+.trigger-item {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
@@ -260,7 +319,20 @@
     gap: 20px;
 }
 
-.uitleg-item:last-child {
+.trigger-box {
+    background: #cce5ff;
+}
+
+.trigger-item {
+    border-bottom: 1px solid #bacddf;
+}
+
+.trigger-item label {
+    padding-bottom: 5%;
+}
+
+.uitleg-item:last-child,
+.trigger-item:last-child {
     margin-bottom: 0;
     padding-bottom: 0;
     border-bottom: none;
@@ -282,13 +354,14 @@
     border-radius: 50%;
     border: 2px solid #ced4da;
     background-color: #ffffff;
-    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: all 0.2s ease-in-out;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     padding: 0;
+    box-sizing: border-box;
+    flex: 0 0 60px;
 }
 
 .icon-btn img {
@@ -316,9 +389,17 @@
 }
 
 /* Gekleurde statussen voor de legenda-knoppen */
-.icon-btn.geen { background-color: #16a816; }
-.icon-btn.matig { background-color: #ffa500; }
-.icon-btn.veel { background-color: #da3d3d; }
+.icon-btn.geen {
+    background-color: #16a816;
+}
+
+.icon-btn.matig {
+    background-color: #ffa500;
+}
+
+.icon-btn.veel {
+    background-color: #da3d3d;
+}
 
 .icon-btn:not([disabled]):hover {
     transform: scale(1.1);
@@ -350,12 +431,12 @@
     padding: 25px;
     margin-bottom: 20px;
     text-align: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
     transition: box-shadow 0.3s ease;
 }
 
 .question-box:hover {
-    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
 }
 
 .question-box .form-label {
@@ -373,7 +454,7 @@
 
 
 /* =========================================
-   4. TOOLTIP / POPUP STYLING (FIXED)
+   4. TOOLTIP / POPUP STYLING
 ========================================= */
 
 .popup {
@@ -383,49 +464,58 @@
 }
 
 /* Hardhandig alle oude overervingen en 'nowrap' fouten breken */
-.popup .popuptext, .popuptext {
+.popup .popuptext,
+.popuptext {
     visibility: hidden;
     display: block !important;
-    width: 260px !important;        /* Vaste breedte zodat tekst binnen het vak blijft */
-    height: auto !important;       /* Achtergrond groeit nu ALTIJD mee met de tekst */
-    white-space: normal !important;  /* Zorgt ervoor dat de zinnen netjes afbreken */
-    background-color: #2c3e50 !important; 
-    color: #ffffff !important;      /* Volledig witte tekst voor maximaal contrast */
+    width: 260px !important;
+    /* Vaste breedte zodat tekst binnen het vak blijft */
+    height: auto !important;
+    /* Achtergrond groeit nu ALTIJD mee met de tekst */
+    white-space: normal !important;
+    /* Zorgt ervoor dat de zinnen netjes afbreken */
+    background-color: #2c3e50 !important;
+    color: #ffffff !important;
+    /* Volledig witte tekst voor maximaal contrast */
     text-align: left;
     border-radius: 8px;
     padding: 15px !important;
     position: absolute;
-    z-index: 9999 !important;       /* Zweeft overal bovenop */
-    
+    z-index: 9999 !important;
+    /* Zweeft overal bovenop */
+
     /* Positionering: Boven de knop, uitgelijnd naar links zodat hij binnen de kaart blijft */
     bottom: 130% !important;
     right: 0 !important;
     left: auto !important;
     transform: none !important;
-    
+
     opacity: 0;
     transition: opacity 0.3s ease;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25) !important; 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
     font-size: 0.9rem !important;
     box-sizing: border-box !important;
 }
 
 /* Pijltje onderaan de tooltip (netjes rechts uitgelijnd boven het ronde blauwe icoon) */
-.popup .popuptext::after, .popuptext::after {
+.popup .popuptext::after,
+.popuptext::after {
     content: "" !important;
     position: absolute !important;
     top: 100% !important;
-    right: 12px !important;         /* Precies in het midden van de 40px brede knop */
+    right: 12px !important;
+    /* Precies in het midden van de 40px brede knop */
     left: auto !important;
     transform: none !important;
     margin-left: 0 !important;
     border-width: 8px !important;
     border-style: solid !important;
-    border-color: #2c3e50 transparent transparent transparent !important; 
+    border-color: #2c3e50 transparent transparent transparent !important;
 }
 
 /* Actieve status bij klikken */
-.popup .popuptext.show, .popuptext.show {
+.popup .popuptext.show,
+.popuptext.show {
     visibility: visible !important;
     opacity: 1 !important;
 }
@@ -446,36 +536,136 @@
     margin-bottom: 0 !important;
 }
 
+html {
+    font-size: clamp(15px, 0.3vw + 14px, 18px);
+}
 
-/* =========================================
-   5. RESPONSIVE DESIGN (MEDIA QUERIES)
-========================================= */
+/* GRID LAYOUT */
+.dashboard-container-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
 
-@media (max-width: 992px) {
-    .metrics-grid {
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.left-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+}
+
+/* --- BELANGRIJK: laat cards netjes schalen --- */
+.left-column .card,
+.right-column .card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+    .main-grid {
         grid-template-columns: 1fr;
-        gap: 12px;
     }
 
-    .statuscards-wrapper {
-        flex-direction: column;
-    }
-
-    .statuscards-container {
-        max-width: 100%;
+    .left-column,
+    .right-column {
+        width: 100%;
     }
 }
 
-@media screen and (min-width: 1920px) {
-    html {
-        font-size: 18px;
-    }
+/* TRIGGERS */
+.trigger-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
 
-    .dashboard-container {
-        max-width: 1800px;
-    }
+.trigger-label {
+    font-weight: 500;
+}
 
-    .statuscards-container {
-        max-width: 500px;
-    }
+/* BADGES */
+.badge-value.geen {
+    background: #16a816;
+    color: white;
+}
+
+.badge-value.matig {
+    background: #ffa500;
+    color: black;
+}
+
+.badge-value.veel {
+    background: #da3d3d;
+    color: white;
+}
+
+/* NIVAU BADGE */
+.badge-niveau.hoog {
+    background: #da3d3d;
+}
+
+.badge-niveau.midden {
+    background: #ffa500;
+    color: black;
+}
+
+.badge-niveau.laag {
+    background: #16a816;
+}
+
+/* DREMPELS */
+.drempel-box {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.inner-list {
+    list-style: none;
+    padding-left: 15px;
+}
+
+.inner-list .green {
+    color: #16a816;
+}
+
+.inner-list .orange {
+    color: #ffa500;
+}
+
+.inner-list .red {
+    color: #da3d3d;
+}
+
+/* spacing between items (better readability) */
+.trigger-item {
+    padding: 0.65rem 0;
+}
+
+/* your existing badge system stays untouched */
+.badge-value.geen {
+    background: #16a816;
+    color: white;
+}
+
+.badge-value.matig {
+    background: #ffa500;
+    color: black;
+}
+
+.badge-value.veel {
+    background: #da3d3d;
+    color: white;
 }

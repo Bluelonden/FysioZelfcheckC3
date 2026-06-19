@@ -285,11 +285,3 @@ form {
 .succes{margin-bottom:25px;}
 #margintop{margin-top:35px;}
 #margintopextra{margin-top:55px;}
-#border-radius{border-radius:20px;max-width:200px}
-#margin-bottom{margin-bottom:35px;}
-.big-pictogram{
-    width: 350px;
-    display: block;
-    margin: 0 auto;
-}
-.no-margin{margin:0px;}

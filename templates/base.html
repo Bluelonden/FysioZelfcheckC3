@@ -12,7 +12,7 @@
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    
+
     <style>
         .nav-menu {
             display: flex;
@@ -32,8 +32,10 @@
         .font-size-controls {
             display: flex;
             align-items: center;
-            gap: 8px; /* Ruimte tussen de A-knoppen onderling */
-            margin-left: auto; /* Duwt ze naar de rechterkant */
+            gap: 8px;
+            /* Ruimte tussen de A-knoppen onderling */
+            margin-left: auto;
+            /* Duwt ze naar de rechterkant */
         }
     </style>
 
@@ -50,24 +52,27 @@
             <li><a href="/">Home</a></li>
             <li><a href="/over_ons">Over ons</a></li>
             {% if current_user.is_authenticated %}
-                {% if current_user.role == 'arts' %}
-                    <li><a href="{{ url_for('doctor') }}">Artsenportaal</a></li>
-                {% else %}
-                    <li><a href="{{ url_for('profiel') }}">Mijn Profiel</a></li>
-                    <li><a href="{{ url_for('user_ui') }}">Metingen</a></li>
-                {% endif %}
-
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                
+            {% if current_user.role == 'arts' %}
+            <li><a href="{{ url_for('doctor') }}">Artsenportaal</a></li>
             {% else %}
-                <li><a href="{{ url_for('login') }}">Inloggen</a></li>
-                <li><a href="{{ url_for('register') }}">Registreren</a></li>
+            <li><a href="{{ url_for('profiel') }}">Mijn Profiel</a></li>
+            <li><a href="{{ url_for('user_ui') }}">Metingen</a></li>
+            {% endif %}
+
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+
+            {% else %}
+            <li><a href="{{ url_for('login') }}">Inloggen</a></li>
+            <li><a href="{{ url_for('register') }}">Registreren</a></li>
             {% endif %}
 
             <li class="font-size-controls">
-                <a onclick="changeFontSize('decrease')" title="Tekst verkleinen" style="cursor: pointer; font-weight: bold;">A-</a>
-                <a onclick="changeFontSize('reset')" title="Standaard tekstgrootte" style="cursor: pointer; font-weight: bold;">A</a>
-                <a onclick="changeFontSize('increase')" title="Tekst vergroten" style="cursor: pointer; font-weight: bold;">A+</a>
+                <a onclick="changeFontSize('decrease')" title="Tekst verkleinen"
+                    style="cursor: pointer; font-weight: bold;">A-</a>
+                <a onclick="changeFontSize('reset')" title="Standaard tekstgrootte"
+                    style="cursor: pointer; font-weight: bold;">A</a>
+                <a onclick="changeFontSize('increase')" title="Tekst vergroten"
+                    style="cursor: pointer; font-weight: bold;">A+</a>
             </li>
         </ul>
     </nav>
@@ -91,15 +96,15 @@
             const htmlElement = document.documentElement;
 
             if (action === 'increase') {
-                if (currentZoom < 140) { 
+                if (currentZoom < 140) {
                     currentZoom += 10;
                 }
             } else if (action === 'decrease') {
-                if (currentZoom > 80) { 
+                if (currentZoom > 80) {
                     currentZoom -= 10;
                 }
             } else if (action === 'reset') {
-                currentZoom = 100; 
+                currentZoom = 100;
             }
 
             htmlElement.style.fontSize = currentZoom + '%';
@@ -107,4 +112,5 @@
     </script>
 
 </body>
+
 </html>

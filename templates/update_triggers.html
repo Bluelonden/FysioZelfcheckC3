@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-
 <!-- TITLE -->
 {% block title %}
 Trigger - Update
@@ -19,6 +18,9 @@ Trigger - Update
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <h2 class="mb-4 text-center">Vragenlijst</h2>
+                    <p style="text-align: center;">
+                        Hier kunt u aangeven hoe erg u reageerd op onderstaande triggers.
+                    </p>
 
                     <div id="uitleg-box">
 
@@ -29,7 +31,7 @@ Trigger - Update
                             </button>
 
                             <div class="uitleg-txt">
-                                <p>Ik ervaar geen of lichte symptomen</p>
+                                <p>Ik reageer niet of weinig</p>
                             </div>
 
                             <div class="popup" onclick="myFunction(this)">
@@ -37,6 +39,7 @@ Trigger - Update
                                     <img src="{{ url_for('static', filename='img/icons/tooltip.svg')}}" alt="tooltip">
                                 </button>
                                 <div class="popuptext" id="tt-green">
+                                    Symptomen zijn onder anderen:
                                     <li>> af en toe hoesten</li>
                                     <li>> licht hoesten</li>
                                     <li>> licht piepende ademhaling</li>
@@ -52,7 +55,7 @@ Trigger - Update
                             </button>
 
                             <div class="uitleg-txt">
-                                <p>Ik ervaar milde symptomen</p>
+                                <p>Ik regaeer mild tot matig</p>
                             </div>
 
                             <div class="popup" onclick="myFunction(this)">
@@ -60,6 +63,7 @@ Trigger - Update
                                     <img src="{{ url_for('static', filename='img/icons/tooltip.svg')}}" alt="tooltip">
                                 </button>
                                 <span class="popuptext" id="tt-orange">
+                                    Symptomen zijn onder anderen:
                                     <li>> (lichte) kortademigheid</li>
                                     <li>> (lichte) druk op de borst</li>
                                     <li>> meer moeite met sporten/bewegen</li>
@@ -75,7 +79,7 @@ Trigger - Update
                             </button>
 
                             <div class="uitleg-txt">
-                                <p>Ik ervaar ernstige symptomen</p>
+                                <p>Ik reageer (zeer) heftig</p>
                             </div>
 
                             <div class="popup" onclick="myFunction(this)">
@@ -83,6 +87,7 @@ Trigger - Update
                                     <img src="{{ url_for('static', filename='img/icons/tooltip.svg')}}" alt="tooltip">
                                 </button>
                                 <span class="popuptext" id="tt-red">
+                                    Symptomen zijn onder anderen:
                                     <li>> snelle ademhaling</li>
                                     <li>> significante druk op borst</li>
                                     <li>> alleen korte zinnen kunnen spreken</li>
@@ -91,90 +96,242 @@ Trigger - Update
                             </div>
                         </div>
                     </div>
+
                     <!-- TRIGGERS FORM -->
                     <form method="POST">
                         {{ form.hidden_tag() }}
 
-                        <h5 class="mt-4 mb-3 text-primary">Trigger vragen</h5>
+                        <h5 class="mt-4 mb-3 text-primary" style="text-align:center;">Allergenen</h5>
 
-                        <div class="mb-3">
-                            <label for="allergens" class="form-label">Allergenen</label>
-                            {{ form.allergens(type="hidden", id="allergens") }}
+                        <div class="trigger-box">
 
-                            <div class="symp-lvl" data-target="allergens">
-                                <button type="button" class="icon-btn geen" data-value="geen">
-                                    <img src="/static/img/icons/smile.svg">
-                                </button>
+                            <!-- Huisstofmijt -->
+                            <div class="trigger-item">
+                                <div class="symp-row" data-category="allergens" data-index="0">
+                                    <label>Huisstofmijt</label>
+                                    <input type="hidden" name="alr_0" id="alr_0">
 
-                                <button type="button" class="icon-btn matig" data-value="matig">
-                                    <img src="/static/img/icons/sad.svg">
-                                </button>
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
 
-                                <button type="button" class="icon-btn veel" data-value="veel">
-                                    <img src="/static/img/icons/tired.svg">
-                                </button>
-                            </div>
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
 
-                            <div class="mb-3">
-                                <label for="irritants" class="form-label">Irriterende stoffen</label>
-                                {{ form.irritants(type="hidden", id="irritants") }}
-
-                                <div class="symp-lvl" data-target="irritants">
-                                    <button type="button" class="icon-btn geen" data-value="geen">
-                                        <img src="/static/img/icons/smile.svg">
-                                    </button>
-
-                                    <button type="button" class="icon-btn matig" data-value="matig">
-                                        <img src="/static/img/icons/sad.svg">
-                                    </button>
-
-                                    <button type="button" class="icon-btn veel" data-value="veel">
-                                        <img src="/static/img/icons/tired.svg">
-                                    </button>
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="weather" class="form-label">Weer</label>
-                                {{ form.weather(type="hidden", id="weather") }}
+                            <!-- Pollen -->
+                            <div class="trigger-item">
+                                <div class="symp-row" data-category="allergens" data-index="1">
+                                    <label>Pollen</label>
+                                    <input type="hidden" name="alr_1" id="alr_1">
 
-                                <div class="symp-lvl" data-target="weather">
-                                    <button type="button" class="icon-btn geen" data-value="geen">
-                                        <img src="/static/img/icons/smile.svg">
-                                    </button>
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
 
-                                    <button type="button" class="icon-btn matig" data-value="matig">
-                                        <img src="/static/img/icons/sad.svg">
-                                    </button>
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
 
-                                    <button type="button" class="icon-btn veel" data-value="veel">
-                                        <img src="/static/img/icons/tired.svg">
-                                    </button>
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="pollution" class="form-label">Luchtvervuiling</label>
-                                {{ form.pollution(type="hidden", id="pollution") }}
+                            <!-- Schimmel -->
+                            <div class="trigger-item">
+                                <div class="symp-row" data-category="allergens" data-index="2">
+                                    <label>Schimmel</label>
+                                    <input type="hidden" name="alr_2" id="alr_2">
 
-                                <div class="symp-lvl" data-target="pollution">
-                                    <button type="button" class="icon-btn geen" data-value="geen">
-                                        <img src="/static/img/icons/smile.svg">
-                                    </button>
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
 
-                                    <button type="button" class="icon-btn matig" data-value="matig">
-                                        <img src="/static/img/icons/sad.svg">
-                                    </button>
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
 
-                                    <button type="button" class="icon-btn veel" data-value="veel">
-                                        <img src="/static/img/icons/tired.svg">
-                                    </button>
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3 text-primary" style="text-align:center;">Irriterende stoffen</h5>
+                        <div class="trigger-box">
+                            <div class="trigger-item">
+                                <div class="symp-row">
+                                    <label>Rook</label>
+                                    <input type="hidden" name="irr_0" id="irr_0">
+
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="d-grid">
-                                {{ form.submit(class="btn btn-primary btn-lg") }}
+                            <div class="trigger-item">
+                                <div class="symp-row">
+                                    <label>Sterke geuren</label>
+                                    <input type="hidden" name="irr_1" id="irr_1">
+
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
+
+                                </div>
                             </div>
+                            <div class="trigger-item">
+                                <div class="symp-row">
+                                    <label>Chemische dampen</label>
+                                    <input type="hidden" name="irr_2" id="irr_2">
+
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="trigger-item">
+                                <div class="symp-row">
+                                    <label>Schoonmaakmiddelen</label>
+                                    <input type="hidden" name="irr_3" id="irr_3">
+
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3 text-primary" style="text-align:center;">Luchtvervuiling</h5>
+                        <div class="trigger-box">
+
+                            <div class="trigger-item">
+                                <div class="symp-row">
+                                    <label>Smog</label>
+                                    <input type="hidden" name="pol_0" id="pol_0">
+
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="trigger-item">
+                                <div class="symp-row">
+                                    <label>Uitlaatgassen</label>
+                                    <input type="hidden" name="pol_1" id="pol_1">
+
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="trigger-item">
+                                <div class="symp-row">
+                                    <label>Fijnstof</label>
+                                    <input type="hidden" name="pol_2" id="pol_2">
+                                    <div class="symp-lvl">
+                                        <button type="button" class="icon-btn geen" data-value="geen">
+                                            <img src="/static/img/icons/smile.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn matig" data-value="matig">
+                                            <img src="/static/img/icons/sad.svg">
+                                        </button>
+
+                                        <button type="button" class="icon-btn veel" data-value="veel">
+                                            <img src="/static/img/icons/tired.svg">
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
                     </form>
                 </div>
             </div>
@@ -206,17 +363,19 @@ Trigger - Update
             });
         }
     });
-    document.querySelectorAll('.symp-lvl').forEach(group => {
-        group.querySelectorAll('.icon-btn').forEach(btn => {
+
+    document.querySelectorAll('.symp-row').forEach(row => {
+        const input = row.querySelector('input[type="hidden"]');
+        const buttons = row.querySelectorAll('.icon-btn');
+
+        buttons.forEach(btn => {
             btn.addEventListener('click', () => {
+
                 const value = btn.dataset.value;
-                const target = group.dataset.target;
+                input.value = value;
 
-                // set hidden input
-                document.getElementById(target).value = value;
-
-                // optional: visual selection state
-                group.querySelectorAll('.icon-btn').forEach(b => b.classList.remove('active'));
+                // active state per rij
+                buttons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             });
         });
